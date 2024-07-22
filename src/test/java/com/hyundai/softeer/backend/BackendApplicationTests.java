@@ -1,10 +1,10 @@
-package com.hyundai.softeer.event;
+package com.hyundai.softeer.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EventApplicationTests {
+class BackendApplicationTests {
 
 	@Test
 	void contextLoads() {
