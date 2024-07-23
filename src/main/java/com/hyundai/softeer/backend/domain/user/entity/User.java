@@ -1,17 +1,17 @@
 package com.hyundai.softeer.backend.domain.user.entity;
 
 import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthProvider;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "Users")
 public class User {
 
     @Id
@@ -20,14 +20,26 @@ public class User {
 
     private String email;
 
-    private String nickname;
+    private String name;
+
+    private String phoneNumber;
+
+    private LocalDate birthDate;
 
     private OAuthProvider oAuthProvider;
 
+    private String refreshToken;
+
     @Builder
-    public User(String email, String nickname, OAuthProvider oAuthProvider) {
+    public User(String email, String name,String phoneNumber, LocalDate birthDate, OAuthProvider oAuthProvider) {
         this.email = email;
-        this.nickname = nickname;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
         this.oAuthProvider = oAuthProvider;
+    }
+
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
 }
