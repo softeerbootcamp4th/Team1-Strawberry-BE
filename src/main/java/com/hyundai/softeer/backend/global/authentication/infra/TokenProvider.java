@@ -4,7 +4,6 @@ import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JwtTokenProvider {
+public class TokenProvider {
 
     private final Key key;
 
-    public JwtTokenProvider(@Value("${jwt.secret-key}") String secretKey) {
+    public TokenProvider(@Value("${jwt.secret-key}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
