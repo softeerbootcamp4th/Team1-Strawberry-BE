@@ -17,7 +17,7 @@ public class NaverInfoResponse implements OAuthInfoResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class Response {
         private String email;
-        private String nickname;
+        private String name;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class NaverInfoResponse implements OAuthInfoResponse {
     }
 
     @Override
-    public String getNickname() {
-        return response.nickname;
+    public String getName() {
+        return response.name;
     }
 
     @Override
