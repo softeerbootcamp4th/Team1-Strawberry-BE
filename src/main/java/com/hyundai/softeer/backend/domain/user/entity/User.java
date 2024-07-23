@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
@@ -28,8 +28,6 @@ public class User {
 
     private OAuthProvider oAuthProvider;
 
-    private String refreshToken;
-
     @Builder
     public User(String email, String name,String phoneNumber, LocalDate birthDate, OAuthProvider oAuthProvider) {
         this.email = email;
@@ -37,9 +35,5 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.birthDate = birthDate;
         this.oAuthProvider = oAuthProvider;
-    }
-
-    public void updateRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
     }
 }
