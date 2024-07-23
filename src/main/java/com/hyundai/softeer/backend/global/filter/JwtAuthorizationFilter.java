@@ -76,6 +76,5 @@ public class JwtAuthorizationFilter implements Filter {
         Claims claims = jwtProvider.getClaims(token);
         String authenticateUserJson = claims.get("email", String.class);
         return new AuthenticateUser(authenticateUserJson);
-        //        return objectMapper.readValue(authenticateUserJson, AuthenticateUser.class);
     }
 }
