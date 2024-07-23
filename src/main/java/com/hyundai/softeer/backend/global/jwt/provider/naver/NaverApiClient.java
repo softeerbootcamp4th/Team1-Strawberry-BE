@@ -1,9 +1,9 @@
-package com.hyundai.softeer.backend.global.authentication.infra.naver;
+package com.hyundai.softeer.backend.global.jwt.provider.naver;
 
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthApiClient;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthInfoResponse;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthLoginParams;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthProvider;
+import com.hyundai.softeer.backend.global.jwt.OAuthApiClient;
+import com.hyundai.softeer.backend.global.jwt.OAuthInfoResponse;
+import com.hyundai.softeer.backend.global.jwt.OAuthLoginParams;
+import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

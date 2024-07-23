@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.global.authentication.domain.oauth;
+package com.hyundai.softeer.backend.global.jwt;
 
 import org.springframework.stereotype.Component;
 

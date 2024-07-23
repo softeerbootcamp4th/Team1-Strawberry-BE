@@ -1,9 +1,9 @@
-package com.hyundai.softeer.backend.global.authentication.infra.kakao;
+package com.hyundai.softeer.backend.global.jwt.provider.kakao;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthInfoResponse;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthProvider;
+import com.hyundai.softeer.backend.global.jwt.OAuthInfoResponse;
+import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import lombok.Getter;
 
 @Getter

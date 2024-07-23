@@ -1,6 +1,6 @@
 package com.hyundai.softeer.backend.domain.user.entity;
 
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthProvider;
+import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

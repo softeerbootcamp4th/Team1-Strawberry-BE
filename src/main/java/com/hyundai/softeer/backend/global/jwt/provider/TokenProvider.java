@@ -1,6 +1,6 @@
-package com.hyundai.softeer.backend.global.authentication.infra;
+package com.hyundai.softeer.backend.global.jwt.provider;
 
-import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
+import com.hyundai.softeer.backend.global.jwt.dto.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

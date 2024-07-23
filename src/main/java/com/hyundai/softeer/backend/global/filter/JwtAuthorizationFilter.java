@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyundai.softeer.backend.domain.user.dto.AuthenticateUser;
-import com.hyundai.softeer.backend.global.authentication.infra.TokenProvider;
+import com.hyundai.softeer.backend.global.jwt.provider.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;

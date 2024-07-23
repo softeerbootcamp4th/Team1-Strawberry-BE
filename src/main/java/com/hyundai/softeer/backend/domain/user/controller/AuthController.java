@@ -2,9 +2,8 @@ package com.hyundai.softeer.backend.domain.user.controller;
 
 import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.service.OAuthLoginService;
-import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
-import com.hyundai.softeer.backend.global.authentication.infra.kakao.KakaoLoginParams;
-import com.hyundai.softeer.backend.global.authentication.infra.naver.NaverLoginParams;
+import com.hyundai.softeer.backend.global.jwt.provider.kakao.KakaoLoginParams;
+import com.hyundai.softeer.backend.global.jwt.provider.naver.NaverLoginParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

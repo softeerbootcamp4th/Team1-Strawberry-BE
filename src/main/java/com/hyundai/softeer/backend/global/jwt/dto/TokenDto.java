@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.global.authentication.domain;
+package com.hyundai.softeer.backend.global.jwt.dto;
 
 import lombok.Builder;
 import lombok.Getter;
