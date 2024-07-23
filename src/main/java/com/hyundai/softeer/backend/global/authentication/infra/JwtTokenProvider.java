@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.global.authentication.infra;
 
+import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
@@ -22,20 +25,34 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generate(String subject, Date expiredAt) {
+    public TokenDto createJwt(Map<String, Object> claims) {
+        String accessToken = createToken(claims, getExpireDateAccessToken());
+        String refreshToken = createToken(new HashMap<>(), getExpireDateRefreshToken());
+        return TokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public Date getExpireDateAccessToken() {
+        long expireTimeMils = 1000 * 60 * 60;
+        return new Date(System.currentTimeMillis() + expireTimeMils);
+    }
+
+    public Date getExpireDateRefreshToken() {
+        long expireTimeMils = 1000L * 60 * 60 * 24 * 60;
+        return new Date(System.currentTimeMillis() + expireTimeMils);
+    }
+
+    public String createToken(Map<String, Object> claims, Date expireDate) {
         return Jwts.builder()
-                .setSubject(subject)
-                .setExpiration(expiredAt)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .setClaims(claims)
+                .setExpiration(expireDate)
+                .signWith(key)
                 .compact();
     }
 
-    public String extractSubject(String accessToken) {
-        Claims claims = parseClaims(accessToken);
-        return claims.getSubject();
-    }
-
-    private Claims parseClaims(String accessToken) {
+    public Claims getClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -46,5 +63,6 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
 }
 
