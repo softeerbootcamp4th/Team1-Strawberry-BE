@@ -2,25 +2,29 @@ package com.hyundai.softeer.backend.domain.user.service;
 
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
-import com.hyundai.softeer.backend.global.authentication.domain.AuthTokens;
-import com.hyundai.softeer.backend.global.authentication.domain.AuthTokensGenerator;
+import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
 import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthInfoResponse;
 import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthLoginParams;
 import com.hyundai.softeer.backend.global.authentication.domain.oauth.RequestOAuthInfoService;
+import com.hyundai.softeer.backend.global.authentication.infra.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class OAuthLoginService {
     private final UserRepository userRepository;
-    private final AuthTokensGenerator authTokensGenerator;
+    private final TokenProvider jwtTokenProvider;
     private final RequestOAuthInfoService requestOAuthInfoService;
 
-    public AuthTokens login(OAuthLoginParams params) {
+    public TokenDto login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
-        Long memberId = findOrCreateMember(oAuthInfoResponse);
-        return authTokensGenerator.generate(memberId);
+        Long userId = findOrCreateMember(oAuthInfoResponse);
+        User user = userRepository.findById(userId).get();
+        Map<String, Object> claims = Map.of("email", user.getEmail());
+        return jwtTokenProvider.createJwt(claims);
     }
 
     private Long findOrCreateMember(OAuthInfoResponse oAuthInfoResponse) {
@@ -32,7 +36,7 @@ public class OAuthLoginService {
     private Long newMember(OAuthInfoResponse oAuthInfoResponse) {
         User member = User.builder()
                 .email(oAuthInfoResponse.getEmail())
-                .nickname(oAuthInfoResponse.getNickname())
+                .name(oAuthInfoResponse.getName())
                 .oAuthProvider(oAuthInfoResponse.getOAuthProvider())
                 .build();
 
