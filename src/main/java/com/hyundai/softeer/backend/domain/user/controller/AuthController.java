@@ -1,7 +1,8 @@
 package com.hyundai.softeer.backend.domain.user.controller;
 
+import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.service.OAuthLoginService;
-import com.hyundai.softeer.backend.global.authentication.domain.AuthTokens;
+import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
 import com.hyundai.softeer.backend.global.authentication.infra.kakao.KakaoLoginParams;
 import com.hyundai.softeer.backend.global.authentication.infra.naver.NaverLoginParams;
 import lombok.RequiredArgsConstructor;
@@ -13,17 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/oauth")
 public class AuthController {
     private final OAuthLoginService oAuthLoginService;
 
     @PostMapping("/kakao")
-    public ResponseEntity<AuthTokens> loginKakao(@RequestBody KakaoLoginParams params) {
+    public ResponseEntity<LoginResponseDto> loginKakao(@RequestBody KakaoLoginParams params) {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 
     @PostMapping("/naver")
-    public ResponseEntity<AuthTokens> loginNaver(@RequestBody NaverLoginParams params) {
+    public ResponseEntity<LoginResponseDto> loginNaver(@RequestBody NaverLoginParams params) {
         return ResponseEntity.ok(oAuthLoginService.login(params));
     }
 }

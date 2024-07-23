@@ -1,5 +1,7 @@
 package com.hyundai.softeer.backend.domain.user.service;
 
+import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
+import com.hyundai.softeer.backend.domain.user.dto.UserInfoDto;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
@@ -19,12 +21,17 @@ public class OAuthLoginService {
     private final TokenProvider jwtTokenProvider;
     private final RequestOAuthInfoService requestOAuthInfoService;
 
-    public TokenDto login(OAuthLoginParams params) {
+    public LoginResponseDto login(OAuthLoginParams params) {
         OAuthInfoResponse oAuthInfoResponse = requestOAuthInfoService.request(params);
         Long userId = findOrCreateMember(oAuthInfoResponse);
         User user = userRepository.findById(userId).get();
         Map<String, Object> claims = Map.of("email", user.getEmail());
-        return jwtTokenProvider.createJwt(claims);
+        TokenDto jwt = jwtTokenProvider.createJwt(claims);
+
+        return LoginResponseDto.builder()
+                .user(UserInfoDto.fromEntity(user))
+                .token(jwt)
+                .build();
     }
 
     private Long findOrCreateMember(OAuthInfoResponse oAuthInfoResponse) {
