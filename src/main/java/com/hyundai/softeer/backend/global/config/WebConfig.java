@@ -1,8 +1,7 @@
 package com.hyundai.softeer.backend.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyundai.softeer.backend.domain.user.service.UserService;
-import com.hyundai.softeer.backend.global.authentication.infra.TokenProvider;
+import com.hyundai.softeer.backend.global.jwt.provider.TokenProvider;
 import com.hyundai.softeer.backend.global.filter.JwtAuthorizationFilter;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.client.RestTemplateBuilder;

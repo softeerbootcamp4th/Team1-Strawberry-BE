@@ -1,7 +1,7 @@
-package com.hyundai.softeer.backend.global.authentication.infra.naver;
+package com.hyundai.softeer.backend.global.jwt.provider.naver;
 
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthLoginParams;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthProvider;
+import com.hyundai.softeer.backend.global.jwt.OAuthLoginParams;
+import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.LinkedMultiValueMap;

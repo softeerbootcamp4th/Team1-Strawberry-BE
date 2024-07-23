@@ -4,11 +4,11 @@ import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.dto.UserInfoDto;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
-import com.hyundai.softeer.backend.global.authentication.domain.TokenDto;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthInfoResponse;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.OAuthLoginParams;
-import com.hyundai.softeer.backend.global.authentication.domain.oauth.RequestOAuthInfoService;
-import com.hyundai.softeer.backend.global.authentication.infra.TokenProvider;
+import com.hyundai.softeer.backend.global.jwt.dto.TokenDto;
+import com.hyundai.softeer.backend.global.jwt.OAuthInfoResponse;
+import com.hyundai.softeer.backend.global.jwt.OAuthLoginParams;
+import com.hyundai.softeer.backend.global.jwt.RequestOAuthInfoService;
+import com.hyundai.softeer.backend.global.jwt.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
