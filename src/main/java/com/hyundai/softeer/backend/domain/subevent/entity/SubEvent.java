@@ -1,7 +1,5 @@
 package com.hyundai.softeer.backend.domain.subevent.entity;
 
-import com.hyundai.softeer.backend.domain.lottery.entity.DrawingLottery;
-import com.hyundai.softeer.backend.domain.lottery.entity.Lottery;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import jakarta.persistence.*;
@@ -10,7 +8,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "sub_events")
+@Table(name = "Sub_events")
 @Builder
 @Getter
 @Setter
@@ -27,12 +25,8 @@ public class SubEvent {
 
     private SubEventType eventType;
 
-    private String winnersMeta;
-
-    private String winners;
-
     private LocalDateTime startAt;
 
     private LocalDateTime endAt;
-    
+
 }

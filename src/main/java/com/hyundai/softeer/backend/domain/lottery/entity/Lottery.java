@@ -1,8 +1,8 @@
 package com.hyundai.softeer.backend.domain.lottery.entity;
 
-import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -13,6 +13,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class Lottery {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "sub_event_id", nullable = false)
+    private Long subEventId;
+
+    private String winners_meta;
+
+    private String winners;
 }
