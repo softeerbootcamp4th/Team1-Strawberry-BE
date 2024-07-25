@@ -18,6 +18,7 @@ public enum SubEventExecuteType {
                 return subEventExecuteType;
             }
         }
+        // TODO: Exception 추가
         throw new IllegalArgumentException("Unknown code: " + code);
     }
 }

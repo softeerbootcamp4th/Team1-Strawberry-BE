@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.lottery.entity;
+package com.hyundai.softeer.backend.domain.subevent.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @NoArgsConstructor
-public class Lottery {
+public class BaseSubEvent {
     @Id
     @Column(name = "sub_event_id", nullable = false)
     private Long subEventId;
@@ -19,4 +19,5 @@ public class Lottery {
     private String winners_meta;
 
     private String winners;
+
 }

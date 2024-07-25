@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum SubEventType {
     DRAWING(1, "DRAWING"),
-    QUIZ(1, "QUIZ"),;
+    QUIZ(1, "QUIZ");
 
     private int code;
     private String status;
@@ -18,6 +18,7 @@ public enum SubEventType {
                 return subEventHoldType;
             }
         }
+        // TODO: Exception 추가
         throw new IllegalArgumentException("Unknown code: " + code);
     }
 }
