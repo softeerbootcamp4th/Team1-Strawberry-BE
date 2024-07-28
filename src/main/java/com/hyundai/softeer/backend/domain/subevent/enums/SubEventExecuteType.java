@@ -6,8 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SubEventExecuteType {
-    LOTTERY(1, "LOTTERY"),
-    FIRSTCOME(2, "FIRSTCOME");
+    LOTTERY(0, "LOTTERY"),
+    FIRSTCOME(1, "FIRSTCOME");
 
     private int code;
     private String status;

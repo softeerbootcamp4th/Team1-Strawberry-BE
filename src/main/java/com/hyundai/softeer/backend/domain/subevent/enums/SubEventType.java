@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SubEventType {
-    DRAWING(1, "DRAWING"),
+    DRAWING(0, "DRAWING"),
     QUIZ(1, "QUIZ"),;
 
     private int code;
