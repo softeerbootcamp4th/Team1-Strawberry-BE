@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.car;
+package com.hyundai.softeer.backend.domain.car.enums;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

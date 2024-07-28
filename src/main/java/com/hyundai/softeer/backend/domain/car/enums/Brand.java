@@ -1,9 +1,9 @@
-package com.hyundai.softeer.backend.domain.car;
+package com.hyundai.softeer.backend.domain.car.enums;
 
 public enum Brand {
-    HYUNDAI(10),
-    KIA(20),
-    GENESIS(30);
+    HYUNDAI(0),
+    KIA(1),
+    GENESIS(2);
 
     private int brandValue;
 
