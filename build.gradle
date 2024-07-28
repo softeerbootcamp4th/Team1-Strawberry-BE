@@ -28,8 +28,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'junit:junit:4.13.1'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	testImplementation 'junit:junit:4.13.1'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
