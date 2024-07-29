@@ -19,26 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 @Slf4j
 class LotteryServiceTest {
-    private static final Logger log = LoggerFactory.getLogger(LotteryServiceTest.class);
     @InjectMocks
     private LotteryService lotteryService;
-
-    @Test
-    @DisplayName("당첨자 메타 데이터 파싱")
-    void parseWinnerMeta() {
-        // given
-        String winnerMeta = "{'1':[1,1],'2':[2,2],'3':[3,3],'4':[4,4],'5':[5,5],'6':[6,6],'7':[7,7],'8':[8,8],'9':[9,9],'10':[10,10]}";
-        // when
-        Map<Integer, WinnerInfo> integerWinnerInfoMap = lotteryService.parseWinnersMeta(winnerMeta);
-
-        // then
-        for (int i = 1; i <= 10; i++) {
-            WinnerInfo winnerInfo = integerWinnerInfoMap.get(i);
-            assertThat(winnerInfo).isNotNull();
-            assertThat(winnerInfo.getWinnerCount()).isEqualTo(i);
-            assertThat(winnerInfo.getPrizeId()).isEqualTo(i);
-        }
-    }
 
     @Test
     @DisplayName("당첨자 선정")

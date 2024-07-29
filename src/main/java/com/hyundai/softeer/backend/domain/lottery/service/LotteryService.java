@@ -63,7 +63,7 @@ public class LotteryService {
                 (gameScore * scoreWeight.getGameWeight());
     }
 
-    public static Map<Integer, WinnerInfo> parseWinnersMeta(String winnersMeta) {
+    private Map<Integer, WinnerInfo> parseWinnersMeta(String winnersMeta) {
         Map<Integer, WinnerInfo> resultMap = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
 
