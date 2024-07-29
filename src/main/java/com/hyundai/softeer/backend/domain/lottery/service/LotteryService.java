@@ -32,4 +32,30 @@ public class LotteryService {
                 .limit(totalWinners)
                 .toList();
     }
+    public static Map<Integer, WinnerInfo> parseWinnersMeta(String winnersMeta) {
+        Map<Integer, WinnerInfo> resultMap = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // JSON 문자열을 JsonNode로 변환
+            JsonNode rootNode = objectMapper.readTree(winnersMeta.replace("'", "\""));
+
+            // 각 키와 값 파싱
+            rootNode.fields().forEachRemaining(entry -> {
+                Integer rank = Integer.valueOf(entry.getKey());
+                JsonNode values = entry.getValue();
+
+                int winnerCount = values.get(0).asInt();
+                int prizeId = values.get(1).asInt();
+
+                resultMap.put(rank, new WinnerInfo(winnerCount, prizeId));
+            });
+
+        } catch (IOException e) {
+            // TODO 예외 처리
+            e.printStackTrace();
+        }
+        return resultMap;
+    }
+
 }
