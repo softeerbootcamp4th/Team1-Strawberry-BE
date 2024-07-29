@@ -9,3 +9,4 @@ import lombok.Getter;
 public class AuthenticateUser {
     private String email;
 }
+
