@@ -1,13 +1,13 @@
-package com.hyundai.softeer.event;
+package com.hyundai.softeer.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EventApplication {
+public class BackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EventApplication.class, args);
+		SpringApplication.run(BackendApplication.class, args);
 	}
 
 }
