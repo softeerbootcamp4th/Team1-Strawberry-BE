@@ -37,11 +37,11 @@ public class EventUser {
     @Builder.Default
     private Double gameScore = 0.0;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_event_id", nullable = false)
     private SubEvent subEvent;
 
