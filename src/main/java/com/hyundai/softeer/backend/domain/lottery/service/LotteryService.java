@@ -1,3 +1,21 @@
+package com.hyundai.softeer.backend.domain.lottery.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
+import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
+import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +50,19 @@ public class LotteryService {
                 .limit(totalWinners)
                 .toList();
     }
+
+    private double calculateWeightedValue(EventUser eventUser, LotteryScoreWeight scoreWeight) {
+        double sharedScore = eventUser.getSharedScore();
+        double priorityScore = eventUser.getPriorityScore();
+        double lottoScore = eventUser.getLottoScore();
+        double gameScore = eventUser.getGameScore();
+
+        return (sharedScore * scoreWeight.getSharedWeight()) +
+                (priorityScore * scoreWeight.getPriorityWeight()) +
+                (lottoScore * scoreWeight.getLottoWeight()) +
+                (gameScore * scoreWeight.getGameWeight());
+    }
+
     public static Map<Integer, WinnerInfo> parseWinnersMeta(String winnersMeta) {
         Map<Integer, WinnerInfo> resultMap = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
