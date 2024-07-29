@@ -58,18 +58,17 @@ public class HyundaiOauthService {
     }
 
 
-    public ResponseEntity<?> callback(String code, String state) throws JsonProcessingException {
+    public LoginResponseDto callback(String code, String state) throws JsonProcessingException {
         String hyundaiAccessToken = requestAccessToken(code, state);
         HyundaiUserInfo userInfo = getHyundaiUserInfo(hyundaiAccessToken);
         Optional<User> user = userRepository.findByPhoneNumber(userInfo.getMobileNum());
 
         // 등록된 회원이라면 로그인처리
         if (user.isPresent()) {
-            return ResponseEntity.ok(
-                    LoginResponseDto.builder()
-                            .user(UserInfoDto.fromEntity(user.get()))
-                            .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
-                            .build());
+            return LoginResponseDto.builder()
+                    .user(UserInfoDto.fromEntity(user.get()))
+                    .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
+                    .build();
         }
 
         // 등록되지 않은 회원이라면 회원가입 처리
@@ -83,11 +82,10 @@ public class HyundaiOauthService {
 
         User savedUser = userRepository.save(newUser);
 
-        return ResponseEntity.ok(
-                LoginResponseDto.builder()
-                        .user(UserInfoDto.fromEntity(savedUser))
-                        .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
-                        .build());
+        return LoginResponseDto.builder()
+                .user(UserInfoDto.fromEntity(savedUser))
+                .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
+                .build();
 
     }
 

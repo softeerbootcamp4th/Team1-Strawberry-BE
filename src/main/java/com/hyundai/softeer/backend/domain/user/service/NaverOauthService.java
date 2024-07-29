@@ -60,18 +60,17 @@ public class NaverOauthService {
     }
 
 
-    public ResponseEntity<?> callback(String code, String state) throws JsonProcessingException {
+    public LoginResponseDto callback(String code, String state) throws JsonProcessingException {
         String naverAccessToken = requestAccessToken(code, state);
         NaverUserInfo userInfo = getNaverUserInfo(naverAccessToken);
         Optional<User> user = userRepository.findByEmail(userInfo.getEmail());
 
         // 등록된 회원이라면 로그인처리
         if (user.isPresent()) {
-            return ResponseEntity.ok(
-                    LoginResponseDto.builder()
-                            .user(UserInfoDto.fromEntity(user.get()))
-                            .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
-                            .build());
+            return LoginResponseDto.builder()
+                    .user(UserInfoDto.fromEntity(user.get()))
+                    .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
+                    .build();
         }
 
         // 등록되지 않은 회원이라면 회원가입 처리
@@ -85,11 +84,10 @@ public class NaverOauthService {
 
         User savedUser = userRepository.save(newUser);
 
-        return ResponseEntity.ok(
-                LoginResponseDto.builder()
-                        .user(UserInfoDto.fromEntity(savedUser))
-                        .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
-                        .build());
+        return LoginResponseDto.builder()
+                .user(UserInfoDto.fromEntity(savedUser))
+                .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
+                .build();
 
     }
 
