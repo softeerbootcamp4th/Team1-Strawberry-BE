@@ -1,29 +1,41 @@
 package com.hyundai.softeer.backend.domain.user.controller;
 
-import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
-import com.hyundai.softeer.backend.domain.user.service.OAuthLoginService;
-import com.hyundai.softeer.backend.global.jwt.provider.kakao.KakaoLoginParams;
-import com.hyundai.softeer.backend.global.jwt.provider.naver.NaverLoginParams;
+import com.hyundai.softeer.backend.domain.user.service.HyundaiOauthService;
+import com.hyundai.softeer.backend.domain.user.service.NaverOauthService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/oauth")
+@RequestMapping("/api/v1/oauth2")
 public class AuthController {
-    private final OAuthLoginService oAuthLoginService;
+    private final NaverOauthService naverOauthService;
+    private final HyundaiOauthService hyundaiOauthService;
 
-    @PostMapping("/kakao")
-    public ResponseEntity<LoginResponseDto> loginKakao(@RequestBody KakaoLoginParams params) {
-        return ResponseEntity.ok(oAuthLoginService.login(params));
+    @GetMapping("/naver")
+    public void redirectNaver(HttpServletResponse response) throws IOException {
+        response.sendRedirect(naverOauthService.getNaverUrl());
     }
 
-    @PostMapping("/naver")
-    public ResponseEntity<LoginResponseDto> loginNaver(@RequestBody NaverLoginParams params) {
-        return ResponseEntity.ok(oAuthLoginService.login(params));
+    @GetMapping("/naver/callback")
+    public ResponseEntity<?> callbackNaver(@RequestParam String code, @RequestParam String state) throws IOException {
+        return naverOauthService.callback(code, state);
+    }
+
+    @GetMapping("/hyundai")
+    public void redirectHyundai(HttpServletResponse response) throws IOException {
+        response.sendRedirect(hyundaiOauthService.getHyundaiUrl());
+    }
+
+    @GetMapping("/hyundai/callback")
+    public ResponseEntity<?> callbackHyundai(@RequestParam String code, @RequestParam String state) throws IOException {
+        return hyundaiOauthService.callback(code, state);
     }
 }
