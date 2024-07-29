@@ -38,6 +38,4 @@ public class AuthController {
     public ResponseEntity<?> callbackHyundai(@RequestParam String code, @RequestParam String state) throws IOException {
         return hyundaiOauthService.callback(code, state);
     }
-
-
 }
