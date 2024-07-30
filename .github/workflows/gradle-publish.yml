@@ -25,6 +25,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
+      - name: Create application.yml files
+        run: |
+          mkdir -p ${{ secrets.APPLICATION_PATH }}/yaml
+          echo "${{ secrets.APPLICATION_YML }}" > ${{ secrets.APPLICATION_PATH }}/application.yml
+          echo "${{ secrets.APPLICATION_PROD_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-prod.yml
+          echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-oauth.yml
+
       - name: Build with Gradle Wrapper
         run: ./gradlew build
 
