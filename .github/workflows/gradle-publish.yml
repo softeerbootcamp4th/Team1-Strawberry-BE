@@ -11,7 +11,9 @@ jobs:
     environment: aws
 
     runs-on: ubuntu-latest
+
     permissions:
+      id-token: write
       contents: read
 
     steps:
@@ -30,22 +32,24 @@ jobs:
           mkdir -p ${{ secrets.APPLICATION_PATH }}/yaml
           echo "${{ secrets.APPLICATION_YML }}" > ${{ secrets.APPLICATION_PATH }}/application.yml
           echo "${{ secrets.APPLICATION_PROD_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-prod.yml
+          echo "${{ secrets.APPLICATION_DEV_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-dev.yml
           echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-oauth.yml
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build
 
       - name: AWS credential
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.AWS_ROLE_NAME }}
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_NAME }}
+          role-session-name: GithubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: S3 upload
-        run: aws deploy push --application-name $ --ignore-hidden-files --s3-location s3://${{ secrets.AWS_S3_BUCKET }}/cicdtest/$GITHUB_SHA.zip --source .
+        run: aws deploy push --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION }} --ignore-hidden-files --s3-location s3://${{ secrets.AWS_S3_BUCKET }}/cicdtest/$GITHUB_SHA.zip --source .
 
       - name: CodeDeploy
-        run: aws deploy create-deployment --application-name $ --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $ --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=cicdtest/$GITHUB_SHA.zip,bundleType=zip
+        run: aws deploy create-deployment --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.AWS_CODE_DEPLOY_GROUP }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=cicdtest/$GITHUB_SHA.zip,bundleType=zip
 
   dependency-submission:
 

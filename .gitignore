@@ -38,7 +38,7 @@ out/
 ### VS Code ###
 .vscode/
 src/main/resources/*.yml
+src/main/resources/yaml/*.yml
 src/test/resources/*.yml
-*.yml
 src/main/resources/sql/integration.sql
 
