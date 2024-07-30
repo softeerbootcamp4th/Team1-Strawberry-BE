@@ -3,10 +3,9 @@ package com.hyundai.softeer.backend.domain.subevent.entity;
 import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
+import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubEvent {
+public class SubEvent extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,12 +34,6 @@ public class SubEvent {
     private LocalDateTime startAt;
 
     private LocalDateTime endAt;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
 
     private String bannerUrl;
 

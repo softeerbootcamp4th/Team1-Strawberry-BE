@@ -1,10 +1,11 @@
 package com.hyundai.softeer.backend.domain.user.controller;
 
+import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.service.HyundaiOauthService;
 import com.hyundai.softeer.backend.domain.user.service.NaverOauthService;
+import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,8 +26,10 @@ public class AuthController {
     }
 
     @GetMapping("/naver/callback")
-    public ResponseEntity<?> callbackNaver(@RequestParam String code, @RequestParam String state) throws IOException {
-        return naverOauthService.callback(code, state);
+    public BaseResponse<LoginResponseDto> callbackNaver(@RequestParam String code, @RequestParam String state) throws IOException {
+        return BaseResponse.<LoginResponseDto>builder()
+                .data(naverOauthService.callback(code, state))
+                .build();
     }
 
     @GetMapping("/hyundai")
@@ -35,9 +38,9 @@ public class AuthController {
     }
 
     @GetMapping("/hyundai/callback")
-    public ResponseEntity<?> callbackHyundai(@RequestParam String code, @RequestParam String state) throws IOException {
-        return hyundaiOauthService.callback(code, state);
+    public BaseResponse<LoginResponseDto> callbackHyundai(@RequestParam String code, @RequestParam String state) throws IOException {
+        return BaseResponse.<LoginResponseDto>builder()
+                .data(hyundaiOauthService.callback(code, state))
+                .build();
     }
-
-
 }
