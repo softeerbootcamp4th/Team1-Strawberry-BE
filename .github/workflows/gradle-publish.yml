@@ -1,0 +1,60 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "feat/#39-cicd" ]
+  pull_request:
+    branches: [ "feat/#39-cicd" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: gradlew permmision
+        run: chmod +x ./gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew clean build -x test
+
+      - name: AWS credential
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_NAME }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: S3 upload
+        run: aws deploy push --application-name $ --ignore-hidden-files --s3-location s3://${{ secrets.AWS_S3_BUCKET }}/cicdtest/$GITHUB_SHA.zip --source .
+
+      - name: CodeDeploy
+        run: aws deploy create-deployment --application-name $ --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $ --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=cicdtest/$GITHUB_SHA.zip,bundleType=zip
+
+  dependency-submission:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Generate and submit dependency graph
+        uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
