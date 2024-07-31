@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseResponse<T> {
-    
     @Builder.Default
     private int status = BaseResponseStatus.SUCCESS.getStatus();
 
