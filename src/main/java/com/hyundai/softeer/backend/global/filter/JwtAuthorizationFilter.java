@@ -23,7 +23,11 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
-    private final String[] whiteListUris = new String[]{"/user/login", "/auth/refresh/token", "/user/register", "*/h2-console*", "/api/auth/kakao"};
+    private final String[] whiteListUris = new String[]{
+            "/api/v1/oauth2/**",
+            "/swagger-ui/**",
+            "/v3/api-docs",
+            "/v3/api-docs/**"};
 
     private final TokenProvider jwtProvider;
 
