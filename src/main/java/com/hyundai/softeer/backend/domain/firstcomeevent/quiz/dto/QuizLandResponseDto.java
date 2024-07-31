@@ -25,6 +25,9 @@ public class QuizLandResponseDto {
     @Schema(description = "서버 시간", example = "2024-07-26T18:30:00.000Z")
     private LocalDateTime serverTime;
 
+    @Schema(description = "퀴즈 개요", example = "디 올 뉴 산타페 하이브리드의")
+    private String overview;
+
     @Schema(description = "퀴즈 문제", example = "산타페의 연비는?")
     private String problem;
 
