@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity;
 
+import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.converter.ProblemConverter;
 import com.hyundai.softeer.backend.domain.subevent.entity.BaseSubEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +18,11 @@ public class Quiz extends BaseSubEvent {
 
   private Integer sequence;
 
+  private String overview;
+
   private String problem;
+
+  private String carInfo;
 
   private String answer;
 
