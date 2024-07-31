@@ -8,12 +8,21 @@ import lombok.Getter;
 @Builder
 public class QuizResponseDto {
 
-    @Schema(name = "퀴즈 문제", example = "대한민국의 수도는?")
+    @Schema(description = "퀴즈 이벤트 ID", example = "1")
+    private Long subEventId;
+
+    @Schema(description = "퀴즈 개요", example = "디 올 뉴 산타페의")
+    private String overview;
+
+    @Schema(description = "퀴즈 문제", example = "통합 연비는?")
     private String problem;
 
-    @Schema(name = "퀴즈 정답 초성", example = "ㅅㅇ")
+    @Schema(description = "퀴즈 정보", example = "디 올 뉴 산타페의 특징은 어쩌구 저쩌구")
+    private String carInfo;
+
+    @Schema(description = "퀴즈 정답 초성", example = "ㅅㅇ")
     private String initConsonant;
 
-    @Schema(name = "퀴즈 정답 초성", example = "우리가 현재 있는 곳!")
+    @Schema(description = "퀴즈 힌트", example = "10 근처 일지도..?")
     private String hint;
 }
