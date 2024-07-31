@@ -1,14 +1,8 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto;
 
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.converter.ProblemConverter;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity.QuizProblems;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.Map;
 
 @Getter
 @Builder

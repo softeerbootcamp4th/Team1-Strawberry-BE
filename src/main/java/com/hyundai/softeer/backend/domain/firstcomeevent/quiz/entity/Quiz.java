@@ -1,6 +1,5 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity;
 
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.converter.ProblemConverter;
 import com.hyundai.softeer.backend.domain.subevent.entity.BaseSubEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
