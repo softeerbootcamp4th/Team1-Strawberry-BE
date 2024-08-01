@@ -4,7 +4,7 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.jwt.provider.TokenProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -15,13 +15,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 
 @Component
+@RequiredArgsConstructor
 public class CurrentUserMethodArgumentResolver implements HandlerMethodArgumentResolver {
-
-    @Autowired
-    private TokenProvider jwtUtil;
-
-    @Autowired
-    private UserDetailService userDetailService;
+    private final TokenProvider jwtUtil;
+    private final UserDetailService userDetailService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
