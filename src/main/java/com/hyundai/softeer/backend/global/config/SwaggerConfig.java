@@ -41,7 +41,8 @@ public class SwaggerConfig {
 
     private List<Tag> tagList() {
         return List.of(
-                new Tag().name("User").description("사용자 관련 API")
+                new Tag().name("User").description("사용자 관련 API"),
+                new Tag().name("Drawing Lottery").description("드로잉 추첨 이벤트 관련 API")
         );
     }
 }

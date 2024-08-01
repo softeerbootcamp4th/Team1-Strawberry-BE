@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.lottery.entity;
+package com.hyundai.softeer.backend.domain.lottery.drawing.entity;
 
 import com.hyundai.softeer.backend.domain.subevent.entity.BaseSubEvent;
 import lombok.Getter;
@@ -8,11 +8,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @NoArgsConstructor
-public class DrawingLotteryEvent extends BaseSubEvent {
-    
-
+public class DrawingLottery extends BaseSubEvent {
     private String drawPointsJsonUrl;
 
-    private String contourImageUrl;
+    private String contourImgUrl;
+
+    private String imgUrl;
 
 }

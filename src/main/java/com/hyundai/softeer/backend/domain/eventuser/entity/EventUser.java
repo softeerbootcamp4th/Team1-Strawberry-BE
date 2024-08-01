@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -19,9 +21,9 @@ public class EventUser {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private String expectationStatus;
+    private Boolean isWriteExpectation;
 
-    private String lastVisitedAt;
+    private LocalDateTime lastVisitedAt;
 
     private String sharedUrl;
 
@@ -36,6 +38,14 @@ public class EventUser {
 
     @Builder.Default
     private Double gameScore = 0.0;
+
+    private Integer chance;
+
+    @Builder.Default
+    private Integer expectationBonusChance = -1;
+
+    @Builder.Default
+    private Integer shareBonusChance = -1;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
