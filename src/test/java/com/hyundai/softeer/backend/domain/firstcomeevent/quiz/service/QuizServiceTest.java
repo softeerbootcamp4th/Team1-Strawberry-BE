@@ -1,19 +1,16 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service;
 
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizLandResponseDto;
-
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizResponseDto;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizSubmitResponseDto;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity.Quiz;
+import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.repository.QuizRepository;
 import com.hyundai.softeer.backend.domain.subevent.exception.NoWinnerException;
-import com.hyundai.softeer.backend.global.exception.NoContentException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +25,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @SpringBootTest
 @Transactional
@@ -84,7 +82,7 @@ class QuizServiceTest {
         // when, then
         Assertions.assertThatThrownBy(() -> {
             quizService.getQuizLand(eventId);
-        }).isInstanceOf(NoContentException.class);
+        }).isInstanceOf(QuizNotFoundException.class);
     }
 
     @Test
@@ -114,7 +112,7 @@ class QuizServiceTest {
         // when, then
         Assertions.assertThatThrownBy(() -> {
             quizService.getQuiz(eventId, problemSequence);
-        }).isInstanceOf(NoContentException.class);
+        }).isInstanceOf(QuizNotFoundException.class);
     }
 
     @Test
@@ -127,7 +125,7 @@ class QuizServiceTest {
         // when, then
         Assertions.assertThatThrownBy(() -> {
             quizService.quizSubmit(subEventId, answer);
-        }).isInstanceOf(NoContentException.class);
+        }).isInstanceOf(QuizNotFoundException.class);
     }
 
     @Test
@@ -139,8 +137,8 @@ class QuizServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> {
-            quizService.quizSubmit(subEventId, answer);
-        })
+                    quizService.quizSubmit(subEventId, answer);
+                })
                 .isInstanceOf(NoWinnerException.class)
                 .hasMessage("정답이 아니에요.");
     }
@@ -173,8 +171,8 @@ class QuizServiceTest {
 
         // when them
         Assertions.assertThatThrownBy(() -> {
-            quizService.quizSubmit(subEventId, answer);
-        })
+                    quizService.quizSubmit(subEventId, answer);
+                })
                 .isInstanceOf(NoWinnerException.class)
                 .hasMessage("선착순 이벤트가 끝났어요.");
     }
