@@ -97,7 +97,7 @@ public class QuizService {
             WinnerInfo winnerInfo = findPrize(integerWinnerInfoMap, winners)
                     .orElseThrow(() -> new NoWinnerException("선착순 이벤트가 끝났어요."));
             quiz.setWinners(winners + 1);
-            return new QuizSubmitResponseDto(true, winnerInfo.getPrizeImgUrl());
+            return new QuizSubmitResponseDto(true, null);
         } catch (JsonProcessingException e) {
             throw new JsonParseException();
         }

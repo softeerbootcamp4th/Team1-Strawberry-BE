@@ -30,9 +30,9 @@ class ParseUtilTest {
 
         // then
         assertThat(integerWinnerInfoMap).isNotEmpty();
-        assertThat(integerWinnerInfoMap.get(1)).isEqualTo(new WinnerInfo(1, 1, "img1.com"));
-        assertThat(integerWinnerInfoMap.get(2)).isEqualTo(new WinnerInfo(2, 2, "img2.com"));
-        assertThat(integerWinnerInfoMap.get(3)).isEqualTo(new WinnerInfo(3, 3, "img3.com"));
+        assertThat(integerWinnerInfoMap.get(1)).isEqualTo(new WinnerInfo(1, 1));
+        assertThat(integerWinnerInfoMap.get(2)).isEqualTo(new WinnerInfo(2, 2));
+        assertThat(integerWinnerInfoMap.get(3)).isEqualTo(new WinnerInfo(3, 3));
     }
 //    @Getter
 //    @AllArgsConstructor

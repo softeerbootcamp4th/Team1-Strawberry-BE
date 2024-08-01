@@ -24,9 +24,8 @@ public class ParseUtil {
 
             int winnerCount = values.get(0).asInt();
             int prizeId = values.get(1).asInt();
-            String prizeImg = values.get(2).asText();
 
-            resultMap.put(rank, new WinnerInfo(winnerCount, prizeId, prizeImg));
+            resultMap.put(rank, new WinnerInfo(winnerCount, prizeId));
         });
         return resultMap;
     }
