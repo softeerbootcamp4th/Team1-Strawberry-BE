@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   pull_request:
-    branches: [ "release/*" ]
+    branches: [ "master" ]
 
 jobs:
   build:
