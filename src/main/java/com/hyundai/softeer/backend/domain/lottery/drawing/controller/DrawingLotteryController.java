@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DrawingLotteryController {
     private final DrawingLotteryService drawingLotteryService;
 
-
+    @GetMapping("/land")
     @Operation(summary = "드로잉 추첨 이벤트 랜딩 페이지 조회", description = """
             # 드로잉 추첨 이벤트 랜딩 페이지 조회
                         
@@ -46,7 +47,7 @@ public class DrawingLotteryController {
             @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 랜딩 페이지 조회 성공", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DrawingLotteryLandResponseDto.class))}),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
-    @GetMapping("/land")
+    @SecurityRequirement(name = "access-token")
     public DrawingLotteryLandResponseDto getQuizLandingPage(
             @Parameter(hidden = true) @CurrentUser User user,
             @RequestParam("eventId") Long eventId
