@@ -37,7 +37,7 @@ public class QuizService {
         Optional<Quiz> optionalQuiz = quizRepository.findQuiz(eventId, sequence);
 
         Quiz quiz = optionalQuiz
-                .orElseThrow(QuizNotFoundException::new);
+                .orElseThrow(() -> new QuizNotFoundException());
 
         return QuizResponseDto.builder()
                 .subEventId(quiz.getSubEventId())
@@ -61,7 +61,7 @@ public class QuizService {
         Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEvent.getId());
 
         Quiz quiz = optionalQuiz
-                .orElseThrow(QuizNotFoundException::new);
+                .orElseThrow(() -> new QuizNotFoundException());
 
         return QuizLandResponseDto.builder()
                 .bannerImg(subEvent.getBannerUrl())
@@ -82,7 +82,7 @@ public class QuizService {
         Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEventId);
 
         Quiz quiz = optionalQuiz
-                .orElseThrow(QuizNotFoundException::new);
+                .orElseThrow(() -> new QuizNotFoundException());
 
         if (!quiz.getAnswer().equals(answer)) {
             throw new NoWinnerException("정답이 아니에요.");
