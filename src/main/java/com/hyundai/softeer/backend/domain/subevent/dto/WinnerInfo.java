@@ -10,5 +10,4 @@ import lombok.Getter;
 public class WinnerInfo {
     private int winnerCount;
     private int prizeId;
-    private String prizeImgUrl;
 }
