@@ -64,8 +64,8 @@ public class QuizService {
                 .orElseThrow(() -> new QuizNotFoundException());
 
         return QuizLandResponseDto.builder()
-                .bannerImg(subEvent.getBannerUrl())
-                .eventImg(subEvent.getEventImgUrl())
+                .bannerImg(subEvent.getBannerImgUrl())
+                .eventImg(subEvent.getEventImgUrls())
                 .startTime(subEvent.getStartAt())
                 .endTime(subEvent.getEndAt())
                 .serverTime(LocalDateTime.now())
