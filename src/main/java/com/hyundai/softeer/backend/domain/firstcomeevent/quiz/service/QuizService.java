@@ -1,18 +1,27 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizLandResponseDto;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizResponseDto;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizSubmitResponseDto;
+import com.hyundai.softeer.backend.domain.event.entity.Event;
+import com.hyundai.softeer.backend.domain.event.exception.EventNotWithinPeriodException;
+import com.hyundai.softeer.backend.domain.event.exception.NotExistEventException;
+import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
+import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity.Quiz;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.JsonParseException;
+import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.NotExistQuizException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.repository.QuizRepository;
+import com.hyundai.softeer.backend.domain.prize.entity.Prize;
+import com.hyundai.softeer.backend.domain.prize.exception.NotExistPrizeException;
+import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
-import com.hyundai.softeer.backend.domain.subevent.exception.NoWinnerException;
+import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
+import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
+import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
-import com.hyundai.softeer.backend.global.utils.ParseUtil;
+import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.domain.winner.entity.Winner;
+import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
+import com.hyundai.softeer.backend.global.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,9 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +38,10 @@ import java.util.Optional;
 public class QuizService {
     private final QuizRepository quizRepository;
     private final SubEventRepository subEventRepository;
+    private final WinnerRepository winnerRepository;
+    private final PrizeRepository prizeRepository;
+    private final EventRepository eventRepository;
+    private final DateUtil dateUtil;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -51,86 +63,159 @@ public class QuizService {
 
     @Transactional(readOnly = true)
     public QuizLandResponseDto getQuizLand(Long eventId) {
-        List<SubEvent> subEvents = subEventRepository.findByEventId(eventId);
-        SubEvent subEvent = findEventByDateTime(subEvents);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotExistEventException());
 
-        if (subEvent == null) {
-            throw new QuizNotFoundException();
+        if(eventNotWithinPeriod(event)) {
+            throw new EventNotWithinPeriodException();
         }
 
-        Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEvent.getId());
+        List<SubEvent> subEvents = subEventRepository.findByEventId(eventId);
 
-        Quiz quiz = optionalQuiz
+        SubEvent subEvent = findClosestSubEvent(subEvents);
+
+        if (subEvent == null) {
+            return getPrizesWithEventEnd(subEvents);
+        }
+
+        Quiz quiz = quizRepository.findBySubEventId(subEvent.getId())
+                .orElseThrow(() -> new QuizNotFoundException());
+
+        Integer winners = quiz.getWinners();
+
+        List<PrizeInfo> prizes = getPrizes(subEvents, winners, quiz);
+
+        return QuizLandResponseDto.builder()
+                .valid(true)
+                .bannerImg(subEvent.getBannerUrl())
+                .eventImg(subEvent.getEventImgUrl())
+                .remainSecond(dateUtil.startBetweenCurrentDiff(subEvent))
+                .problem(quiz.getProblem())
+                .overview(quiz.getOverview())
+                .hint(quiz.getHint())
+                .anchor(quiz.getAnchor())
+                .quizSequence(quiz.getSequence())
+                .prizeInfos(prizes)
+                .startAt(subEvent.getStartAt())
+                .endAt(subEvent.getEndAt())
+                .build();
+    }
+
+    private List<PrizeInfo> getPrizes(List<SubEvent> subEvents, int winners, Quiz currentQuiz) {
+        LocalDateTime current = LocalDateTime.now(clock);
+        List<PrizeInfo> prizeInfos = subEvents.stream()
+                .map((subEvent) -> {
+                    Quiz quiz = quizRepository.findBySubEventId(subEvent.getId())
+                            .orElseThrow(() -> new NotExistQuizException());
+
+                    Prize prize = quiz.getPrize();
+
+                    boolean isValidPrize = (quiz.getWinnerCount() != winners
+                            && quiz.getSequence() >= currentQuiz.getSequence())
+                            || current.isBefore(subEvent.getStartAt());
+
+                    return new PrizeInfo(
+                            isValidPrize,
+                            prize.getProductName(),
+                            prize.getPrizeImgUrl(),
+                            quiz.getSequence(),
+                            subEvent.getStartAt().toLocalDate());
+                })
+                .collect(Collectors.toList());
+        Collections.sort(prizeInfos, Comparator.comparingInt(PrizeInfo::getQuizSequence));
+        return prizeInfos;
+    }
+
+    private QuizLandResponseDto getPrizesWithEventEnd(List<SubEvent> subEvents) {
+        List<PrizeInfo> prizeInfos = subEvents.stream()
+                .map((subEvent) -> {
+                    Quiz quiz = quizRepository.findBySubEventId(subEvent.getId())
+                            .orElseThrow(() -> new NotExistQuizException());
+                    Prize prize = quiz.getPrize();
+                    return new PrizeInfo(
+                            false,
+                            prize.getProductName(),
+                            prize.getPrizeImgUrl(),
+                            quiz.getSequence(),
+                            subEvent.getStartAt().toLocalDate());
+                })
+                .collect(Collectors.toList());
+        Collections.sort(prizeInfos, Comparator.comparingInt(PrizeInfo::getQuizSequence));
+
+        SubEvent subEvent = subEvents.get(0);
+        Quiz quiz = quizRepository.findById(subEvent.getId())
                 .orElseThrow(() -> new QuizNotFoundException());
 
         return QuizLandResponseDto.builder()
                 .bannerImg(subEvent.getBannerUrl())
                 .eventImg(subEvent.getEventImgUrl())
-                .startTime(subEvent.getStartAt())
-                .endTime(subEvent.getEndAt())
-                .serverTime(LocalDateTime.now())
-                .problem(quiz.getProblem())
-                .overview(quiz.getOverview())
-                .hint(quiz.getHint())
-                .anchor(quiz.getAnchor())
-                .prizes(quiz.getWinners_meta())
+                .prizeInfos(prizeInfos)
+                .valid(false)
+                .winners(quiz.getWinners())
                 .build();
     }
 
-    @Transactional
-    public QuizSubmitResponseDto quizSubmit(Long subEventId, String answer) {
-        Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEventId);
+    private boolean eventNotWithinPeriod(Event event) {
+        LocalDateTime current = LocalDateTime.now(clock);
+        return current.isBefore(event.getStartAt()) || current.isAfter(event.getEndAt());
+    }
 
-        Quiz quiz = optionalQuiz
-                .orElseThrow(() -> new QuizNotFoundException());
+    @Transactional
+    public QuizSubmitResponseDto quizSubmit(QuizSubmitRequest quizSubmitRequest, User user) {
+
+        Long subEventId = quizSubmitRequest.getSubEventId();
+        String answer = quizSubmitRequest.getAnswer();
+
+        SubEvent subEvent = subEventRepository.findById(subEventId)
+                .orElseThrow(() -> new SubEventNotFoundException());
+
+        if(dateUtil.isNotWithinSubEventPeriod(subEvent)) {
+            throw new SubEventNotWithinPeriodException();
+        }
+
+        Quiz quiz = quizRepository.findBySubEventId(subEventId)
+                .orElseThrow(() -> new SubEventNotFoundException());
 
         if (!quiz.getAnswer().equals(answer)) {
-            throw new NoWinnerException("정답이 아니에요.");
+            return QuizSubmitResponseDto.notCorrect();
         }
 
-        String winnersMeta = quiz.getWinners_meta();
-        Integer winners = quiz.getWinners();
+        int winners = quiz.getWinners();
+        int winnerCount = quiz.getWinnerCount();
 
-        try {
-            Map<Integer, WinnerInfo> integerWinnerInfoMap = ParseUtil.parseWinnersMeta(winnersMeta);
+        log.error("asdf = {},, {}", winners, winnerCount);
 
-            WinnerInfo winnerInfo = findPrize(integerWinnerInfoMap, winners)
-                    .orElseThrow(() -> new NoWinnerException("선착순 이벤트가 끝났어요."));
-            quiz.setWinners(winners + 1);
-            return new QuizSubmitResponseDto(true, winnerInfo.getPrizeImgUrl());
-        } catch (JsonProcessingException e) {
-            throw new JsonParseException();
+        if(winnerCount >= winners) {
+           return QuizSubmitResponseDto.correctBut();
         }
+
+        Prize prize = quiz.getPrize();
+
+        quiz.setWinnerCount(winnerCount + 1);
+
+        Winner winner = new Winner();
+        winner.setPrize(prize);
+        winner.setSubEvent(subEvent);
+        winner.setUser(user);
+        winnerRepository.save(winner);
+
+        return QuizSubmitResponseDto.winner(prize.getPrizeImgUrl());
     }
 
-    private Optional<WinnerInfo> findPrize(Map<Integer, WinnerInfo> integerWinnerInfoMap, int winners) {
-        int accumulate = 0;
-        for (Integer key : integerWinnerInfoMap.keySet()) {
-            WinnerInfo winnerInfo = integerWinnerInfoMap.get(key);
-            accumulate += winnerInfo.getWinnerCount();
+    private SubEvent findClosestSubEvent(List<SubEvent> subEvents) {
+        LocalDateTime current = LocalDateTime.now(clock);
+        SubEvent closetSubEvent = null;
+        for(SubEvent subEvent: subEvents) {
+            if(subEvent.getEventType().equals(SubEventType.DRAWING)) continue;
 
-            if (winners < accumulate) {
-                return Optional.of(winnerInfo);
+            if(dateUtil.isWithinSubEventPeriod(subEvent)) {
+                return subEvent;
             }
-        }
-        return Optional.empty();
-    }
 
-    /**
-     * A-2. 현재 시간 기준 가장 가까운 선착순 이벤트 오픈 시간까지 남은 시간을 표시한다.
-     *
-     * @param subEvents
-     * @return
-     */
-    private SubEvent findEventByDateTime(List<SubEvent> subEvents) {
-        for (SubEvent subEvent : subEvents) {
-            LocalDateTime startAt = subEvent.getStartAt();
-            LocalDateTime endAt = subEvent.getEndAt();
-            LocalDateTime current = LocalDateTime.now(clock);
-            if (current.isAfter(startAt) && current.isBefore(endAt)) {
+            if(current.isBefore(subEvent.getEndAt())) {
                 return subEvent;
             }
         }
-        return null;
+        return closetSubEvent;
     }
 }
