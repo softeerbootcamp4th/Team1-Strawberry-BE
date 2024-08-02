@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizSubmitRequest {
-
     @NotBlank
     private String answer;
 
