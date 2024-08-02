@@ -5,6 +5,8 @@ import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizSubmitRequ
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizSubmitResponseDto;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service.QuizService;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizLandResponseDto;
+import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.global.jwt.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -60,12 +62,13 @@ public class QuizController {
     })
     @PostMapping("/api/v1/quiz/submit")
     public ResponseEntity<QuizSubmitResponseDto> quizSubmit(
-            @RequestBody QuizSubmitRequest quizSubmitRequest
+            @RequestBody QuizSubmitRequest quizSubmitRequest,
+            @CurrentUser User user
     ) {
         Long subEventId = quizSubmitRequest.getSubEventId();
         String answer = quizSubmitRequest.getAnswer();
 
-        QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(subEventId, answer);
+        QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);
 
         return ResponseEntity.ok(quizSubmitResponseDto);
     }
