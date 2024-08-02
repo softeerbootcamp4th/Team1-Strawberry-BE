@@ -10,9 +10,7 @@ import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.NotExist
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.repository.QuizRepository;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
-import com.hyundai.softeer.backend.domain.prize.exception.NotExistPrizeException;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
@@ -87,8 +85,8 @@ public class QuizService {
 
         return QuizLandResponseDto.builder()
                 .valid(true)
-                .bannerImg(subEvent.getBannerUrl())
-                .eventImg(subEvent.getEventImgUrl())
+                .bannerImg(subEvent.getBannerImgUrl())
+                .eventImg(subEvent.getEventImgUrls())
                 .remainSecond(dateUtil.startBetweenCurrentDiff(subEvent))
                 .problem(quiz.getProblem())
                 .overview(quiz.getOverview())
@@ -147,8 +145,8 @@ public class QuizService {
                 .orElseThrow(() -> new QuizNotFoundException());
 
         return QuizLandResponseDto.builder()
-                .bannerImg(subEvent.getBannerUrl())
-                .eventImg(subEvent.getEventImgUrl())
+                .bannerImg(subEvent.getBannerImgUrl())
+                .eventImg(subEvent.getEventImgUrls())
                 .prizeInfos(prizeInfos)
                 .valid(false)
                 .winners(quiz.getWinners())
@@ -182,8 +180,6 @@ public class QuizService {
 
         int winners = quiz.getWinners();
         int winnerCount = quiz.getWinnerCount();
-
-        log.error("asdf = {},, {}", winners, winnerCount);
 
         if(winnerCount >= winners) {
            return QuizSubmitResponseDto.correctBut();

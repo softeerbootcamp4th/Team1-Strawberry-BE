@@ -26,7 +26,7 @@ public class AuthController {
     private final NaverOauthService naverOauthService;
     private final HyundaiOauthService hyundaiOauthService;
 
-    @PostMapping("/naver")
+    @GetMapping("/naver")
     @Operation(summary = "네이버 로그인", description = """
             # 네이버 로그인
                 
