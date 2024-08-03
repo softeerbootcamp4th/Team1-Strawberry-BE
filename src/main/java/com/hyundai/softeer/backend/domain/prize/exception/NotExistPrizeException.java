@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class NotExistPrizeException extends BaseException {
     public NotExistPrizeException() {
-        super(HttpStatus.NO_CONTENT, "존재하지 않는 상품이에요.");
+        super(HttpStatus.NO_CONTENT, "존재하지 않는 상품입니다.");
     }
 }

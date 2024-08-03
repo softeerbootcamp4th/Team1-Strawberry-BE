@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class EventNotWithinPeriodException extends BaseException {
     public EventNotWithinPeriodException() {
-        super(HttpStatus.ACCEPTED, "이벤트 기간이 아니에요.");
+        super(HttpStatus.ACCEPTED, "이벤트 기간이 아닙니다.");
     }
 }

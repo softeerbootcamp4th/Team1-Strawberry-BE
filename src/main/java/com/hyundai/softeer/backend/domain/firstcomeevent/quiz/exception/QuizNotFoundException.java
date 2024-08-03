@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class QuizNotFoundException extends BaseException {
     public QuizNotFoundException() {
-        super(HttpStatus.NO_CONTENT, "존재하지 않습니다.");
+        super(HttpStatus.NO_CONTENT, "퀴즈가 존재하지 않습니다.");
     }
 }
