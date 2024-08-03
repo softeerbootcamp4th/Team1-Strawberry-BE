@@ -193,7 +193,7 @@ class QuizServiceTest {
             quizService.getQuizLand(eventId);
         })
                 .isInstanceOf(EventNotWithinPeriodException.class)
-                .hasMessage("이벤트 기간이 아니에요.");
+                .hasMessage("이벤트 기간이 아닙니다.");
     }
     @Test
     @DisplayName("getQuiz 테스트: Quiz가 존재하는 경우")
