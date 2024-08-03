@@ -23,7 +23,7 @@ import static org.springframework.boot.test.context.SpringBootTest.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Sql({"/sql/car.sql", "/sql/event.sql", "/sql/subEvent.sql", "/sql/quiz.sql"})
+@Sql(value = {"/sql/integration.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Slf4j
 public class QuizRepositoryTest {
 

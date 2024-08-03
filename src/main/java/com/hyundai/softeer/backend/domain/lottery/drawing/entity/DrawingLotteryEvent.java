@@ -8,11 +8,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @NoArgsConstructor
-public class DrawingLottery extends BaseSubEvent {
+public class DrawingLotteryEvent extends BaseSubEvent {
     private String drawPointsJsonUrl;
 
     private String contourImgUrl;
 
     private String imgUrl;
 
+    private String winners_meta;
 }
