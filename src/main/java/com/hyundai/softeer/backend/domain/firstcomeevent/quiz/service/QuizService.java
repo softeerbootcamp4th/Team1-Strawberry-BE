@@ -10,9 +10,7 @@ import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.NotExist
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.repository.QuizRepository;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
-import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
-import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
@@ -37,11 +35,21 @@ public class QuizService {
     private final QuizRepository quizRepository;
     private final SubEventRepository subEventRepository;
     private final WinnerRepository winnerRepository;
-    private final PrizeRepository prizeRepository;
     private final EventRepository eventRepository;
     private final DateUtil dateUtil;
     private final Clock clock;
 
+    /**
+     * 퀴즈를 가져오기 위한 비즈니스 로직
+     *
+     * 예외
+     * 퀴즈가 없는 경우: QuizNotFoundException
+     *
+     * @param eventId 이벤트 id
+     * @param sequence 퀴즈 번호
+     *
+     * @return QuizResponseDto
+     */
     @Transactional(readOnly = true)
     public QuizResponseDto getQuiz(Long eventId, Integer sequence) {
         Optional<Quiz> optionalQuiz = quizRepository.findQuiz(eventId, sequence);
@@ -59,18 +67,31 @@ public class QuizService {
                 .build();
     }
 
+    /**
+     * 랜딩 페이지 정보를 반환하는 비즈니스 로직
+     * 가장 가까운 퀴즈 이벤트를 찾아서 (퀴즈 이벤트 전, 퀴즈 이벤트 후) 처리
+     *
+     * 예외
+     * 이벤트가 존재하지 않는 경우: NotExistEventException
+     * 이벤트 기간이 아닌 경우   : EventNotWithinPeriodException
+     * 퀴즈가 존재하지 않는 경우  : QuizNotFoundException
+     *
+     *
+     * @param eventId 이벤트 id
+     * @return QuizLandResponseDto
+     */
     @Transactional(readOnly = true)
     public QuizLandResponseDto getQuizLand(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotExistEventException());
 
-        if(eventNotWithinPeriod(event)) {
+        if(dateUtil.eventNotWithinPeriod(event)) {
             throw new EventNotWithinPeriodException();
         }
 
         List<SubEvent> subEvents = subEventRepository.findByEventId(eventId);
 
-        SubEvent subEvent = findClosestSubEvent(subEvents);
+        SubEvent subEvent = dateUtil.findClosestSubEvent(subEvents);
 
         if (subEvent == null) {
             return getPrizesWithEventEnd(subEvents);
@@ -138,9 +159,11 @@ public class QuizService {
                             subEvent.getStartAt().toLocalDate());
                 })
                 .collect(Collectors.toList());
+
         Collections.sort(prizeInfos, Comparator.comparingInt(PrizeInfo::getQuizSequence));
 
         SubEvent subEvent = subEvents.get(0);
+
         Quiz quiz = quizRepository.findById(subEvent.getId())
                 .orElseThrow(() -> new QuizNotFoundException());
 
@@ -153,11 +176,16 @@ public class QuizService {
                 .build();
     }
 
-    private boolean eventNotWithinPeriod(Event event) {
-        LocalDateTime current = LocalDateTime.now(clock);
-        return current.isBefore(event.getStartAt()) || current.isAfter(event.getEndAt());
-    }
-
+    /**
+     * 퀴즈 제출을 처리하는 비즈니스 로직
+     *
+     * 예외
+     * SubEvent가 존재하지 않을 때: SubEventNotFoundException
+     *
+     * @param quizSubmitRequest
+     * @param user
+     * @return
+     */
     @Transactional
     public QuizSubmitResponseDto quizSubmit(QuizSubmitRequest quizSubmitRequest, User user) {
 
@@ -196,22 +224,5 @@ public class QuizService {
         winnerRepository.save(winner);
 
         return QuizSubmitResponseDto.winner(prize.getPrizeImgUrl());
-    }
-
-    private SubEvent findClosestSubEvent(List<SubEvent> subEvents) {
-        LocalDateTime current = LocalDateTime.now(clock);
-        SubEvent closetSubEvent = null;
-        for(SubEvent subEvent: subEvents) {
-            if(subEvent.getEventType().equals(SubEventType.DRAWING)) continue;
-
-            if(dateUtil.isWithinSubEventPeriod(subEvent)) {
-                return subEvent;
-            }
-
-            if(current.isBefore(subEvent.getEndAt())) {
-                return subEvent;
-            }
-        }
-        return closetSubEvent;
     }
 }
