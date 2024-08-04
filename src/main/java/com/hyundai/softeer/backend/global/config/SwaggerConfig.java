@@ -20,7 +20,11 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI().addServersItem(new Server().url("/"))
+
+        OpenAPI openAPI = new OpenAPI();
+        openAPI.addExtension("x-resolver-type", "generic");
+        return openAPI
+                .addServersItem(new Server().url("/"))
                 .components(new Components().addSecuritySchemes("access-token",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
@@ -30,6 +34,7 @@ public class SwaggerConfig {
                                 .bearerFormat("JWT")))
                 .info(apiInfo())
                 .tags(tagList());
+
     }
 
     private Info apiInfo() {
