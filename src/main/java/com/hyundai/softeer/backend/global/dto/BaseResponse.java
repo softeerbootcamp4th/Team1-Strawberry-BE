@@ -18,4 +18,8 @@ public class BaseResponse<T> {
     private String message = BaseResponseStatus.SUCCESS.getMessage();
 
     private T data;
+
+    public BaseResponse(T data) {
+        this.data = data;
+    }
 }
