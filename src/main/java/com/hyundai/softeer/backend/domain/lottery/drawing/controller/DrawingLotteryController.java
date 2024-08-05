@@ -44,15 +44,14 @@ public class DrawingLotteryController {
              
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 랜딩 페이지 조회 성공", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DrawingLotteryLandResponseDto.class))}),
+            @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 랜딩 페이지 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
     @SecurityRequirement(name = "access-token")
-    public DrawingLotteryLandResponseDto getQuizLandingPage(
+    public BaseResponse<DrawingLotteryLandResponseDto> getQuizLandingPage(
             @Parameter(hidden = true) @CurrentUser User user,
             @RequestParam("eventId") Long eventId
     ) {
-
-        return drawingLotteryService.getDrawingLotteryLand(user, eventId);
+        return new BaseResponse<>(drawingLotteryService.getDrawingLotteryLand(user, eventId));
     }
 }
