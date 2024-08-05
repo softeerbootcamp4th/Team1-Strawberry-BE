@@ -13,10 +13,10 @@ import org.springdoc.core.annotations.ParameterObject;
 @ParameterObject
 public class ExpectationsRequest {
     @NotBlank
-    @Parameter(name = "페이지 번호")
+    @Parameter
     private int pageSequence;
 
     @NotBlank
-    @Parameter(name = "이벤트 id")
+    @Parameter
     private Long eventId;
 }

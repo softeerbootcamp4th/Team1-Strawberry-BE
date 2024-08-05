@@ -13,6 +13,6 @@ import org.springdoc.core.annotations.ParameterObject;
 @ParameterObject
 public class ExpectationPageRequest {
     @NotBlank
-    @Parameter(name = "이벤트 id")
+    @Parameter
     private Long eventId;
 }
