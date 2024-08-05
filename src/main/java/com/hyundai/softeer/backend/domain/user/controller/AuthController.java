@@ -7,14 +7,14 @@ import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -63,17 +63,15 @@ public class AuthController {
     @ApiResponse(
             responseCode = "200",
             description = "로그인 성공 응답을 반환합니다.",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = LoginResponseDto.class)
-            ))
-    public BaseResponse<LoginResponseDto> callbackNaver(@RequestParam String code, @RequestParam String state) throws IOException {
-        return BaseResponse.<LoginResponseDto>builder()
-                .data(naverOauthService.callback(code, state))
-                .build();
+            useReturnTypeSchema = true)
+    public BaseResponse<LoginResponseDto> callbackNaver(
+            @RequestParam String code,
+            @RequestParam String state
+    ) throws IOException {
+        return new BaseResponse<>(naverOauthService.callback(code, state));
     }
 
-    @PostMapping("/hyundai")
+    @GetMapping("/hyundai")
     @Operation(summary = "현대자동차 로그인", description = """
             # 현대자동차 로그인
                 
@@ -110,13 +108,8 @@ public class AuthController {
     @ApiResponse(
             responseCode = "200",
             description = "로그인 성공 응답을 반환합니다.",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = LoginResponseDto.class)
-            ))
+            useReturnTypeSchema = true)
     public BaseResponse<LoginResponseDto> callbackHyundai(@RequestParam String code, @RequestParam String state) throws IOException {
-        return BaseResponse.<LoginResponseDto>builder()
-                .data(hyundaiOauthService.callback(code, state))
-                .build();
+        return new BaseResponse<>(hyundaiOauthService.callback(code, state));
     }
 }
