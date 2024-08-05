@@ -27,7 +27,11 @@ public class JwtAuthorizationFilter implements Filter {
             "/api/v1/oauth2/**",
             "/swagger-ui/**",
             "/v3/api-docs",
-            "/v3/api-docs/**"};
+            "/v3/api-docs/**",
+            "/api/v1/quiz",
+            "/api/v1/quiz/land",
+            "/api/v1/lottery/drawing/land"
+    };
 
     private final TokenProvider jwtProvider;
 

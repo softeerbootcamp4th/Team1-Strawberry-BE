@@ -20,9 +20,9 @@ class ParseUtilTest {
     void winnerInfoTest() throws JsonProcessingException {
         // given
         String winnersInfo = "{" +
-                "'1': [1, 1, \"img1.com\"]," +
-                "'2': [2, 2, \"img2.com\"]," +
-                "'3': [3, 3, \"img3.com\"]" +
+                "'1': [1, 1, 1]," +
+                "'2': [2, 2, 2]," +
+                "'3': [3, 3, 3]" +
                 "}";
 
         // when
@@ -30,9 +30,9 @@ class ParseUtilTest {
 
         // then
         assertThat(integerWinnerInfoMap).isNotEmpty();
-        assertThat(integerWinnerInfoMap.get(1)).isEqualTo(new WinnerInfo(1, 1));
-        assertThat(integerWinnerInfoMap.get(2)).isEqualTo(new WinnerInfo(2, 2));
-        assertThat(integerWinnerInfoMap.get(3)).isEqualTo(new WinnerInfo(3, 3));
+        assertThat(integerWinnerInfoMap.get(1)).isEqualTo(new WinnerInfo(1, 1L, 1));
+        assertThat(integerWinnerInfoMap.get(2)).isEqualTo(new WinnerInfo(2, 2L, 2));
+        assertThat(integerWinnerInfoMap.get(3)).isEqualTo(new WinnerInfo(3, 3L, 3));
     }
 //    @Getter
 //    @AllArgsConstructor

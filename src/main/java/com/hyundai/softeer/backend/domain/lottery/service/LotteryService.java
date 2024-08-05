@@ -77,9 +77,10 @@ public class LotteryService {
                 JsonNode values = entry.getValue();
 
                 int winnerCount = values.get(0).asInt();
-                int prizeId = values.get(1).asInt();
+                long prizeId = values.get(1).asLong();
+                int _rank = values.get(1).asInt();
 
-                resultMap.put(rank, new WinnerInfo(winnerCount, prizeId));
+                resultMap.put(rank, new WinnerInfo(winnerCount, prizeId, _rank));
             });
 
         } catch (IOException e) {
