@@ -143,12 +143,12 @@ public class HyundaiOauthService {
     private String formatMobileNumber(String mobileNum) {
         // +82 제거 및 형식 변환
         String localNum = mobileNum.substring(3); // +82 제거
-        return "010-" + localNum.substring(1, 5) + "-" + localNum.substring(5);
+        return "010-" + localNum.substring(2, 6) + "-" + localNum.substring(6);
     }
 
     private LocalDate formatBirthdate(String birthdate) {
-        // 생년월일 형식 변환 (YYMMDD)
-        DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyMMdd");
+        // 생년월일 형식 변환 (YYYYMMDD)
+        DateTimeFormatter originalFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
         return LocalDate.parse(birthdate, originalFormat);
     }
 }
