@@ -1,2 +1,0 @@
-INSERT INTO events (id, end_at, event_name, event_registered_at, event_status, start_at, winner_count, car_id)
-values (1, "2024-07-01 10:00:00", "별 헤는 밤", "2024-06-28 00:00:00", 0, "2024-06-25 10:00:00", 10, 1);
