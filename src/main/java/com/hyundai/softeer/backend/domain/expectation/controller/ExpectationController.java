@@ -27,7 +27,7 @@ public class ExpectationController {
 
     private final ExpectationService expectationService;
 
-    @Operation(summary = "기대평 랜딩 페이지", description = """
+    @Operation(summary = "기대평 랜딩 페이지 api", description = """
     기대평 페이지의 데이터를 반환하는 api
         
     응답
@@ -49,7 +49,7 @@ public class ExpectationController {
         return new BaseResponse<>(expectationPage);
     }
 
-    @Operation(summary = "기대평 랜딩 페이지", description = """
+    @Operation(summary = "기대평 페이지네이션 api", description = """
     기대평의 페이지네이션을 반환하는 api
         
     응답
