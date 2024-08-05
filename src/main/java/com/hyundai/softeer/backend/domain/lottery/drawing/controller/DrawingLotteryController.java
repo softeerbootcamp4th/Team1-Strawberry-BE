@@ -1,19 +1,16 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.controller;
 
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingLotteryLandResponseDto;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingLotteryLandDto;
 import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLotteryService;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
-import com.hyundai.softeer.backend.global.jwt.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +36,6 @@ public class DrawingLotteryController {
             # 드로잉 추첨 이벤트 랜딩 페이지 조회
                         
             - 드로잉 추첨 이벤트 랜딩 페이지의 기본 정보를 조회합니다.
-            - 로그인 된 유저의 해당 이벤트 참여 정보를 함께 반환합니다.
              
             ## 응답
                         
@@ -51,12 +47,10 @@ public class DrawingLotteryController {
             @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 랜딩 페이지 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
-    @SecurityRequirement(name = "access-token")
-    public BaseResponse<DrawingLotteryLandResponseDto> getQuizLandingPage(
-            @Parameter(hidden = true) @CurrentUser User user,
+    public BaseResponse<DrawingLotteryLandDto> getDrawingLandingPage(
             @RequestParam("eventId") Long eventId
     ) {
-        return new BaseResponse<>(drawingLotteryService.getDrawingLotteryLand(user, eventId));
+        return new BaseResponse<>(drawingLotteryService.getDrawingLotteryLand(eventId));
     }
 
     @GetMapping("/rank")
