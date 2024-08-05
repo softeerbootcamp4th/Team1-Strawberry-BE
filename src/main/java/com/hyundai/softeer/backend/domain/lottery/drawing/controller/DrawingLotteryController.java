@@ -31,6 +31,7 @@ import java.util.List;
 @RequestMapping("/api/v1/lottery/drawing")
 @Tag(name = "Drawing Lottery")
 public class DrawingLotteryController {
+    public static final int RANK_COUNT = 20;
     private final DrawingLotteryService drawingLotteryService;
 
     @GetMapping("/land")
@@ -77,6 +78,6 @@ public class DrawingLotteryController {
     public BaseResponse<List<RankDto>> getRankList(
             @RequestParam("subEventId") Long subEventId
     ) {
-        return new BaseResponse<>(drawingLotteryService.getRankList(subEventId, 3));
+        return new BaseResponse<>(drawingLotteryService.getRankList(subEventId, RANK_COUNT));
     }
 }
