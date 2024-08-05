@@ -59,8 +59,8 @@ public class ExpectationController {
     - 성공 시 `200`을 응답한다.
         
     주의
-    - problemSequence는 반드시 0-based로 요청해야한다.
-    - 예를 들어, 1번 페이지는 problemSequence=0 으로 요청해야한다.
+    - pageSequence는 반드시 0-based로 요청해야한다.
+    - 예를 들어, 1번 페이지는 pageSequence=0 으로 요청해야한다.
     """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 반환 시", useReturnTypeSchema = true),
