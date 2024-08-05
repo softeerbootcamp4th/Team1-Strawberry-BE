@@ -27,4 +27,5 @@ public class Event extends BaseEntity {
     private LocalDateTime eventRegisteredAt;
     private Integer winnerCount;
     private Boolean eventStatus;
+    private String expectationBannerImgUrl;
 }
