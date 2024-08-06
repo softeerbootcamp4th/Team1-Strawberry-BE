@@ -7,19 +7,22 @@ import com.hyundai.softeer.backend.domain.expectation.dto.ExpectationPageRespons
 import com.hyundai.softeer.backend.domain.expectation.service.ExpectationService;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import com.hyundai.softeer.backend.global.exception.ApiErrorResponse;
+import com.hyundai.softeer.backend.domain.expectation.dto.*;
+import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.global.jwt.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,5 +76,27 @@ public class ExpectationController {
     ) {
         ExpectationsResponseDto expectations = expectationService.getExpectations(expectationsRequest);
         return new BaseResponse<>(expectations);
+    }
+
+    @Operation(summary = "기대평 제출 api", description = """
+    기대평을 제출하는 api
+        
+    응답
+    - 파라미터의 값이 존재하지 않거나 올바르지 않은 타입인 경우 `400`을 응답한다.
+    - 정상적으로 기대평이 저장된 경우 `201`을 반환한다.
+    """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "정상 반환 시", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "쿼리 파라미터의 타입이 잘못되었거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+    })
+    @PostMapping("/api/v1/expectation/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<Null> expectationRegisterApi(
+            @RequestBody ExpectationRegisterRequest expectationRegisterRequest,
+            @CurrentUser User authenticatedUser
+    ) {
+        expectationService.expectationRegisterApi(expectationRegisterRequest, authenticatedUser);
+
+        return new BaseResponse<>(null);
     }
 }

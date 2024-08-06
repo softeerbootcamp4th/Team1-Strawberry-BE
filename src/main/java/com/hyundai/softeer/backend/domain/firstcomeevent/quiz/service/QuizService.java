@@ -141,7 +141,9 @@ public class QuizService {
                             subEvent.getStartAt().toLocalDate());
                 })
                 .collect(Collectors.toList());
+
         Collections.sort(prizeInfos, Comparator.comparingInt(PrizeInfo::getQuizSequence));
+
         return prizeInfos;
     }
 
