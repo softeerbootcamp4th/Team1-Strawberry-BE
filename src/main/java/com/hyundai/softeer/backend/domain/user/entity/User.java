@@ -3,6 +3,7 @@ package com.hyundai.softeer.backend.domain.user.entity;
 import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,10 @@ import java.time.LocalDate;
 
 @Getter
 @Entity
-@NoArgsConstructor
 @Table(name = "Users")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseEntity {
 
     @Id
@@ -29,12 +32,4 @@ public class User extends BaseEntity {
 
     private OAuthProvider oAuthProvider;
 
-    @Builder
-    public User(String email, String name, String phoneNumber, LocalDate birthDate, OAuthProvider oAuthProvider) {
-        this.email = email;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.birthDate = birthDate;
-        this.oAuthProvider = oAuthProvider;
-    }
 }

@@ -40,7 +40,7 @@ class LotteryServiceTest {
 
         // when
 
-        List<WinnerCandidate> winners = lotteryService.getWinners(winnersMeta, users, scoreWeight);
+        List<WinnerCandidate> winners = lotteryService.getWinners(users, scoreWeight, 3);
         log.info("당첨자: {}", winners);
 
         // then
