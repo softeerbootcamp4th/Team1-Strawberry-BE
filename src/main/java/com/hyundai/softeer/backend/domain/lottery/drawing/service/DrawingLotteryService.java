@@ -134,6 +134,6 @@ public class DrawingLotteryService implements LotteryService {
 
         winnerRepository.saveAll(winners);
 
-        return winners;
+        return winnerCandidates;
     }
 }

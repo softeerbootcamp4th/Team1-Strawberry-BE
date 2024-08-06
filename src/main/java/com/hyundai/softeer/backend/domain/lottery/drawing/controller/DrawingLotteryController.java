@@ -7,7 +7,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingLotteryLand
 import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLotteryService;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
-import com.hyundai.softeer.backend.domain.winner.entity.Winner;
+import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -111,7 +111,7 @@ public class DrawingLotteryController {
              
             """)
     @ApiResponses(value = {})
-    public BaseResponse<List<Winner>> drawWinner(
+    public BaseResponse<List<WinnerCandidate>> drawWinner(
             SubEventRequest subEventRequest,
             ApiKeyRequest apiKeyRequest
     ) {
