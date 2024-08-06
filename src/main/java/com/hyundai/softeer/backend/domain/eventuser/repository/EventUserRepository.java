@@ -22,4 +22,7 @@ public interface EventUserRepository extends JpaRepository<EventUser, Long> {
     @Query("SELECT eu FROM EventUser eu " +
             "WHERE eu.subEvent.id = :subEventId")
     List<EventUser> findRestByRand(long subEventId, Pageable pageable);
+
+    long countBySubEventId(Long subEventId);
+
 }

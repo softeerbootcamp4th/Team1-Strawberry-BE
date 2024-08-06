@@ -96,9 +96,12 @@ public class DrawingLotteryService implements LotteryService {
                 .sum();
 
         int lotteryWinnerCount = totalWinners;
+        int lotteryWinnerCount = totalWinners * MULTIPLE_WINNER_COUNT;
 
+        int randomValue = getRandomValue(subEventId);
         Pageable pageable = PageRequest.of(0, lotteryWinnerCount);
         List<EventUser> nByRand = eventUserRepository.findNByRand(subEventId, lotteryWinnerCount, pageable);
+        List<EventUser> randomEventUsers = eventUserRepository.findNByRand(subEventId, randomValue, pageable);
 
         if (nByRand.size() < lotteryWinnerCount) {
             lotteryWinnerCount -= nByRand.size();
@@ -140,5 +143,13 @@ public class DrawingLotteryService implements LotteryService {
         winnerRepository.saveAll(winners);
 
         return winnerCandidates;
+    }
+
+    private int getRandomValue(long subEventId) {
+        long randomSeed = System.currentTimeMillis();
+        Random random = new Random(randomSeed);
+
+        long left = eventUserRepository.countBySubEventId(subEventId);
+        return random.nextInt((int) left) + 1;
     }
 }
