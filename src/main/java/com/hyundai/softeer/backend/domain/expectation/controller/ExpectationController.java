@@ -11,6 +11,7 @@ import com.hyundai.softeer.backend.domain.expectation.dto.*;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.jwt.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -93,7 +94,7 @@ public class ExpectationController {
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<Null> expectationRegisterApi(
             @RequestBody ExpectationRegisterRequest expectationRegisterRequest,
-            @CurrentUser User authenticatedUser
+            @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
         expectationService.expectationRegisterApi(expectationRegisterRequest, authenticatedUser);
 
