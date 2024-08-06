@@ -24,6 +24,8 @@ public class BaseResponse<T> {
     private T data;
 
     public BaseResponse(T data) {
+        this.status = HttpStatus.OK.value();
+        this.message = HttpStatus.OK.getReasonPhrase();
         this.data = data;
     }
 }

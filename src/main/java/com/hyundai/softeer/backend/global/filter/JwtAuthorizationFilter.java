@@ -28,6 +28,8 @@ public class JwtAuthorizationFilter implements Filter {
             "/swagger-ui/**",
             "/v3/api-docs",
             "/v3/api-docs/**",
+            "/api/v1/expectation/land",
+            "/api/v1/expectation/page",
             "/api/v1/quiz",
             "/api/v1/quiz/land",
             "/api/v1/lottery/drawing/land"

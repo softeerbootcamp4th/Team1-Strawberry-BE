@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "event_users")
 @Getter
 @Builder
 @AllArgsConstructor

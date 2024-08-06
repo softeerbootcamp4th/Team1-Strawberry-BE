@@ -54,14 +54,13 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(user.getId(), drawingEvent.getId())).thenReturn(eventUser);
 
         // Then
-        assertDoesNotThrow(() -> drawingLotteryService.getDrawingLotteryLand(user, eventId));
+        assertDoesNotThrow(() -> drawingLotteryService.getDrawingLotteryLand(eventId));
     }
 
     @Test
     @DisplayName("드로잉 추첨 이벤트 랜딩 페이지 조회 실패")
     void getDrawingLotteryLand_noDrawingEvent() {
         // Given
-        User user = new User();
         Long eventId = 1L;
         SubEvent nonDrawingEvent = new SubEvent();
         nonDrawingEvent.setEventType(SubEventType.QUIZ);
@@ -71,6 +70,6 @@ class DrawingLotteryServiceTest {
         when(subEventRepository.findByEventId(eventId)).thenReturn(events);
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingLotteryLand(user, eventId));
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingLotteryLand(eventId));
     }
 }
