@@ -2,16 +2,12 @@ package com.hyundai.softeer.backend.global.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ParseUtilTest {
 
@@ -19,20 +15,20 @@ class ParseUtilTest {
     @DisplayName("당첨자 정보 파싱 테스트")
     void winnerInfoTest() throws JsonProcessingException {
         // given
-        String winnersInfo = "{" +
-                "'1': [1, 1, 1]," +
-                "'2': [2, 2, 2]," +
-                "'3': [3, 3, 3]" +
-                "}";
+        Map<String, Object> winnersInfo = Map.of(
+                "1", Map.of("winnerCount", 1, "prizeId", 1L),
+                "2", Map.of("winnerCount", 2, "prizeId", 2L),
+                "3", Map.of("winnerCount", 3, "prizeId", 3L)
+        );
 
         // when
-        Map<Integer, WinnerInfo> integerWinnerInfoMap = ParseUtil.parseWinnersMeta(winnersInfo);
+        Map<Integer, WinnerInfo> winnersMetaInfo = ParseUtil.parseWinnersMeta(winnersInfo);
 
         // then
-        assertThat(integerWinnerInfoMap).isNotEmpty();
-        assertThat(integerWinnerInfoMap.get(1)).isEqualTo(new WinnerInfo(1, 1L, 1));
-        assertThat(integerWinnerInfoMap.get(2)).isEqualTo(new WinnerInfo(2, 2L, 2));
-        assertThat(integerWinnerInfoMap.get(3)).isEqualTo(new WinnerInfo(3, 3L, 3));
+        assertThat(winnersMetaInfo).isNotEmpty();
+        assertThat(winnersMetaInfo.get(1)).isEqualTo(new WinnerInfo(1, 1L, 1));
+        assertThat(winnersMetaInfo.get(2)).isEqualTo(new WinnerInfo(2, 2L, 2));
+        assertThat(winnersMetaInfo.get(3)).isEqualTo(new WinnerInfo(3, 3L, 3));
     }
 //    @Getter
 //    @AllArgsConstructor
