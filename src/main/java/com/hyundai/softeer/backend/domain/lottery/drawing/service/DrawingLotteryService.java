@@ -126,23 +126,26 @@ public class DrawingLotteryService implements LotteryService {
 
         // 당첨자 선정
         int rank = 1;
-        int count = 0;
+        int index = 0;
 
         List<Winner> winners = new ArrayList<>();
 
         for (Map.Entry<Integer, WinnerInfo> entry : winnersMeta.entrySet()) {
+            int count = 0;
             int winnerCount = entry.getValue().getWinnerCount();
 
             while (count < winnerCount && count < winnerCandidates.size()) {
-                WinnerCandidate winnerCandidate = winnerCandidates.get(count);
+                WinnerCandidate winnerCandidate = winnerCandidates.get(index);
                 Winner winner = Winner.builder()
                         .user(userRepository.getReferenceById(winnerCandidate.getUserId()))
                         .subEvent(subEventRepository.getReferenceById(subEventId))
                         .prize(prizeRepository.getReferenceById(winnersMeta.get(rank).getPrizeId()))
+                        .rank(rank)
                         .build();
 
                 winners.add(winner);
                 count++;
+                index++;
             }
 
             rank++;

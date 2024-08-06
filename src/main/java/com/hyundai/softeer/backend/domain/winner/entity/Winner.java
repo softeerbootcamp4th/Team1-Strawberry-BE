@@ -30,10 +30,12 @@ public class Winner {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
-
-    public Winner(Prize prize, SubEvent subEvent, User user) {
+    private Integer rank;
+    
+    public Winner(Prize prize, SubEvent subEvent, User user, int rank) {
         this.prize = prize;
         this.subEvent = subEvent;
         this.user = user;
+        this.rank = rank;
     }
 }
