@@ -33,6 +33,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class DrawingLotteryService implements LotteryService {
+    public static final int MULTIPLE_WINNER_COUNT = 3;
     private final SubEventRepository subEventRepository;
     private final EventUserRepository eventUserRepository;
     private final DrawingLotteryRepository drawingLotteryRepository;
@@ -78,14 +79,17 @@ public class DrawingLotteryService implements LotteryService {
 
     @Transactional
     public List<WinnerCandidate> drawWinner(long subEventId) {
+        // subEventId 유효성 검사
+        DrawingLotteryEvent drawingLotteryEvent = drawingLotteryRepository.findById(subEventId)
+                .orElseThrow(() -> new DrawingNotFoundException());
+
+        // 이미 추첨이 되었는지 확인
         Optional<List<Winner>> bySubEventId = winnerRepository.findBySubEventId(subEventId);
         if (bySubEventId.isPresent() && !bySubEventId.get().isEmpty()) {
             throw new AlreadyDrawedException();
         }
 
-        DrawingLotteryEvent drawingLotteryEvent = drawingLotteryRepository.findById(subEventId)
-                .orElseThrow(() -> new DrawingNotFoundException());
-
+        // 당첨자 정보 파싱
         Map<Integer, WinnerInfo> winnersMeta = ParseUtil.parseWinnersMeta(drawingLotteryEvent.getWinnersMeta());
 
         // TODO: Score 자체 변동사항으로 인한 임시 코드
@@ -95,35 +99,40 @@ public class DrawingLotteryService implements LotteryService {
                 .mapToInt(WinnerInfo::getWinnerCount)
                 .sum();
 
-        int lotteryWinnerCount = totalWinners;
+        // N 배수 당첨자 수
         int lotteryWinnerCount = totalWinners * MULTIPLE_WINNER_COUNT;
 
+        // 랜덤 사용자를 추출할 기준 값
         int randomValue = getRandomValue(subEventId);
+
+        // 랜덤 사용자 추출
         Pageable pageable = PageRequest.of(0, lotteryWinnerCount);
-        List<EventUser> nByRand = eventUserRepository.findNByRand(subEventId, lotteryWinnerCount, pageable);
         List<EventUser> randomEventUsers = eventUserRepository.findNByRand(subEventId, randomValue, pageable);
 
-        if (nByRand.size() < lotteryWinnerCount) {
-            lotteryWinnerCount -= nByRand.size();
+        // 랜덤 사용자가 부족할 경우 나머지 사용자를 추가로 추출
+        if (randomEventUsers.size() < lotteryWinnerCount) {
+            lotteryWinnerCount -= randomEventUsers.size();
             pageable = PageRequest.of(0, lotteryWinnerCount);
-            List<EventUser> nByRand2 = eventUserRepository.findRestByRand(subEventId, pageable);
+            List<EventUser> extraEventUsers = eventUserRepository.findRestByRand(subEventId, pageable);
+
+            randomEventUsers.addAll(extraEventUsers);
         }
 
-        List<WinnerCandidate> winnerCandidates = getWinners(nByRand, scoreWeight, totalWinners)
+        // 당첨자 후보 선정
+        List<WinnerCandidate> winnerCandidates = getWinners(randomEventUsers, scoreWeight, totalWinners)
                 .stream()
                 .sorted(Comparator.comparingDouble(WinnerCandidate::getRandomValue).reversed())
                 .toList();
 
+        // 당첨자 선정
         int rank = 1;
         int count = 0;
 
         List<Winner> winners = new ArrayList<>();
 
-        // 각 rank에 해당하는 WinnerInfo를 가져옵니다.
         for (Map.Entry<Integer, WinnerInfo> entry : winnersMeta.entrySet()) {
             int winnerCount = entry.getValue().getWinnerCount();
 
-            // 상위 N명에 대해 1등으로 설정
             while (count < winnerCount && count < winnerCandidates.size()) {
                 WinnerCandidate winnerCandidate = winnerCandidates.get(count);
                 Winner winner = Winner.builder()
@@ -136,10 +145,10 @@ public class DrawingLotteryService implements LotteryService {
                 count++;
             }
 
-            // 다음 rank로 이동합니다.
             rank++;
         }
 
+        // 당첨자 저장
         winnerRepository.saveAll(winners);
 
         return winnerCandidates;
