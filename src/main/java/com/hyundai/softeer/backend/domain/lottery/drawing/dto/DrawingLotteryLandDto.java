@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -15,7 +16,7 @@ public class DrawingLotteryLandDto {
 
     //TODO : 파싱을 해서 주어야하는 지, 확인
     @Schema(description = "이벤트 이미지 url", example = "{ \"description_url\": \"https://www.example.com/description.jpg\", \"main_url\": \"https://www.example.com/main.jpg\" }")
-    private String eventImgUrls;
+    private Map<String, Object> eventImgUrls;
 
     @Schema(description = "이벤트 시작 시간", example = "2021-08-01T00:00:00")
     private LocalDateTime startAt;
