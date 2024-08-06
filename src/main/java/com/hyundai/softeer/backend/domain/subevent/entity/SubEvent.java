@@ -6,8 +6,12 @@ import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Table(name = "Sub_events")
@@ -37,7 +41,7 @@ public class SubEvent extends BaseEntity {
 
     private String bannerImgUrl;
 
-    private String eventImgUrls;
-
-
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> eventImgUrls;
 }
