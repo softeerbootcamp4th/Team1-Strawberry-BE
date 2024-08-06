@@ -88,7 +88,14 @@ public class DrawingLotteryService implements LotteryService {
 
         Map<Integer, WinnerInfo> winnersMeta = ParseUtil.parseWinnersMeta(drawingLotteryEvent.getWinnersMeta());
 
-        int lotteryWinnerCount = 3;
+        // TODO: Score 자체 변동사항으로 인한 임시 코드
+        LotteryScoreWeight scoreWeight = new LotteryScoreWeight(1.0, 1.0, 1.0, 1.0);
+
+        int totalWinners = winnersMeta.values().stream()
+                .mapToInt(WinnerInfo::getWinnerCount)
+                .sum();
+
+        int lotteryWinnerCount = totalWinners;
 
         Pageable pageable = PageRequest.of(0, lotteryWinnerCount);
         List<EventUser> nByRand = eventUserRepository.findNByRand(subEventId, lotteryWinnerCount, pageable);
@@ -99,9 +106,7 @@ public class DrawingLotteryService implements LotteryService {
             List<EventUser> nByRand2 = eventUserRepository.findRestByRand(subEventId, pageable);
         }
 
-        LotteryScoreWeight scoreWeight = new LotteryScoreWeight(1.0, 1.0, 1.0, 1.0);
-
-        List<WinnerCandidate> winnerCandidates = getWinners(winnersMeta, nByRand, scoreWeight)
+        List<WinnerCandidate> winnerCandidates = getWinners(nByRand, scoreWeight, totalWinners)
                 .stream()
                 .sorted(Comparator.comparingDouble(WinnerCandidate::getRandomValue).reversed())
                 .toList();

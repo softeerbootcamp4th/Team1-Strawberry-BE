@@ -4,12 +4,10 @@ import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public interface LotteryService {
@@ -17,16 +15,11 @@ public interface LotteryService {
     /**
      * 당첨자 선정 메서드
      *
-     * @param winnersMeta 당첨자 메타 데이터
      * @param eventUsers  1차 랜덤 선정된 참여자 리스트
      * @param scoreWeight 각 스코어에 대한 가중치
      * @return 당첨자 리스트
      */
-    default List<WinnerCandidate> getWinners(Map<Integer, WinnerInfo> winnersMeta, List<EventUser> eventUsers, LotteryScoreWeight scoreWeight) {
-        int totalWinners = winnersMeta.values().stream()
-                .mapToInt(WinnerInfo::getWinnerCount)
-                .sum();
-
+    default List<WinnerCandidate> getWinners(List<EventUser> eventUsers, LotteryScoreWeight scoreWeight, int totalWinners) {
         List<WinnerCandidate> candidates = new java.util.ArrayList<>(eventUsers.stream()
                 .map(eventUser -> {
                     double eventRandomScore = Math.random();
