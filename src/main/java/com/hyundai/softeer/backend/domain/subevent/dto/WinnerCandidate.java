@@ -2,18 +2,13 @@ package com.hyundai.softeer.backend.domain.subevent.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@ToString
 public class WinnerCandidate {
-    private Long eventUserId;
+    private long eventUserId;
     private double randomValue;
-
-    @Override
-    public String toString() {
-        return "WinnerCandidate{" +
-                "eventUserId=" + eventUserId +
-                ", randomValue=" + randomValue +
-                '}';
-    }
+    private long userId;
 }

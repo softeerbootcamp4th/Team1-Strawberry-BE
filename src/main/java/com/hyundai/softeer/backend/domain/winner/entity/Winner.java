@@ -5,10 +5,12 @@ import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Builder
 @NoArgsConstructor
 @Setter
 @Table(name = "Winners")

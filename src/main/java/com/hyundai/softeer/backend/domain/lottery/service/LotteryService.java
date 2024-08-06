@@ -31,7 +31,8 @@ public interface LotteryService {
                 .map(eventUser -> {
                     double eventRandomScore = Math.random();
                     eventRandomScore += calculateWeightedValue(eventUser, scoreWeight);
-                    return new WinnerCandidate(eventUser.getId(), eventRandomScore);
+                    Long userId = eventUser.getUser().getId();
+                    return new WinnerCandidate(eventUser.getId(), eventRandomScore, userId);
                 })
                 .toList());
 
@@ -56,5 +57,5 @@ public interface LotteryService {
                 (gameScore * scoreWeight.getGameWeight());
     }
 
-    List<RankDto> getRankList(Long subEventId, int rankCount);
+    List<RankDto> getRankList(long subEventId, int rankCount);
 }
