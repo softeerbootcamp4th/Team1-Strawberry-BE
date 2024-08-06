@@ -7,6 +7,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryE
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
+import com.hyundai.softeer.backend.domain.lottery.exception.AlreadyDrawedException;
 import com.hyundai.softeer.backend.domain.lottery.service.LotteryService;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
@@ -26,10 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -78,7 +76,13 @@ public class DrawingLotteryService implements LotteryService {
         return topNBySubEventId;
     }
 
-    public List<Winner> drawWinner(long subEventId) {
+    @Transactional
+    public List<WinnerCandidate> drawWinner(long subEventId) {
+        Optional<List<Winner>> bySubEventId = winnerRepository.findBySubEventId(subEventId);
+        if (bySubEventId.isPresent() && !bySubEventId.get().isEmpty()) {
+            throw new AlreadyDrawedException();
+        }
+
         DrawingLotteryEvent drawingLotteryEvent = drawingLotteryRepository.findById(subEventId)
                 .orElseThrow(() -> new DrawingNotFoundException());
 
