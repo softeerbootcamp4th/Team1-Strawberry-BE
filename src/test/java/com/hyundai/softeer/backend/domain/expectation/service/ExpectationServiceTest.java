@@ -29,7 +29,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 class ExpectationServiceTest {
@@ -135,6 +135,47 @@ class ExpectationServiceTest {
         Assertions.assertThatThrownBy(() -> {
             expectationService.getExpectations(expectationsRequest);
         }).isInstanceOf(ExpectationNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("기대평 제출 api: 기대평 제출을 위한 api")
+    void expectationSubmitTest() {
+        // Arrange
+        long eventId = 1L;
+        String comment = "Test comment";
+        ExpectationRegisterRequest request = new ExpectationRegisterRequest(eventId, comment);
+        User authenticatedUser = new User(
+                "minjun@naver.com",
+                "김민준",
+                "010-6860-6823",
+                LocalDate.now(),
+                OAuthProvider.NAVER
+        );
+
+        Event mockEvent = new Event(); // 필요한 경우 이벤트 정보 설정
+        mockEvent.setId(1L);
+        mockEvent.setEventName("산타페 이벤트");
+
+        when(eventRepository.getReferenceById(eventId)).thenReturn(mockEvent);
+        when(expectationRepository.save(any(Expectation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Expectation result = expectationService.expectationRegisterApi(request, authenticatedUser);
+        Event resultEvent = result.getEvent();
+        User resultUser = result.getUser();
+
+        // Assert
+        assertThat(result).isNotNull();
+
+        assertThat(resultEvent.getEventName()).isEqualTo("산타페 이벤트");
+        assertThat(resultEvent.getId()).isEqualTo(1L);
+
+        assertThat(resultUser.getName()).isEqualTo("김민준");
+        assertThat(resultUser.getEmail()).isEqualTo("minjun@naver.com");
+        assertThat(resultUser.getOAuthProvider()).isEqualTo(OAuthProvider.NAVER);
+
+        verify(eventRepository).getReferenceById(eventId);
+        verify(expectationRepository).save(any(Expectation.class));
     }
 
     private List<ExpectationContentDto> makeMockExpectationContent() {
