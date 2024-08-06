@@ -110,6 +110,5 @@ public class QuizController {
         QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);
 
         return new BaseResponse<>(quizSubmitResponseDto);
-
     }
 }
