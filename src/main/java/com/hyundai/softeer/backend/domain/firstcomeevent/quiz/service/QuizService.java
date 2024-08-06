@@ -1,8 +1,8 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service;
 
 import com.hyundai.softeer.backend.domain.event.entity.Event;
+import com.hyundai.softeer.backend.domain.event.exception.EventNotFoundException;
 import com.hyundai.softeer.backend.domain.event.exception.EventNotWithinPeriodException;
-import com.hyundai.softeer.backend.domain.event.exception.NotExistEventException;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity.Quiz;
@@ -83,7 +83,7 @@ public class QuizService {
     @Transactional(readOnly = true)
     public QuizLandResponseDto getQuizLand(Long eventId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotExistEventException());
+                .orElseThrow(() -> new EventNotFoundException());
 
         if(dateUtil.eventNotWithinPeriod(event)) {
             throw new EventNotWithinPeriodException();
