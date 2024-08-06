@@ -40,23 +40,7 @@ public class QuizLandResponseDto {
     @Schema(description = "퀴즈 번호", example = "1")
     private Integer quizSequence;
 
-    @Schema(description = "선착순 경품 정보들이 담겨있음", example = """
-            {
-                {   isValuePrize: false,
-                    prizeImgUrl: "www.mj.com",
-                    prizeName: "스타벅스",
-                    quizEventDate: "2024-06-25",
-                    quizSequence: 1
-                },
-                {
-                    isValuePrize: true,
-                    prizeImgUrl: "www.sj.com",
-                    prizeName: "자전거",
-                    quizEventDate: "2024-06-27",
-                    quizSequence: 2
-                },
-            } 
-            """)
+    @Schema(description = "선착순 경품 정보들이 담겨있음", example = "PrizeInfo Dto 배열 들어가요. PrizeInfo Dto 확인해주세요 🥹")
     private List<PrizeInfo> prizeInfos;
 
     @Schema(description = "시작 시간", example = "2024-06-25 10:30:00")

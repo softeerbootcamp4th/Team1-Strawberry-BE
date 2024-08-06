@@ -8,7 +8,7 @@ import com.hyundai.softeer.backend.domain.expectation.dto.*;
 import com.hyundai.softeer.backend.domain.expectation.entity.Expectation;
 import com.hyundai.softeer.backend.domain.expectation.exception.ExpectationNotFoundException;
 import com.hyundai.softeer.backend.domain.expectation.repository.ExpectationRepository;
-import com.hyundai.softeer.backend.global.dto.BaseResponse;
+import com.hyundai.softeer.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -73,5 +73,20 @@ public class ExpectationService {
                 expectationPage.getTotalPages(),
                 expectationContentDtos
         );
+    }
+    @Transactional
+    public Expectation expectationRegisterApi(
+            ExpectationRegisterRequest expectationRegisterRequest,
+            User authenticatedUser
+    ) {
+        Expectation expectation = new Expectation();
+
+        long eventId = expectationRegisterRequest.getEventId();
+
+        expectation.setEvent(eventRepository.getReferenceById(eventId));
+        expectation.setUser(authenticatedUser);
+        expectation.setExpectationComment(expectationRegisterRequest.getComment());
+
+        return expectationRepository.save(expectation);
     }
 }
