@@ -1,9 +1,9 @@
-INSERT INTO Prizes (product_name, price, prize_img_url)
+INSERT INTO prizes (product_name, price, prize_img_url)
 values ("스타벅스 상품권", 4000, "www.starbucks.com"),
        ("자전거", 120000, "www.bicycle.com"),
        ("아이폰", 1000000, "www.apple.com");
 
-INSERT INTO Users (email, name, phone_number, birth_date, o_auth_provider)
+INSERT INTO users (email, name, phone_number, birth_date, o_auth_provider)
 value ("alswnssl0528@naver.com", "김민준", "010-6833-4234", "1998-05-28", 0),
       ("seong123@naver.com", "김승준", "010-1234-4234", "2000-03-28", 0),
       ("sarang@naver.com", "한사랑", "010-5432-4234", "1999-11-28", 0);
