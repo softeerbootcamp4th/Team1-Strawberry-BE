@@ -12,12 +12,12 @@ INSERT INTO cars (id, brand_name, car_name_eng, car_name_kor, model_line, price,
 values (1, 0, "santafe", "산타페", 0, 30000000, "2024-07-01 10:00:00");
 
 INSERT INTO events (id, end_at, event_name, event_registered_at, event_status, start_at, winner_count, car_id)
-values (1, "2024-09-01 10:00:00", "별 헤는 밤", "2024-05-29 00:00:00", 0, "2024-06-01 10:00:00", 10, 1);
+values (1, "2024-07-01 10:00:00", "별 헤는 밤", "2024-06-28 00:00:00", 0, "2024-06-25 10:00:00", 10, 1);
 
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls)
-values (1, 1, "퀴즈 테스트", 1, 1, "2024-06-25 10:30:00", "2024-06-26 10:30:00", "www.banner1.com", "www.event1.com"),
-       (2, 1, "ㅣ히히", 1, 1, "2024-06-27 10:30:00", "2024-06-28 10:30:00", "www.banner2.com", "www.event2.com"),
-       (3, 1, "퀴즈 시러", 1, 1, "2024-06-29 10:30:00", "2024-06-30 10:30:00", "www.banner3.com", "www.event3.com");
+values (1, 1, "퀴즈 테스트", 1, 1, "2024-06-25 10:30:00", "2024-06-26 10:30:00", "www.banner1.com", json_object('main', 'www.event1.com')),
+       (2, 1, "ㅣ히히", 1, 1, "2024-06-27 10:30:00", "2024-06-28 10:30:00", "www.banner2.com", json_object('main', 'www.event1.com')),
+       (3, 1, "퀴즈 시러", 1, 1, "2024-06-29 10:30:00", "2024-06-30 10:30:00", "www.banner3.com", json_object('main', 'www.event1.com'));
 
 INSERT INTO Quizzes (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count, init_consonant, car_info)
 values (1, 1, 1, "#sub1", "10.4", "10 근처", "산타페의 연비는?", 2, 1, "ㅅㅈㅅ", "산타페의 선루프는...."),

@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @Getter
@@ -19,7 +20,7 @@ public class QuizLandResponseDto {
     private String bannerImg;
 
     @Schema(description = "이벤트 이미지 Url", example = "https://www.awss3/eventImg")
-    private String eventImg;
+    private Map<String, Object> eventImg;
 
     @Schema(description = "이벤트까지 남은 시간", example = "3959")
     private Long remainSecond;

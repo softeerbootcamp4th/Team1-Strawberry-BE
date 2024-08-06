@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.lottery.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLotteryService;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class LotteryServiceTest {
     @InjectMocks
-    private LotteryService lotteryService;
+    private DrawingLotteryService lotteryService;
 
     @Test
     @DisplayName("당첨자 선정")
