@@ -14,14 +14,18 @@ public interface EventUserRepository extends JpaRepository<EventUser, Long> {
     @Query("SELECT new com.hyundai.softeer.backend.domain.lottery.dto.RankDto(u.name, eu.gameScore) FROM EventUser eu JOIN eu.user u WHERE eu.subEvent.id = :subEventId " +
             "ORDER BY eu.gameScore DESC")
     List<RankDto> findTopNBySubEventId(long subEventId, Pageable pageable);
+    
+    @Query(value = "SELECT * " +
+            "FROM event_users as eu " +
+            "WHERE eu.sub_event_id = :subEventId AND eu.id >= :rand " +
+            "LIMIT :limit", nativeQuery = true)
+    List<EventUser> findNByRand(long subEventId, int rand, int limit);
 
-    @Query("SELECT eu FROM EventUser eu " +
-            "WHERE eu.subEvent.id = :subEventId AND eu.id >= :rand")
-    List<EventUser> findNByRand(long subEventId, int rand, Pageable pageable);
-
-    @Query("SELECT eu FROM EventUser eu " +
-            "WHERE eu.subEvent.id = :subEventId")
-    List<EventUser> findRestByRand(long subEventId, Pageable pageable);
+    @Query(value = "SELECT * " +
+            "FROM event_users as eu " +
+            "WHERE eu.sub_event_id = :subEventId " +
+            "LIMIT :limit", nativeQuery = true)
+    List<EventUser> findRestByRand(long subEventId, int limit);
 
     long countBySubEventId(Long subEventId);
 

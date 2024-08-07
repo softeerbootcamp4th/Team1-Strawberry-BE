@@ -73,9 +73,9 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 추첨 이벤트 랜딩 페이지 조회 성공")
     void getDrawingLotteryLand() {
         // Given
-        User user = new User();
+        User user = User.builder().id(1L).build();
         Long eventId = 1L;
-        SubEvent drawingEvent = new SubEvent();
+        SubEvent drawingEvent = SubEvent.builder().id(1L).build();
         drawingEvent.setEventType(SubEventType.DRAWING);
         EventUser eventUser = new EventUser();
 
@@ -192,8 +192,7 @@ class DrawingLotteryServiceTest {
         when(drawingLotteryRepository.findById(subEventId)).thenReturn(Optional.of(drawingLotteryEvent));
         when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.empty());
         when(eventUserRepository.countBySubEventId(subEventId)).thenReturn(10L);
-        when(eventUserRepository.findNByRand(anyLong(), anyInt(), any())).thenReturn(users);
-        when(lotteryService.getWinners(any(), any(), anyInt())).thenReturn(winnerCandidates);
+        when(eventUserRepository.findNByRand(anyLong(), anyInt(), anyInt())).thenReturn(users);
         when(userRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
                 User.builder().id(invocation.getArgument(0)).build()
         ));
@@ -245,14 +244,13 @@ class DrawingLotteryServiceTest {
         DrawingLotteryEvent drawingLotteryEvent = DrawingLotteryEvent.builder()
                 .winnersMeta(winnersInfo)
                 .build();
-        Pageable pageable = PageRequest.of(0, 6);
 
         // When
         when(drawingLotteryRepository.findById(subEventId)).thenReturn(Optional.of(drawingLotteryEvent));
         when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.empty());
         when(eventUserRepository.countBySubEventId(subEventId)).thenReturn(10L);
-        when(eventUserRepository.findNByRand(anyLong(), anyInt(), any())).thenReturn(users);
-        when(eventUserRepository.findRestByRand(anyLong(), any())).thenReturn(extraUser);
+        when(eventUserRepository.findNByRand(anyLong(), anyInt(), anyInt())).thenReturn(users);
+        when(eventUserRepository.findRestByRand(anyLong(), anyInt())).thenReturn(extraUser);
         when(lotteryService.getWinners(any(), any(), anyInt())).thenReturn(winnerCandidates);
         when(userRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
                 User.builder().id(invocation.getArgument(0)).build()
