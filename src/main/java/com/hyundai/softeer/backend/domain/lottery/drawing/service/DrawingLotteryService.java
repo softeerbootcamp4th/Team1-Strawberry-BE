@@ -106,14 +106,12 @@ public class DrawingLotteryService implements LotteryService {
         int randomValue = getRandomValue(subEventId);
 
         // 랜덤 사용자 추출
-        Pageable pageable = PageRequest.of(0, lotteryWinnerCount);
-        List<EventUser> randomEventUsers = eventUserRepository.findNByRand(subEventId, randomValue, pageable);
+        List<EventUser> randomEventUsers = eventUserRepository.findNByRand(subEventId, randomValue, lotteryWinnerCount);
 
         // 랜덤 사용자가 부족할 경우 나머지 사용자를 추가로 추출
         if (randomEventUsers.size() < lotteryWinnerCount) {
             lotteryWinnerCount -= randomEventUsers.size();
-            pageable = PageRequest.of(0, lotteryWinnerCount);
-            List<EventUser> extraEventUsers = eventUserRepository.findRestByRand(subEventId, pageable);
+            List<EventUser> extraEventUsers = eventUserRepository.findRestByRand(subEventId, lotteryWinnerCount);
 
             randomEventUsers.addAll(extraEventUsers);
         }
@@ -140,7 +138,7 @@ public class DrawingLotteryService implements LotteryService {
                         .user(userRepository.getReferenceById(winnerCandidate.getUserId()))
                         .subEvent(subEventRepository.getReferenceById(subEventId))
                         .prize(prizeRepository.getReferenceById(winnersMeta.get(rank).getPrizeId()))
-                        .rank(rank)
+                        .ranking(rank)
                         .build();
 
                 winners.add(winner);

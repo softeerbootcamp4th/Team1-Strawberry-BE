@@ -11,9 +11,9 @@ import lombok.Setter;
 
 @Entity
 @Builder
+@Table(name = "Winners")
 @NoArgsConstructor
 @Setter
-@Table(name = "Winners")
 @AllArgsConstructor
 public class Winner {
 
@@ -30,12 +30,12 @@ public class Winner {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
-    private Integer rank;
-    
+    private int ranking;
+
     public Winner(Prize prize, SubEvent subEvent, User user, int rank) {
         this.prize = prize;
         this.subEvent = subEvent;
         this.user = user;
-        this.rank = rank;
+        this.ranking = rank;
     }
 }
