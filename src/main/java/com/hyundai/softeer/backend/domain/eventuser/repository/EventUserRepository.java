@@ -7,14 +7,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventUserRepository extends JpaRepository<EventUser, Long> {
-    EventUser findByUserIdAndSubEventId(long userId, long subEventId);
+    Optional<EventUser> findByUserIdAndSubEventId(long userId, long subEventId);
 
     @Query("SELECT new com.hyundai.softeer.backend.domain.lottery.dto.RankDto(u.name, eu.gameScore) FROM EventUser eu JOIN eu.user u WHERE eu.subEvent.id = :subEventId " +
             "ORDER BY eu.gameScore DESC")
     List<RankDto> findTopNBySubEventId(long subEventId, Pageable pageable);
-    
+
     @Query(value = "SELECT * " +
             "FROM event_users as eu " +
             "WHERE eu.sub_event_id = :subEventId AND eu.id >= :rand " +
