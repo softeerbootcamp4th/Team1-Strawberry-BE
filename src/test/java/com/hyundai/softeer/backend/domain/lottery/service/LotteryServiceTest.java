@@ -35,12 +35,12 @@ class LotteryServiceTest {
                 EventUser.builder().id(5L).build());
 
         Map<Integer, WinnerInfo> winnersMeta = Map.of(
-               1, new WinnerInfo(3, 1L, 1));
+                1, new WinnerInfo(3, 1L, 1));
         LotteryScoreWeight scoreWeight = new LotteryScoreWeight(1.0, 1.0, 1.0, 1.0);
 
         // when
 
-        List<WinnerCandidate> winners = lotteryService.getWinners(winnersMeta, users, scoreWeight);
+        List<WinnerCandidate> winners = lotteryService.getWinners(users, scoreWeight, 3);
         log.info("당첨자: {}", winners);
 
         // then

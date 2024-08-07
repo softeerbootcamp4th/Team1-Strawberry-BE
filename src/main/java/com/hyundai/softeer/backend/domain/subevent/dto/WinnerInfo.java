@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class WinnerInfo {
     private int winnerCount;
-    private Long prizeId;
+    private long prizeId;
     private int rank;
 }
