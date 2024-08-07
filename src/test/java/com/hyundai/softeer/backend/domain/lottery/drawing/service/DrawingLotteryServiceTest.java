@@ -83,7 +83,7 @@ class DrawingLotteryServiceTest {
 
         // When
         when(subEventRepository.findByEventId(eventId)).thenReturn(events);
-        when(eventUserRepository.findByUserIdAndSubEventId(user.getId(), drawingEvent.getId())).thenReturn(eventUser);
+        when(eventUserRepository.findByUserIdAndSubEventId(user.getId(), drawingEvent.getId())).thenReturn(Optional.of(eventUser));
 
         // Then
         assertDoesNotThrow(() -> drawingLotteryService.getDrawingLotteryLand(eventId));
