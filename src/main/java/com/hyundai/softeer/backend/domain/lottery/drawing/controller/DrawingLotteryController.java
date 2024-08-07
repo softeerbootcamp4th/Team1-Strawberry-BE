@@ -29,13 +29,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/lottery/drawing")
-@Tag(name = "Drawing Lottery")
 public class DrawingLotteryController {
     public static final int RANK_COUNT = 20;
     private final DrawingLotteryService drawingLotteryService;
     private final EventService eventService;
 
     @GetMapping("/land")
+    @Tag(name = "Drawing Lottery")
     @Operation(summary = "드로잉 추첨 이벤트 랜딩 페이지 조회", description = """
             # 드로잉 추첨 이벤트 랜딩 페이지 조회
                         
@@ -58,6 +58,7 @@ public class DrawingLotteryController {
     }
 
     @GetMapping("/rank")
+    @Tag(name = "Drawing Lottery")
     @Operation(summary = "드로잉 추첨 이벤트 랭킹 조회", description = """
             # 드로잉 추첨 이벤트 랭킹 조회
                         
@@ -80,6 +81,7 @@ public class DrawingLotteryController {
     }
 
     @GetMapping("/winner")
+    @Tag(name = "Admin")
     @Operation(summary = "드로잉 추첨 이벤트 당첨자 조회", description = """
             # 드로잉 추첨 이벤트 당첨자 조회
                         
@@ -99,6 +101,7 @@ public class DrawingLotteryController {
     }
 
     @GetMapping("/draw")
+    @Tag(name = "Admin")
     @Operation(summary = "드로잉 추첨 이벤트 추첨", description = """
             # 드로잉 추첨 이벤트 추첨
                         
@@ -110,7 +113,10 @@ public class DrawingLotteryController {
             - 이벤트 번호에 오류가 있을 경우 `404` 에러를 반환합니다.
              
             """)
-    @ApiResponses(value = {})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 추첨 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
+    })
     public BaseResponse<List<WinnerCandidate>> drawWinner(
             SubEventRequest subEventRequest,
             ApiKeyRequest apiKeyRequest
