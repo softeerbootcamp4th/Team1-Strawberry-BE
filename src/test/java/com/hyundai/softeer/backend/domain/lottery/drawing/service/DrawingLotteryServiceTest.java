@@ -28,10 +28,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -194,6 +191,66 @@ class DrawingLotteryServiceTest {
         when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.empty());
         when(eventUserRepository.countBySubEventId(subEventId)).thenReturn(10L);
         when(eventUserRepository.findNByRand(anyLong(), anyInt(), any())).thenReturn(users);
+        when(lotteryService.getWinners(any(), any(), anyInt())).thenReturn(winnerCandidates);
+        when(userRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
+                User.builder().id(invocation.getArgument(0)).build()
+        ));
+        when(subEventRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
+                SubEvent.builder().id(invocation.getArgument(0)).build()
+        ));
+        when(prizeRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
+                Prize.builder().id(invocation.getArgument(0)).build()
+        ));
+        when(winnerRepository.saveAll(any())).thenReturn(null);
+
+        List<WinnerCandidate> result = drawingLotteryService.drawWinner(subEventId);
+
+        // Then
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getUserId()).isEqualTo(1L);
+        assertThat(result.get(1).getUserId()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("드로잉 추첨 이벤트 N 명 이하 추출 후 나머지 추출")
+    void getDrawWinnerInDrawingEventwithExtra() {
+        // Given
+        Long subEventId = 1L;
+        Map<String, Object> winnersInfo = Map.of(
+                "1", Map.of("winnerCount", 1, "prizeId", 1),
+                "2", Map.of("winnerCount", 1, "prizeId", 2)
+        );
+        List<EventUser> users = new ArrayList<>() {{
+            add(EventUser.builder().id(1L).user(User.builder().id(1L).build()).gameScore(50.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build());
+            add(EventUser.builder().id(2L).user(User.builder().id(2L).build()).gameScore(30.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build());
+            add(EventUser.builder().id(3L).user(User.builder().id(3L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build());
+            add(EventUser.builder().id(4L).user(User.builder().id(4L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build());
+        }};
+
+        List<EventUser> extraUser = List.of(
+                EventUser.builder().id(5L).user(User.builder().id(5L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
+                EventUser.builder().id(6L).user(User.builder().id(6L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build());
+
+        List<WinnerCandidate> winnerCandidates = List.of(
+                WinnerCandidate.builder().userId(1L).randomValue(1).build(),
+                WinnerCandidate.builder().userId(2L).randomValue(2).build(),
+                WinnerCandidate.builder().userId(3L).randomValue(3).build(),
+                WinnerCandidate.builder().userId(4L).randomValue(4).build(),
+                WinnerCandidate.builder().userId(5L).randomValue(5).build(),
+                WinnerCandidate.builder().userId(6L).randomValue(6).build()
+        );
+
+        DrawingLotteryEvent drawingLotteryEvent = DrawingLotteryEvent.builder()
+                .winnersMeta(winnersInfo)
+                .build();
+        Pageable pageable = PageRequest.of(0, 6);
+
+        // When
+        when(drawingLotteryRepository.findById(subEventId)).thenReturn(Optional.of(drawingLotteryEvent));
+        when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.empty());
+        when(eventUserRepository.countBySubEventId(subEventId)).thenReturn(10L);
+        when(eventUserRepository.findNByRand(anyLong(), anyInt(), any())).thenReturn(users);
+        when(eventUserRepository.findRestByRand(anyLong(), any())).thenReturn(extraUser);
         when(lotteryService.getWinners(any(), any(), anyInt())).thenReturn(winnerCandidates);
         when(userRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
                 User.builder().id(invocation.getArgument(0)).build()
