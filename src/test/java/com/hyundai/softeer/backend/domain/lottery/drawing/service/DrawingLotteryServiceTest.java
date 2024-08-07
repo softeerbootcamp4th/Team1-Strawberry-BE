@@ -19,6 +19,7 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
+@Slf4j
 class DrawingLotteryServiceTest {
 
     @InjectMocks
@@ -269,6 +271,9 @@ class DrawingLotteryServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getUserId()).isEqualTo(1L);
         assertThat(result.get(1).getUserId()).isEqualTo(2L);
+
+        log.info("result: {}", result);
+
     }
 }
 
