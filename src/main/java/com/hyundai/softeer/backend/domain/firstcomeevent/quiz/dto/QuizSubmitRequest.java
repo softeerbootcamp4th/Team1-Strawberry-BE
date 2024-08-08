@@ -1,17 +1,21 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.springdoc.core.annotations.ParameterObject;
 
-@Getter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
+@ParameterObject
 public class QuizSubmitRequest {
+
+    @Parameter
     @NotBlank
     private String answer;
 
-    @NotBlank
+    @Parameter
+    @NotNull
     private Long subEventId;
 }

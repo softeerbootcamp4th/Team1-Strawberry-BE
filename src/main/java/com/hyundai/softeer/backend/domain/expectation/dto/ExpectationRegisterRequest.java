@@ -1,18 +1,19 @@
 package com.hyundai.softeer.backend.domain.expectation.dto;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.springdoc.core.annotations.ParameterObject;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
+@ParameterObject
 public class ExpectationRegisterRequest {
+
+    @Parameter
     @NotBlank
-    @Max(300)
+    @Size(max=300)
     private String comment;
 }
