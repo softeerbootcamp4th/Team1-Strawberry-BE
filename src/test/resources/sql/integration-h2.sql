@@ -23,7 +23,7 @@ VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-06-25 10:30:00', '2024-06-26 10:30
         JSON '{"main": "www.event1.com"}');
 
 
-INSERT INTO Quizzes (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count,
+INSERT INTO quiz_firstcome_events (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count,
                      init_consonant, car_info)
 VALUES (1, 1, 1, '#sub1', '10.4', '10 근처', '산타페의 연비는?', 2, 1, 'ㅅㅈㅅ', '산타페의 선루프는....'),
        (2, 2, 2, '#sub2', '11.5', '11 근처', '산타페의 연비는?', 3, 3, 'ㅅㅇㅈㅇ', '산타페의 엔진은..'),

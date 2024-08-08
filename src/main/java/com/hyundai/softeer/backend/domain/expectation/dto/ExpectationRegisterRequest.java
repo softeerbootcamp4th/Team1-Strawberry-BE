@@ -1,18 +1,14 @@
 package com.hyundai.softeer.backend.domain.expectation.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ExpectationRegisterRequest {
+
     @NotBlank
-    @Max(300)
+    @Size(max=300)
     private String comment;
 }

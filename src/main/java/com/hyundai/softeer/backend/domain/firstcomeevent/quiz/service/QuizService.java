@@ -56,8 +56,6 @@ public class QuizService {
     public QuizResponseDto getQuiz(QuizRequest quizRequest) {
         Long subEventId = quizRequest.getSubEventId();
 
-        Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEventId);
-
         Quiz quiz = quizRepository.findBySubEventId(subEventId)
                 .orElseThrow(() -> new QuizNotFoundException());
 

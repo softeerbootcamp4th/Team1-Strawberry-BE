@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,9 +49,9 @@ public class QuizController {
             @ApiResponse(responseCode = "401", description = "로그인x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"로그인이 되지 않았습니다.\",\"status\":401}"))}),
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/quiz")
+    @GetMapping("/api/v1/quiz/info")
     public BaseResponse<QuizResponseDto> getQuiz(
-            @Validated  QuizRequest quizRequest
+            @ModelAttribute @Valid QuizRequest quizRequest
     ) {
         QuizResponseDto quizResponse = quizService.getQuiz(quizRequest);
 
@@ -75,7 +76,7 @@ public class QuizController {
             @ApiResponse(responseCode = "400", description = "GET 요청의 query parameter가 숫자가 아니거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/quiz/land")
+    @GetMapping("/api/v1/quiz")
     public BaseResponse<QuizLandResponseDto> getQuizLandingPage() {
         QuizLandResponseDto getQuizResponseDto = quizService.getQuizLand(eventId);
         return new BaseResponse<>(getQuizResponseDto);
@@ -100,7 +101,7 @@ public class QuizController {
                     useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @PostMapping("/api/v1/quiz/submit")
+    @PostMapping("/api/v1/quiz")
     public BaseResponse<QuizSubmitResponseDto> quizSubmit(
             @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
@@ -108,7 +109,7 @@ public class QuizController {
         QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);
 
         return BaseResponse.<QuizSubmitResponseDto>builder()
-                .data(null)
+                .data(quizSubmitResponseDto)
                 .status(HttpStatus.CREATED.value())
                 .message(HttpStatus.CREATED.getReasonPhrase())
                 .build();
