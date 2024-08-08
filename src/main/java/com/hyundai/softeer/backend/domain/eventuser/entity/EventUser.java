@@ -26,6 +26,7 @@ public class EventUser {
 
     private LocalDateTime lastVisitedAt;
 
+    @Column(unique = true)
     private String sharedUrl;
 
     @Builder.Default
