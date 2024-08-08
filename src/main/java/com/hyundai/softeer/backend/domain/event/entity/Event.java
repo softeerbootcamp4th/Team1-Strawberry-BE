@@ -3,14 +3,16 @@ package com.hyundai.softeer.backend.domain.event.entity;
 import com.hyundai.softeer.backend.domain.car.entity.Car;
 import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "Events")
 public class Event extends BaseEntity {
     @Id
