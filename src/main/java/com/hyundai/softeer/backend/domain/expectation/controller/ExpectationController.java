@@ -49,7 +49,7 @@ public class ExpectationController {
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터의 타입이 잘못되었거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트가 존재하지 않는 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @GetMapping("/api/v1/expectation/land")
+    @GetMapping("/api/v1/expectation")
     public BaseResponse<ExpectationPageResponseDto> expectationLandApi() {
         ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(eventId);
 
@@ -76,7 +76,7 @@ public class ExpectationController {
     })
     @GetMapping("/api/v1/expectation/page")
     public BaseResponse<ExpectationsResponseDto> expectationsApi(
-            @ModelAttribute @Validated ExpectationsRequest expectationsRequest
+            @Validated ExpectationsRequest expectationsRequest
     ) {
         ExpectationsResponseDto expectations = expectationService.getExpectations(expectationsRequest, eventId);
         return new BaseResponse<>(expectations);
@@ -93,7 +93,7 @@ public class ExpectationController {
             @ApiResponse(responseCode = "201", description = "정상 반환 시", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터의 타입이 잘못되었거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @PostMapping("/api/v1/expectation/register")
+    @PostMapping("/api/v1/expectation")
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<Null> expectationRegisterApi(
             @RequestBody @Validated ExpectationRegisterRequest expectationRegisterRequest,
