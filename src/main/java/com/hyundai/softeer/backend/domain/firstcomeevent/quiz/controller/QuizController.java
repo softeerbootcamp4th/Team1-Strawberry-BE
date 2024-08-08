@@ -31,21 +31,22 @@ public class QuizController {
     private Long eventId;
 
     @Operation(summary = "퀴즈 문제 페이지 정보", description = """
-            # 퀴즈 문제를 반환해주는 api
-                
+            퀴즈 문제를 반환해주는 api
             - i번 퀴즈에 대한 정보를 응답합니다.
-            - 로그인 되어 있지 않아도 접근 가능합니다.
                 
             ## 응답
-                
-            - 쿼리 파라미터의 타입이 잘못되었거나 존재하지 않으면 예외가 발생할 수 있습니다.
-            - 현재 진행할 예정이거나 진행중인 퀴즈가 없으면 예외가 발생할 수 있습니다.
-
+            - 쿼리 파라미터의 타입이 잘못되었거나 존재하지 않으면 `400`이 반환됩니다.
+            - 요청 받은 퀴즈가 이벤트 기간 중이 아니라면 `400`이 반환됩니다.
+            
+            - 로그인 되지 않은 유저라면 `401`이 반환됩니다.
+            
+            - 현재 진행할 예정이거나 진행중인 퀴즈가 없으면 `404`가 반환됩니다.
             """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상 반환 시", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "400", description = "쿼리 파라미터의 타입이 잘못되었거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
-            @ApiResponse(responseCode = "404", description = "해당하는 퀴즈 이벤트가 없는 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
+            @ApiResponse(responseCode = "400", description = "파라미터가 유효x, 이벤트 기간x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
+            @ApiResponse(responseCode = "401", description = "로그인x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"로그인이 되지 않았습니다.\",\"status\":401}"))}),
+            @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/api/v1/quiz")
     public BaseResponse<QuizResponseDto> getQuiz(
@@ -77,11 +78,8 @@ public class QuizController {
     @GetMapping("/api/v1/quiz/land")
     public BaseResponse<QuizLandResponseDto> getQuizLandingPage() {
         QuizLandResponseDto getQuizResponseDto = quizService.getQuizLand(eventId);
-
         return new BaseResponse<>(getQuizResponseDto);
-
     }
-
 
     @Operation(summary = "퀴즈 제출을 채점하는 api", description = """
             # 퀴즈 제출을 체점하는 api

@@ -159,7 +159,7 @@ public class DrawingLotteryService implements LotteryService {
         long randomSeed = System.currentTimeMillis();
         Random random = new Random(randomSeed);
 
-        long left = eventUserRepository.countBySubEventId(subEventId);
+        long left = eventUserRepository.findMaxBySubEventId(subEventId);
         return random.nextInt((int) left) + 1;
     }
 }

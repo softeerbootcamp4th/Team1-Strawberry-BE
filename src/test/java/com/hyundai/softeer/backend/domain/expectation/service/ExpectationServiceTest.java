@@ -123,7 +123,7 @@ class ExpectationServiceTest {
         Pageable pageable = PageRequest.of(
                 0,
                 11,
-                Sort.by("createdAt").ascending()
+                Sort.by("createdAt").descending()
         );
 
         Page<Expectation> pages = new PageImpl<>(new ArrayList<>(), pageable, 0);
@@ -152,7 +152,7 @@ class ExpectationServiceTest {
                 .oAuthProvider(OAuthProvider.NAVER)
                 .build();
 
-        Event mockEvent = new Event(); // 필요한 경우 이벤트 정보 설정
+        Event mockEvent = Event.builder().build();
         mockEvent.setId(1L);
         mockEvent.setEventName("산타페 이벤트");
 

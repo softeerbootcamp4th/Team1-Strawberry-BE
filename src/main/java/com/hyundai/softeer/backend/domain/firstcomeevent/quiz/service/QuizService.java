@@ -6,11 +6,12 @@ import com.hyundai.softeer.backend.domain.event.exception.EventNotWithinPeriodEx
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity.Quiz;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.NotExistQuizException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.repository.QuizRepository;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
+import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
+import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,11 +58,20 @@ public class QuizService {
 
         Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEventId);
 
-        Quiz quiz = optionalQuiz
+        Long subEventId = quizRequest.getSubEventId();
+
+        Quiz quiz = quizRepository.findBySubEventId(subEventId)
                 .orElseThrow(() -> new QuizNotFoundException());
 
+        SubEvent subEvent = subEventRepository.findById(subEventId)
+                .orElseThrow(() -> new SubEventNotFoundException());
+
+        if(dateUtil.isNotWithinSubEventPeriod(subEvent)) {
+            throw new SubEventNotWithinPeriodException();
+        }
+
         return QuizResponseDto.builder()
-                .subEventId(quiz.getSubEventId())
+                .subEventId(subEventId)
                 .overview(quiz.getOverview())
                 .problem(quiz.getProblem())
                 .carInfo(quiz.getCarInfo())
@@ -91,7 +102,7 @@ public class QuizService {
             throw new EventNotWithinPeriodException();
         }
 
-        List<SubEvent> subEvents = subEventRepository.findByEventId(eventId);
+        List<SubEvent> subEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.FIRSTCOME);
 
         SubEvent subEvent = dateUtil.findClosestSubEvent(subEvents);
 
@@ -115,19 +126,21 @@ public class QuizService {
                 .overview(quiz.getOverview())
                 .hint(quiz.getHint())
                 .anchor(quiz.getAnchor())
-                .quizSequence(quiz.getSequence())
+                .subEventId(quiz.getSubEventId())
                 .prizeInfos(prizes)
                 .startAt(subEvent.getStartAt())
                 .endAt(subEvent.getEndAt())
+                .lastQuizNumber(subEvents.size())
                 .build();
     }
 
     private List<PrizeInfo> getPrizes(List<SubEvent> subEvents, int winners, Quiz currentQuiz) {
         LocalDateTime current = LocalDateTime.now(clock);
         List<PrizeInfo> prizeInfos = subEvents.stream()
+                .filter((subEvent -> subEvent.getEventType().equals(SubEventType.QUIZ)))
                 .map((subEvent) -> {
                     Quiz quiz = quizRepository.findBySubEventId(subEvent.getId())
-                            .orElseThrow(() -> new NotExistQuizException());
+                            .orElseThrow(() -> new QuizNotFoundException());
 
                     Prize prize = quiz.getPrize();
 
@@ -153,7 +166,7 @@ public class QuizService {
         List<PrizeInfo> prizeInfos = subEvents.stream()
                 .map((subEvent) -> {
                     Quiz quiz = quizRepository.findBySubEventId(subEvent.getId())
-                            .orElseThrow(() -> new NotExistQuizException());
+                            .orElseThrow(() -> new QuizNotFoundException());
                     Prize prize = quiz.getPrize();
                     return new PrizeInfo(
                             false,
