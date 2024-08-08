@@ -101,6 +101,6 @@ public class ExpectationController {
     ) {
         expectationService.expectationRegisterApi(expectationRegisterRequest, eventId, authenticatedUser);
 
-        return new BaseResponse<>(201, "기대평 생성되었습니다.", null);
+        return new BaseResponse<>(HttpStatus.CREATED.value(), "기대평 생성되었습니다.", null);
     }
 }
