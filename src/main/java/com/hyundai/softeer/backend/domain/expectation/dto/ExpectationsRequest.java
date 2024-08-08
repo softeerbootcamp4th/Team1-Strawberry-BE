@@ -15,8 +15,4 @@ public class ExpectationsRequest {
     @NotBlank
     @Parameter
     private int pageSequence;
-
-    @NotBlank
-    @Parameter
-    private Long eventId;
 }
