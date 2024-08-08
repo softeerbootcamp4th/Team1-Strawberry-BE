@@ -14,13 +14,13 @@ VALUES (1, 0, 'santafe', '산타페', 0, 30000000, '2024-07-01 10:00:00');
 INSERT INTO events (id, end_at, event_name, event_registered_at, event_status, start_at, winner_count, car_id)
 VALUES (1, '2024-07-01 10:00:00', '별 헤는 밤', '2024-06-28 00:00:00', 0, '2024-06-25 10:00:00', 10, 1);
 
-INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls)
+INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls, winners_meta)
 VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-06-25 10:30:00', '2024-06-26 10:30:00', 'www.banner1.com',
-        JSON '{"main": "www.event1.com"}'),
+        JSON '{"main": "www.event1.com"}', JSON '{"1": {"prizeId": 1, "winnerCount" : 1} }'),
        (2, 1, 'ㅣ히히', 1, 1, '2024-06-27 10:30:00', '2024-06-28 10:30:00', 'www.banner2.com',
-        JSON '{"main": "www.event1.com"}'),
+        JSON '{"main": "www.event1.com"}', JSON '{"1": {"prizeId": 1, "winnerCount" : 1} }'),
        (3, 1, '퀴즈 시러', 1, 1, '2024-06-29 10:30:00', '2024-06-30 10:30:00', 'www.banner3.com',
-        JSON '{"main": "www.event1.com"}');
+        JSON '{"main": "www.event1.com"}', JSON '{"1": {"prizeId": 1, "winnerCount" : 1} }');
 
 
 INSERT INTO quiz_firstcome_events (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count,

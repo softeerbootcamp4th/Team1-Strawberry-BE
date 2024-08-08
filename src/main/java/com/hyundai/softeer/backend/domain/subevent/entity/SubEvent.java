@@ -8,7 +8,6 @@ import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 import org.springframework.context.annotation.Profile;
 
@@ -49,6 +48,10 @@ public class SubEvent extends BaseEntity {
     @Column(columnDefinition = "json")
     private Map<String, Object> eventImgUrls;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> winnersMeta;
+
     @Profile(ExecuteEnvironment.TEST)
     public static SubEvent subEventGenerator(Long i) {
         return SubEvent.builder()
@@ -66,12 +69,12 @@ public class SubEvent extends BaseEntity {
 
     @Profile(ExecuteEnvironment.TEST)
     public static List<SubEvent> subEventsGenerator(Long i) {
-       List<SubEvent> subEvents = new ArrayList<>();
+        List<SubEvent> subEvents = new ArrayList<>();
 
-       for(long cnt = 1; cnt <= i; cnt++) {
-          subEvents.add(subEventGenerator(cnt));
-       }
+        for (long cnt = 1; cnt <= i; cnt++) {
+            subEvents.add(subEventGenerator(cnt));
+        }
 
-       return subEvents;
+        return subEvents;
     }
 }
