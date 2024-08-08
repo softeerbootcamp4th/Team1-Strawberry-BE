@@ -66,7 +66,7 @@ class ExpectationServiceTest {
         ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(eventId);
 
         // then
-        assertThat(expectationPage.getExpectationBannerImgUrl()).isEqualTo(event.getExpectationBannerImgUrl());
+        assertThat(expectationPage.getBannerImgUrl()).isEqualTo(event.getExpectationBannerImgUrl());
     }
 
     @Test
@@ -80,7 +80,7 @@ class ExpectationServiceTest {
         );
 
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-        ExpectationPageRequest expectationPageRequest = new ExpectationPageRequest(100L);
+        ExpectationPageRequest expectationPageRequest = new ExpectationPageRequest();
 
         // when
         Assertions.assertThatThrownBy(() -> {
@@ -113,7 +113,7 @@ class ExpectationServiceTest {
 
         // then
         assertThat(expectationsDto.getTotalPages()).isEqualTo(2);
-        assertThat(expectationsDto.getExpectationContents()).containsExactlyElementsOf(expectationContentDtos);
+        assertThat(expectationsDto.getComments()).containsExactlyElementsOf(expectationContentDtos);
     }
 
     @Test
@@ -144,7 +144,7 @@ class ExpectationServiceTest {
         // Arrange
         long eventId = 1L;
         String comment = "Test comment";
-        ExpectationRegisterRequest request = new ExpectationRegisterRequest(comment);
+        ExpectationRegisterRequest request = new ExpectationRegisterRequest();
         User authenticatedUser = User.builder()
                 .name("김민준")
                 .email("minjun@naver.com")
