@@ -18,9 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "Events")
 public class Event extends BaseEntity {
     @Id

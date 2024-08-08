@@ -16,11 +16,11 @@ VALUES (1, '2024-07-01 10:00:00', '별 헤는 밤', '2024-06-28 00:00:00', 0, '2
 
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls)
 VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-06-25 10:30:00', '2024-06-26 10:30:00', 'www.banner1.com',
-        '{"main": "www.event1.com"}'),
+        JSON '{"main": "www.event1.com"}'),
        (2, 1, 'ㅣ히히', 1, 1, '2024-06-27 10:30:00', '2024-06-28 10:30:00', 'www.banner2.com',
-        '{"main": "www.event1.com"}'),
+        JSON '{"main": "www.event1.com"}'),
        (3, 1, '퀴즈 시러', 1, 1, '2024-06-29 10:30:00', '2024-06-30 10:30:00', 'www.banner3.com',
-        '{"main": "www.event1.com"}');
+        JSON '{"main": "www.event1.com"}');
 
 
 INSERT INTO Quizzes (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count,
