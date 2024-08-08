@@ -1,10 +1,12 @@
 package com.hyundai.softeer.backend.domain.eventuser.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserInfoDto;
+import com.hyundai.softeer.backend.domain.eventuser.dto.RedirectUrlDto;
 import com.hyundai.softeer.backend.domain.eventuser.dto.SharedUrlDto;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.exception.EventUserNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.exception.NonPlayedUserException;
+import com.hyundai.softeer.backend.domain.eventuser.exception.SharedUrlNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.user.entity.User;
@@ -47,5 +49,12 @@ public class EventUserService {
         }
 
         return new SharedUrlDto(sharedUrl, gameScore);
+    }
+
+    public RedirectUrlDto getRedirectUrl(String sharedUrl) {
+        EventUser eventUser = eventUserRepository.findBySharedUrl(sharedUrl)
+                .orElseThrow(() -> new SharedUrlNotFoundException());
+        
+        return new RedirectUrlDto(eventUser.getSubEvent().getEventType().getRedirectUrl());
     }
 }

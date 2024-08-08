@@ -6,11 +6,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SubEventType {
-    DRAWING(0, "DRAWING"),
-    QUIZ(1, "QUIZ"),;
+    DRAWING(0, "DRAWING", "api/v1/lottery/drawing/land"),
+    QUIZ(1, "QUIZ", "api/v1/firstcome/quiz/land"),
+    ;
 
     private int code;
     private String status;
+    private String redirectUrl;
 
     public static SubEventType of(int code) {
         for (SubEventType subEventHoldType : SubEventType.values()) {

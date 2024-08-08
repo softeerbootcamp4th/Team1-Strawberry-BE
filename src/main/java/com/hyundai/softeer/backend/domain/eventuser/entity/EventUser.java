@@ -27,8 +27,7 @@ public class EventUser {
     private LocalDateTime lastVisitedAt;
 
     @Column(unique = true)
-    @Builder.Default
-    private String sharedUrl = "";
+    private String sharedUrl;
 
     @Builder.Default
     private Double sharedScore = 0.0;
