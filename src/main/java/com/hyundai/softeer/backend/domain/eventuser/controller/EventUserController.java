@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.eventuser.controller;
 
 import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserInfoDto;
+import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserInfoRequest;
 import com.hyundai.softeer.backend.domain.eventuser.service.EventUserService;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,8 +47,8 @@ public class EventUserController {
     @SecurityRequirement(name = "access-token")
     public BaseResponse<EventUserInfoDto> getDrawingUserInfo(
             @Parameter(hidden = true) @CurrentUser User authenticatedUser,
-            @RequestParam("subEventId") Long subEventId
+            @Validated EventUserInfoRequest eventUserInfoRequest
     ) {
-        return new BaseResponse<>(eventUserService.getEventUserInfo(authenticatedUser, subEventId));
+        return new BaseResponse<>(eventUserService.getEventUserInfo(authenticatedUser, eventUserInfoRequest.getSubEventId()));
     }
 }

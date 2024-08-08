@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -49,7 +50,7 @@ public class QuizController {
     })
     @GetMapping("/api/v1/quiz")
     public BaseResponse<QuizResponseDto> getQuiz(
-            QuizRequest quizRequest
+            @Validated  QuizRequest quizRequest
     ) {
         QuizResponseDto quizResponse = quizService.getQuiz(quizRequest);
 
@@ -101,7 +102,7 @@ public class QuizController {
     })
     @PostMapping("/api/v1/quiz/submit")
     public BaseResponse<QuizSubmitResponseDto> quizSubmit(
-            @RequestBody QuizSubmitRequest quizSubmitRequest,
+            @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
     ) {
         QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);

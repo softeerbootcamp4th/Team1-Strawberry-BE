@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,7 +53,7 @@ public class DrawingLotteryController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
     public BaseResponse<DrawingLotteryLandDto> getDrawingLandingPage(
-            EventRequest eventRequest
+            @Validated EventRequest eventRequest
     ) {
         return new BaseResponse<>(drawingLotteryService.getDrawingLotteryLand(eventRequest.getEventId()));
     }
@@ -75,7 +76,7 @@ public class DrawingLotteryController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
     public BaseResponse<List<RankDto>> getRankList(
-            SubEventRequest subEventRequest
+            @Validated SubEventRequest subEventRequest
     ) {
         return new BaseResponse<>(drawingLotteryService.getRankList(subEventRequest.getSubEventId(), RANK_COUNT));
     }
@@ -95,7 +96,7 @@ public class DrawingLotteryController {
             """)
     @ApiResponses(value = {})
     public BaseResponse<List<RankDto>> getWinnerList(
-            SubEventRequest subEventRequest
+            @Validated SubEventRequest subEventRequest
     ) {
         return null;
     }
@@ -118,8 +119,8 @@ public class DrawingLotteryController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
     public BaseResponse<List<WinnerCandidate>> drawWinner(
-            SubEventRequest subEventRequest,
-            ApiKeyRequest apiKeyRequest
+            @Validated SubEventRequest subEventRequest,
+            @Validated ApiKeyRequest apiKeyRequest
     ) {
         if (!eventService.validateApiKey(apiKeyRequest)) {
             throw new IllegalArgumentException("Invalid API Key");

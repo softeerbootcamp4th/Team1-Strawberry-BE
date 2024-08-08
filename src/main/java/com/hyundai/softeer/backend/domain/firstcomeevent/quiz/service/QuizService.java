@@ -54,6 +54,9 @@ public class QuizService {
      */
     @Transactional(readOnly = true)
     public QuizResponseDto getQuiz(QuizRequest quizRequest) {
+        Long subEventId = quizRequest.getSubEventId();
+
+        Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEventId);
 
         Long subEventId = quizRequest.getSubEventId();
 
