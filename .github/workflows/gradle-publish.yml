@@ -32,7 +32,7 @@ jobs:
           echo "${{ secrets.APPLICATION_PROD_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-prod.yml
           echo "${{ secrets.APPLICATION_DEV_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-dev.yml
           echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ${{ secrets.APPLICATION_PATH }}/yaml/application-oauth.yml
-          echo "${{ secrets.APPLICATION_TEST_YML }}" | base64 --decode > ${{ secrets.APPLICATION_TEST_PATH }}/application.yml
+          echo "${{ secrets.APPLICATION_TEST_YML }}" > ${{ secrets.APPLICATION_TEST_PATH }}/application.yml
 
 
 
