@@ -6,6 +6,7 @@ import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.exception.EventUserNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.exception.NonPlayedUserException;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,14 +27,17 @@ public class EventUserService {
         return EventUserInfoDto.fromEntity(eventUser);
     }
 
-    public SharedUrlDto getSharedUrl(User user, long subEventId) {
+    @Transactional
+    public SharedUrlDto getSharedUrl(User user, SubEventRequest subEventRequest) {
 
-        EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(user.getId(), subEventId)
+        EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(user.getId(), subEventRequest.getSubEventId())
                 .orElseThrow(() -> new EventUserNotFoundException());
 
         String sharedUrl = eventUser.getSharedUrl();
         if (sharedUrl.isBlank()) {
             sharedUrl = RandomStringUtils.random(SHARED_URL_LENGTH, true, true);
+            eventUser.updateSharedUrl(sharedUrl);
+            eventUserRepository.save(eventUser);
         }
 
         double gameScore = eventUser.getGameScore();
