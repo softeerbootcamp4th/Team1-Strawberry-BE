@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "Quizzes")
+@Table(name = "firstcomes")
 @SuperBuilder
 @NoArgsConstructor
 @Getter
