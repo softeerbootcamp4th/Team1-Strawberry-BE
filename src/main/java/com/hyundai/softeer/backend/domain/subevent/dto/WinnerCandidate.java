@@ -1,19 +1,22 @@
 package com.hyundai.softeer.backend.domain.subevent.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@ToString
+@Builder
 public class WinnerCandidate {
-    private Long eventUserId;
+    @Schema(example = "1")
+    private long eventUserId;
+
+    @Schema(example = "99.12")
     private double randomValue;
 
-    @Override
-    public String toString() {
-        return "WinnerCandidate{" +
-                "eventUserId=" + eventUserId +
-                ", randomValue=" + randomValue +
-                '}';
-    }
+    @Schema(example = "1")
+    private long userId;
 }

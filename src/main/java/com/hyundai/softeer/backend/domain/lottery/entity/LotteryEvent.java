@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.Map;
 
 @MappedSuperclass
 @SuperBuilder
@@ -18,5 +22,7 @@ public class LotteryEvent {
     @Column(name = "sub_event_id", nullable = false)
     private Long subEventId;
 
-    private String winners_meta;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> winnersMeta;
 }

@@ -5,13 +5,15 @@ import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Builder
+@Table(name = "Winners")
 @NoArgsConstructor
 @Setter
-@Table(name = "Winners")
 @AllArgsConstructor
 public class Winner {
 
@@ -28,10 +30,12 @@ public class Winner {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
+    private int ranking;
 
-    public Winner(Prize prize, SubEvent subEvent, User user) {
+    public Winner(Prize prize, SubEvent subEvent, User user, int rank) {
         this.prize = prize;
         this.subEvent = subEvent;
         this.user = user;
+        this.ranking = rank;
     }
 }

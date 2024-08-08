@@ -27,8 +27,8 @@ public class EventUserController {
     private final EventUserService eventUserService;
 
     @GetMapping("/info")
-    @Operation(summary = "드로잉 추첨 이벤트 유저 정보 조회", description = """
-            # 드로잉 추첨 이벤트 랜딩 페이지 조회
+    @Operation(summary = "이벤트 참가 유저 정보 조회", description = """
+            # 이벤트 참가 유저 정보 조회
                         
             - 로그인 된 유저의 해당 이벤트 참여 정보를 함께 반환합니다.
              
@@ -39,8 +39,8 @@ public class EventUserController {
              
             """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 랜딩 페이지 조회 성공", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
+            @ApiResponse(responseCode = "200", description = "이벤트 참가 유저 정보 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 참가자", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"해당 이벤트 참가자를 찾을 수 없습니다.\",\"status\":404}"))}),
     })
     @SecurityRequirement(name = "access-token")
     public BaseResponse<EventUserInfoDto> getDrawingUserInfo(
