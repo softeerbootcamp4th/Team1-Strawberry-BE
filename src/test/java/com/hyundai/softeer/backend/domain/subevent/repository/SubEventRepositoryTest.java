@@ -5,6 +5,9 @@ import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SpringBootTest
-@Transactional
-@Sql(value = {"/sql/integration.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE, connection = EmbeddedDatabaseConnection.H2)
+@Sql(scripts = "classpath:sql/integration-h2.sql")
 class SubEventRepositoryTest {
 
     @Autowired
