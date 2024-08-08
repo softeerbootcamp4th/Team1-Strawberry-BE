@@ -40,7 +40,7 @@ public class ExpectationService {
 
     @Transactional(readOnly = true)
     public ExpectationsResponseDto getExpectations(ExpectationsRequest expectationsRequest) {
-        Sort sort = Sort.by("createdAt").ascending();
+        Sort sort = Sort.by("createdAt").descending();
 
         Pageable pageable = PageRequest.of(
                 expectationsRequest.getPageSequence(),
