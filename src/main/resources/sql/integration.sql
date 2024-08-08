@@ -19,7 +19,7 @@ values (1, 1, "퀴즈 테스트", 1, 1, "2024-08-06 10:30:00", "2024-08-09 10:30
        (2, 1, "ㅣ히히", 1, 1, "2024-08-10 10:30:00", "2024-08-12 10:30:00", "www.banner2.com", json_object('main', 'www.event1.com')),
        (3, 1, "퀴즈 시러", 1, 1, "2024-08-13 10:30:00", "2024-08-14 10:30:00", "www.banner3.com", json_object('main', 'www.event1.com'));
 
-INSERT INTO Quizzes (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count, init_consonant, car_info)
+INSERT INTO quiz_firstcome_events (sequence, sub_event_id, prize_id, anchor, answer, hint, problem, winners, winner_count, init_consonant, car_info)
 values (1, 1, 1, "#sub1", "10.4", "10 근처", "산타페의 연비는?", 2, 1, "ㅅㅈㅅ", "산타페의 선루프는...."),
        (2, 2, 2, "#sub2", "11.5", "11 근처", "산타페의 연비는?", 3, 3, "ㅅㅇㅈㅇ", "산파페의 엔진은.."),
        (3, 3, 3, "#sub3", "12.5", "12 근처", "산타페의 연비는?", 12, 9, "ㅅㅇㅈㅇ", "산타페의 가격은..");
