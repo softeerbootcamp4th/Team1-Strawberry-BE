@@ -28,6 +28,7 @@ public interface EventUserRepository extends JpaRepository<EventUser, Long> {
             "LIMIT :limit", nativeQuery = true)
     List<EventUser> findRestByRand(long subEventId, int limit);
 
-    long countBySubEventId(Long subEventId);
+    @Query("SELECT MAX(eu.id) FROM EventUser eu WHERE eu.subEvent.id = :subEventId")
+    long findMaxBySubEventId(Long subEventId);
 
 }
