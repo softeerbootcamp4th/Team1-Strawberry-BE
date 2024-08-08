@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +47,7 @@ public class ExpectationController {
     })
     @GetMapping("/api/v1/expectation/land")
     public BaseResponse<ExpectationPageResponseDto> expectationLandApi(
-            @ModelAttribute ExpectationPageRequest expectationRequest
+            @ModelAttribute @Validated ExpectationPageRequest expectationRequest
     ) {
         ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(expectationRequest);
 
@@ -73,7 +74,7 @@ public class ExpectationController {
     })
     @GetMapping("/api/v1/expectation/page")
     public BaseResponse<ExpectationsResponseDto> expectationsApi(
-            @ModelAttribute ExpectationsRequest expectationsRequest
+            @ModelAttribute @Validated ExpectationsRequest expectationsRequest
     ) {
         ExpectationsResponseDto expectations = expectationService.getExpectations(expectationsRequest);
         return new BaseResponse<>(expectations);
@@ -93,7 +94,7 @@ public class ExpectationController {
     @PostMapping("/api/v1/expectation/register")
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<Null> expectationRegisterApi(
-            @RequestBody ExpectationRegisterRequest expectationRegisterRequest,
+            @RequestBody @Validated ExpectationRegisterRequest expectationRegisterRequest,
             @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
         expectationService.expectationRegisterApi(expectationRegisterRequest, authenticatedUser);

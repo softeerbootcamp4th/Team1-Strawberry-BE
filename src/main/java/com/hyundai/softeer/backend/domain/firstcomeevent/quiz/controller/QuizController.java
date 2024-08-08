@@ -1,9 +1,6 @@
 package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.controller;
 
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizLandResponseDto;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizResponseDto;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizSubmitRequest;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizSubmitResponseDto;
+import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service.QuizService;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
@@ -18,7 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 public class QuizController {
 
     private final QuizService quizService;
+
+    @Value("${properties.event-id}")
+    private Long eventId;
 
     @Operation(summary = "퀴즈 문제 페이지 정보", description = """
             # 퀴즈 문제를 반환해주는 api
@@ -47,10 +49,9 @@ public class QuizController {
     })
     @GetMapping("/api/v1/quiz")
     public BaseResponse<QuizResponseDto> getQuiz(
-            @RequestParam("eventId") Long eventId,
-            @RequestParam("problemNumber") Integer problemNumber
+            @Validated  QuizRequest quizRequest
     ) {
-        QuizResponseDto quizResponse = quizService.getQuiz(eventId, problemNumber);
+        QuizResponseDto quizResponse = quizService.getQuiz(quizRequest);
 
         return new BaseResponse<>(quizResponse);
     }
@@ -74,9 +75,7 @@ public class QuizController {
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/api/v1/quiz/land")
-    public BaseResponse<QuizLandResponseDto> getQuizLandingPage(
-            @RequestParam("eventId") Long eventId
-    ) {
+    public BaseResponse<QuizLandResponseDto> getQuizLandingPage() {
         QuizLandResponseDto getQuizResponseDto = quizService.getQuizLand(eventId);
 
         return new BaseResponse<>(getQuizResponseDto);
@@ -105,7 +104,7 @@ public class QuizController {
     })
     @PostMapping("/api/v1/quiz/submit")
     public BaseResponse<QuizSubmitResponseDto> quizSubmit(
-            @RequestBody QuizSubmitRequest quizSubmitRequest,
+            @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
     ) {
         QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);

@@ -51,8 +51,10 @@ public class QuizService {
      * @return QuizResponseDto
      */
     @Transactional(readOnly = true)
-    public QuizResponseDto getQuiz(Long eventId, Integer sequence) {
-        Optional<Quiz> optionalQuiz = quizRepository.findQuiz(eventId, sequence);
+    public QuizResponseDto getQuiz(QuizRequest quizRequest) {
+        Long subEventId = quizRequest.getSubEventId();
+
+        Optional<Quiz> optionalQuiz = quizRepository.findBySubEventId(subEventId);
 
         Quiz quiz = optionalQuiz
                 .orElseThrow(() -> new QuizNotFoundException());
