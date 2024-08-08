@@ -36,19 +36,7 @@ public class SubEventService {
 
     @Transactional
     public List<WinnerCandidate> drawWinner(long subEventId) {
-        // subEventId 유효성 검사
-        SubEvent subEvent = subEventRepository.findById(subEventId)
-                .orElseThrow(() -> new DrawingNotFoundException());
-
-        if (!subEvent.getEventType().equals(SubEventType.DRAWING)) {
-            throw new DrawingNotFoundException();
-        }
-
-        // 이미 추첨이 되었는지 확인
-        Optional<List<Winner>> bySubEventId = winnerRepository.findBySubEventId(subEventId);
-        if (bySubEventId.isPresent() && !bySubEventId.get().isEmpty()) {
-            throw new AlreadyDrawedException();
-        }
+        SubEvent subEvent = validateSubEventId(subEventId);
 
         // 당첨자 정보 파싱
         Map<Integer, WinnerInfo> winnersMeta = ParseUtil.parseWinnersMeta(subEvent.getWinnersMeta());
@@ -116,6 +104,23 @@ public class SubEventService {
         winnerRepository.saveAll(winners);
 
         return winnersInfo;
+    }
+
+    private SubEvent validateSubEventId(long subEventId) {
+        // subEventId 유효성 검사
+        SubEvent subEvent = subEventRepository.findById(subEventId)
+                .orElseThrow(() -> new DrawingNotFoundException());
+
+        if (!subEvent.getEventType().equals(SubEventType.DRAWING)) {
+            throw new DrawingNotFoundException();
+        }
+
+        // 이미 추첨이 되었는지 확인
+        Optional<List<Winner>> bySubEventId = winnerRepository.findBySubEventId(subEventId);
+        if (bySubEventId.isPresent() && !bySubEventId.get().isEmpty()) {
+            throw new AlreadyDrawedException();
+        }
+        return subEvent;
     }
 
     private int getRandomValue(long subEventId) {
