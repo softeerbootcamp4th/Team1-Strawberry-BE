@@ -7,6 +7,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLott
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
+import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
@@ -54,11 +55,11 @@ class DrawingLotteryServiceTest {
         // Given
         User user = User.builder().id(1L).build();
         Long eventId = 1L;
-        com.hyundai.softeer.backend.domain.subevent.entity.SubEvent drawingEvent = com.hyundai.softeer.backend.domain.subevent.entity.SubEvent.builder().id(1L).build();
+        SubEvent drawingEvent = SubEvent.builder().id(1L).build();
         drawingEvent.setEventType(SubEventType.DRAWING);
         EventUser eventUser = new EventUser();
 
-        List<com.hyundai.softeer.backend.domain.subevent.entity.SubEvent> events = Arrays.asList(drawingEvent);
+        List<SubEvent> events = Arrays.asList(drawingEvent);
 
         // When
         when(subEventRepository.findByEventId(eventId)).thenReturn(events);
@@ -73,9 +74,9 @@ class DrawingLotteryServiceTest {
     void getDrawingLotteryLand_noDrawingEvent() {
         // Given
         Long eventId = 1L;
-        com.hyundai.softeer.backend.domain.subevent.entity.SubEvent nonDrawingEvent = new com.hyundai.softeer.backend.domain.subevent.entity.SubEvent();
+        SubEvent nonDrawingEvent = new SubEvent();
         nonDrawingEvent.setEventType(SubEventType.QUIZ);
-        List<com.hyundai.softeer.backend.domain.subevent.entity.SubEvent> events = Arrays.asList(nonDrawingEvent);
+        List<SubEvent> events = Arrays.asList(nonDrawingEvent);
 
         // When
         when(subEventRepository.findByEventId(eventId)).thenReturn(events);
