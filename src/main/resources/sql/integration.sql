@@ -15,7 +15,7 @@ INSERT INTO events (id, end_at, event_name, event_registered_at, event_status, s
 values (1, "2024-09-01 10:00:00", "별 헤는 밤", "2024-06-28 00:00:00", 0, "2024-08-01 10:00:00", 10, 1);
 
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls)
-values (1, 1, "퀴즈 테스트", 1, 1, "2024-08-06 10:30:00", "2024-08-08 10:30:00", "www.banner1.com", json_object('main', 'www.event1.com')),
+values (1, 1, "퀴즈 테스트", 1, 1, "2024-08-06 10:30:00", "2024-08-09 10:30:00", "www.banner1.com", json_object('main', 'www.event1.com')),
        (2, 1, "ㅣ히히", 1, 1, "2024-08-10 10:30:00", "2024-08-12 10:30:00", "www.banner2.com", json_object('main', 'www.event1.com')),
        (3, 1, "퀴즈 시러", 1, 1, "2024-08-13 10:30:00", "2024-08-14 10:30:00", "www.banner3.com", json_object('main', 'www.event1.com'));
 
@@ -24,10 +24,10 @@ values (1, 1, 1, "#sub1", "10.4", "10 근처", "산타페의 연비는?", 2, 1, 
        (2, 2, 2, "#sub2", "11.5", "11 근처", "산타페의 연비는?", 3, 3, "ㅅㅇㅈㅇ", "산파페의 엔진은.."),
        (3, 3, 3, "#sub3", "12.5", "12 근처", "산타페의 연비는?", 12, 9, "ㅅㅇㅈㅇ", "산타페의 가격은..");
 
-INSERT INTO Winners (prize_id, sub_event_id, user_id)
-values (1, 3, 1),
-       (2, 2, 2),
-       (3, 1, 3);
+INSERT INTO Winners (id, prize_id, sub_event_id, user_id, ranking)
+VALUES (1, 1, 3, 1, 1),
+       (2, 2, 2, 2, 2),
+       (3, 3, 1, 3, 3);
 
 INSERT INTO expectations (event_id, user_id, expectation_comment, created_at, modified_at)
 values (1, 1, "기대됩니다.", "2024-07-01 10:00:00", "2024-07-01 10:00:00"),
