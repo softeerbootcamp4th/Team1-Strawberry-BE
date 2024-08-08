@@ -5,8 +5,8 @@ import com.hyundai.softeer.backend.global.constant.ExecuteEnvironment;
 import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.context.annotation.Profile;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "Events")
 public class Event extends BaseEntity {
     @Id

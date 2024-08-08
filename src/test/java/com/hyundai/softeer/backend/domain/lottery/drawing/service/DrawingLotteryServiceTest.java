@@ -191,7 +191,7 @@ class DrawingLotteryServiceTest {
         // When
         when(drawingLotteryRepository.findById(subEventId)).thenReturn(Optional.of(drawingLotteryEvent));
         when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.empty());
-        when(eventUserRepository.countBySubEventId(subEventId)).thenReturn(10L);
+        when(eventUserRepository.findMaxBySubEventId(subEventId)).thenReturn(10L);
         when(eventUserRepository.findNByRand(anyLong(), anyInt(), anyInt())).thenReturn(users);
         when(userRepository.getReferenceById(anyLong())).thenAnswer(invocation -> (
                 User.builder().id(invocation.getArgument(0)).build()
@@ -248,7 +248,7 @@ class DrawingLotteryServiceTest {
         // When
         when(drawingLotteryRepository.findById(subEventId)).thenReturn(Optional.of(drawingLotteryEvent));
         when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.empty());
-        when(eventUserRepository.countBySubEventId(subEventId)).thenReturn(10L);
+        when(eventUserRepository.findMaxBySubEventId(subEventId)).thenReturn(10L);
         when(eventUserRepository.findNByRand(anyLong(), anyInt(), anyInt())).thenReturn(users);
         when(eventUserRepository.findRestByRand(anyLong(), anyInt())).thenReturn(extraUser);
         when(lotteryService.getWinners(any(), any(), anyInt())).thenReturn(winnerCandidates);
