@@ -31,4 +31,6 @@ public interface EventUserRepository extends JpaRepository<EventUser, Long> {
     @Query("SELECT MAX(eu.id) FROM EventUser eu WHERE eu.subEvent.id = :subEventId")
     long findMaxBySubEventId(Long subEventId);
 
+    Optional<EventUser> findBySharedUrl(String sharedUrl);
+
 }
