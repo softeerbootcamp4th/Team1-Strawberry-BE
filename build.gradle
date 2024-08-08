@@ -44,6 +44,8 @@ dependencies {
     testRuntimeOnly 'com.mysql:mysql-connector-j'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
+    testRuntimeOnly 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
