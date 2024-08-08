@@ -24,10 +24,10 @@ values (1, 1, 1, "#sub1", "10.4", "10 근처", "산타페의 연비는?", 2, 1, 
        (2, 2, 2, "#sub2", "11.5", "11 근처", "산타페의 연비는?", 3, 3, "ㅅㅇㅈㅇ", "산파페의 엔진은.."),
        (3, 3, 3, "#sub3", "12.5", "12 근처", "산타페의 연비는?", 12, 9, "ㅅㅇㅈㅇ", "산타페의 가격은..");
 
-INSERT INTO Winners (prize_id, sub_event_id, user_id)
-values (1, 3, 1),
-       (2, 2, 2),
-       (3, 1, 3);
+INSERT INTO Winners (id, prize_id, sub_event_id, user_id, ranking)
+VALUES (1, 1, 3, 1, 1),
+       (2, 2, 2, 2, 2),
+       (3, 3, 1, 3, 3);
 
 INSERT INTO expectations (event_id, user_id, expectation_comment, created_at, modified_at)
 values (1, 1, "기대됩니다.", "2024-07-01 10:00:00", "2024-07-01 10:00:00"),

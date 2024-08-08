@@ -53,17 +53,17 @@ class ExpectationServiceTest {
     void expectationTest() {
         // given
         int pageNumber = 0;
+        long eventId = 1L;
         ExpectationPageResponseDto expectationPageResponseDto = new ExpectationPageResponseDto(
                 "www.naver.com"
         );
 
         Event event = new Event();
         event.setExpectationBannerImgUrl("www.eBanner.com");
-        ExpectationPageRequest expectationPageRequest = new ExpectationPageRequest(1L);
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
 
         // when
-        ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(expectationPageRequest);
+        ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(eventId);
 
         // then
         assertThat(expectationPage.getExpectationBannerImgUrl()).isEqualTo(event.getExpectationBannerImgUrl());
@@ -74,6 +74,7 @@ class ExpectationServiceTest {
     void expectationNotExistEventTest() {
         // given
         int pageNumber = 0;
+        long eventId = 1L;
         ExpectationPageResponseDto expectationPageResponseDto = new ExpectationPageResponseDto(
                 "www.naver.com"
         );
@@ -83,7 +84,7 @@ class ExpectationServiceTest {
 
         // when
         Assertions.assertThatThrownBy(() -> {
-            expectationService.getExpectationPage(expectationPageRequest);
+            expectationService.getExpectationPage(eventId);
         }).isInstanceOf(EventNotFoundException.class);
     }
 
@@ -105,10 +106,10 @@ class ExpectationServiceTest {
         Page<Expectation> pages = new PageImpl<>(expectations, pageable, 22);
 
         when(expectationRepository.findByEventId(any(Long.class), any(Pageable.class))).thenReturn(pages);
-        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1, 1L);
+        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1);
 
         // when
-        ExpectationsResponseDto expectationsDto = expectationService.getExpectations(expectationsRequest);
+        ExpectationsResponseDto expectationsDto = expectationService.getExpectations(expectationsRequest, 1L);
 
         // then
         assertThat(expectationsDto.getTotalPages()).isEqualTo(2);
@@ -129,11 +130,11 @@ class ExpectationServiceTest {
         Page<Expectation> pages = new PageImpl<>(new ArrayList<>(), pageable, 0);
 
         when(expectationRepository.findByEventId(any(Long.class), any(Pageable.class))).thenReturn(pages);
-        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1, 1L);
+        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1);
 
         // when
         Assertions.assertThatThrownBy(() -> {
-            expectationService.getExpectations(expectationsRequest);
+            expectationService.getExpectations(expectationsRequest, 1L);
         }).isInstanceOf(ExpectationNotFoundException.class);
     }
 
@@ -143,7 +144,7 @@ class ExpectationServiceTest {
         // Arrange
         long eventId = 1L;
         String comment = "Test comment";
-        ExpectationRegisterRequest request = new ExpectationRegisterRequest(eventId, comment);
+        ExpectationRegisterRequest request = new ExpectationRegisterRequest(comment);
         User authenticatedUser = User.builder()
                 .name("김민준")
                 .email("minjun@naver.com")
@@ -160,7 +161,7 @@ class ExpectationServiceTest {
         when(expectationRepository.save(any(Expectation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Expectation result = expectationService.expectationRegisterApi(request, authenticatedUser);
+        Expectation result = expectationService.expectationRegisterApi(request, eventId, authenticatedUser);
         Event resultEvent = result.getEvent();
         User resultUser = result.getUser();
 
