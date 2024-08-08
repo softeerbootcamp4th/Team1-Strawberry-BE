@@ -8,14 +8,11 @@ import org.springdoc.core.annotations.ParameterObject;
 
 @Data
 @NoArgsConstructor
-@ParameterObject
 public class QuizSubmitRequest {
 
-    @Parameter
     @NotBlank
     private String answer;
 
-    @Parameter
     @NotNull
     private Long subEventId;
 }
