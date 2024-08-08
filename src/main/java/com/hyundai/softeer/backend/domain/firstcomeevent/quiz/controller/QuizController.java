@@ -106,10 +106,10 @@ public class QuizController {
             @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
     ) {
-        quizService.quizSubmit(quizSubmitRequest, user);
+        QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);
 
         return BaseResponse.<QuizSubmitResponseDto>builder()
-                .data(null)
+                .data(quizSubmitResponseDto)
                 .status(HttpStatus.CREATED.value())
                 .message(HttpStatus.CREATED.getReasonPhrase())
                 .build();
