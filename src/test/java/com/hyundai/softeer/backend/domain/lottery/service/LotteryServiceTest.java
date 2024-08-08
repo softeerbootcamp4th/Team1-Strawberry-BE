@@ -5,6 +5,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLottery
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
+import com.hyundai.softeer.backend.domain.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,11 +29,11 @@ class LotteryServiceTest {
     void getWinners() {
         // given
         List<EventUser> users = List.of(
-                EventUser.builder().id(1L).build(),
-                EventUser.builder().id(2L).build(),
-                EventUser.builder().id(3L).build(),
-                EventUser.builder().id(4L).build(),
-                EventUser.builder().id(5L).build());
+                EventUser.builder().id(1L).user(User.builder().id(1L).build()).build(),
+                EventUser.builder().id(2L).user(User.builder().id(1L).build()).build(),
+                EventUser.builder().id(3L).user(User.builder().id(1L).build()).build(),
+                EventUser.builder().id(4L).user(User.builder().id(1L).build()).build(),
+                EventUser.builder().id(5L).user(User.builder().id(1L).build()).build());
 
         Map<Integer, WinnerInfo> winnersMeta = Map.of(
                 1, new WinnerInfo(3, 1L, 1));
