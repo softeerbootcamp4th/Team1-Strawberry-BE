@@ -1,7 +1,5 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.controller;
 
-import com.hyundai.softeer.backend.domain.event.dto.EventRequest;
-import com.hyundai.softeer.backend.domain.event.service.EventService;
 import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingInfoDtos;
 import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingLotteryLandDto;
 import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLotteryService;
