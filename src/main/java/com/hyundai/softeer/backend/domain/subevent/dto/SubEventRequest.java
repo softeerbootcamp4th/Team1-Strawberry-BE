@@ -1,17 +1,18 @@
 package com.hyundai.softeer.backend.domain.subevent.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @ParameterObject
 public class SubEventRequest {
-    @NotBlank
+    @NotNull
     @Parameter
-    private long subEventId;
+    private Long subEventId;
 }

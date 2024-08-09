@@ -3,10 +3,12 @@ package com.hyundai.softeer.backend.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hyundai.softeer.backend.domain.user.dto.CallBackRequest;
 import com.hyundai.softeer.backend.domain.user.dto.HyundaiUserInfo;
 import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.dto.UserInfoDto;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.domain.user.exception.DuplicateUserException;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import com.hyundai.softeer.backend.global.jwt.provider.HyundaiTokens;
@@ -25,8 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,15 +60,21 @@ public class HyundaiOauthService {
     }
 
 
-    public LoginResponseDto callback(String code, String state) throws JsonProcessingException {
+    public LoginResponseDto callback(CallBackRequest callBackRequest) throws JsonProcessingException {
+        String code = callBackRequest.getCode();
+        String state = callBackRequest.getState();
+
         String hyundaiAccessToken = requestAccessToken(code, state);
         HyundaiUserInfo userInfo = getHyundaiUserInfo(hyundaiAccessToken);
-        Optional<User> user = userRepository.findByPhoneNumber(userInfo.getMobileNum());
+        List<User> user = userRepository.findByEmailOrPhoneNumber(userInfo.getEmail(), userInfo.getMobileNum());
 
         // 등록된 회원이라면 로그인처리
-        if (user.isPresent()) {
+        if (!user.isEmpty()) {
+            if (user.size() > 1) {
+                throw new DuplicateUserException();
+            }
             return LoginResponseDto.builder()
-                    .user(UserInfoDto.fromEntity(user.get()))
+                    .user(UserInfoDto.fromEntity(user.get(0)))
                     .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
                     .build();
         }

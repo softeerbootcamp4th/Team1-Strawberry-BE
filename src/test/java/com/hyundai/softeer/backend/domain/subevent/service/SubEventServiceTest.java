@@ -8,6 +8,7 @@ import com.hyundai.softeer.backend.domain.lottery.exception.AlreadyDrawedExcepti
 import com.hyundai.softeer.backend.domain.lottery.service.LotteryService;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
@@ -71,12 +72,13 @@ class SubEventServiceTest {
     void getDrawWinnerInDrawingEvent_notFound() {
         // Given
         Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(subEventId);
 
         // When
-        when(subEventRepository.findById(subEventId)).thenReturn(Optional.empty());
+        when(subEventRepository.findById(subEventRequest.getSubEventId())).thenReturn(Optional.empty());
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> subEventService.drawWinner(subEventId));
+        assertThrows(DrawingNotFoundException.class, () -> subEventService.drawWinner(subEventRequest));
     }
 
     @Test
@@ -84,12 +86,13 @@ class SubEventServiceTest {
     void getDrawWinnerInDrawingEvent_notDrawing() {
         // Given
         Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(subEventId);
 
         // When
         when(subEventRepository.findById(subEventId)).thenReturn(Optional.of(com.hyundai.softeer.backend.domain.subevent.entity.SubEvent.builder().eventType(SubEventType.QUIZ).build()));
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> subEventService.drawWinner(subEventId));
+        assertThrows(DrawingNotFoundException.class, () -> subEventService.drawWinner(subEventRequest));
     }
 
     @Test
@@ -97,13 +100,14 @@ class SubEventServiceTest {
     void getDrawWinnerInDrawingEvent_AlreadyDraw() {
         // Given
         Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(subEventId);
 
         // When
         when(subEventRepository.findById(subEventId)).thenReturn(Optional.of(SubEvent.builder().eventType(SubEventType.DRAWING).build()));
         when(winnerRepository.findBySubEventId(subEventId)).thenReturn(Optional.of(List.of(new Winner())));
 
         // Then
-        assertThrows(AlreadyDrawedException.class, () -> subEventService.drawWinner(subEventId));
+        assertThrows(AlreadyDrawedException.class, () -> subEventService.drawWinner(subEventRequest));
     }
 
     @Test
@@ -111,6 +115,7 @@ class SubEventServiceTest {
     void getDrawWinnerInDrawingEvent() {
         // Given
         Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(subEventId);
         Map<String, Object> winnersInfo = Map.of(
                 "1", Map.of("winnerCount", 1, "prizeId", 1),
                 "2", Map.of("winnerCount", 1, "prizeId", 2)
@@ -154,7 +159,7 @@ class SubEventServiceTest {
         ));
         when(winnerRepository.saveAll(any())).thenReturn(null);
 
-        List<WinnerCandidate> result = subEventService.drawWinner(subEventId);
+        List<WinnerCandidate> result = subEventService.drawWinner(subEventRequest);
 
         // Then
         assertThat(result).hasSize(2);
@@ -167,6 +172,7 @@ class SubEventServiceTest {
     void getDrawWinnerInDrawingEventwithExtra() {
         // Given
         Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(subEventId);
         Map<String, Object> winnersInfo = Map.of(
                 "1", Map.of("winnerCount", 1, "prizeId", 1),
                 "2", Map.of("winnerCount", 1, "prizeId", 2)
@@ -214,7 +220,7 @@ class SubEventServiceTest {
         ));
         when(winnerRepository.saveAll(any())).thenReturn(null);
 
-        List<WinnerCandidate> result = subEventService.drawWinner(subEventId);
+        List<WinnerCandidate> result = subEventService.drawWinner(subEventRequest);
 
         // Then
         assertThat(result).hasSize(2);

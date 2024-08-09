@@ -23,14 +23,14 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
-    private final String[] whiteListUris = new String[]{"/**",
+    private final String[] whiteListUris = new String[]{
             "/api/v1/oauth2/**",
             "/swagger-ui/**",
             "/v3/api-docs",
             "/v3/api-docs/**",
             "/api/v1/expectation/land",
             "/api/v1/expectation/page",
-            "/api/v1/quiz/land",
+            "/api/v1/firstcome/quiz/land",
             "/api/v1/lottery/drawing/land"
     };
 
@@ -57,7 +57,7 @@ public class JwtAuthorizationFilter implements Filter {
             chain.doFilter(request, response);
         } catch (JsonParseException e) {
             log.error("JsonParseException");
-            httpServletResponse.sendError(HttpStatus.BAD_REQUEST.value());
+            httpServletResponse.sendError(HttpStatus.BAD_REQUEST.value(), "Json Parse 에러가 발생했습니다");
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
             log.error("JwtException");
             httpServletResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "인증 오류");
