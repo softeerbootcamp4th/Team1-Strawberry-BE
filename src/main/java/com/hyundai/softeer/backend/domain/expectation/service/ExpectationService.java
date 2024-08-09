@@ -29,9 +29,7 @@ public class ExpectationService {
     private final EventRepository eventRepository;
 
     @Transactional(readOnly = true)
-    public ExpectationPageResponseDto getExpectationPage(ExpectationPageRequest expectationPageRequest) {
-        Long eventId = expectationPageRequest.getEventId();
-
+    public ExpectationPageResponseDto getExpectationPage(long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException());
 
@@ -39,8 +37,8 @@ public class ExpectationService {
     }
 
     @Transactional(readOnly = true)
-    public ExpectationsResponseDto getExpectations(ExpectationsRequest expectationsRequest) {
-        Sort sort = Sort.by("createdAt").ascending();
+    public ExpectationsResponseDto getExpectations(ExpectationsRequest expectationsRequest, long eventId) {
+        Sort sort = Sort.by("createdAt").descending();
 
         Pageable pageable = PageRequest.of(
                 expectationsRequest.getPageSequence(),
@@ -49,7 +47,7 @@ public class ExpectationService {
         );
 
         Page<Expectation> expectationPage = expectationRepository.findByEventId(
-                expectationsRequest.getEventId(),
+                eventId,
                 pageable
         );
 
@@ -77,11 +75,10 @@ public class ExpectationService {
     @Transactional
     public Expectation expectationRegisterApi(
             ExpectationRegisterRequest expectationRegisterRequest,
+            long eventId,
             User authenticatedUser
     ) {
         Expectation expectation = new Expectation();
-
-        long eventId = expectationRegisterRequest.getEventId();
 
         expectation.setEvent(eventRepository.getReferenceById(eventId));
         expectation.setUser(authenticatedUser);

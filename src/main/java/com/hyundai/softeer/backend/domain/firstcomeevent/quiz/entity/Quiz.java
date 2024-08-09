@@ -6,13 +6,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "Quizzes")
+@Table(name = "quiz_firstcome_events")
 @SuperBuilder
 @NoArgsConstructor
 @Getter
@@ -41,5 +42,4 @@ public class Quiz extends FirstComeEvent {
     private Prize prize;
 
     private Integer winnerCount;
-
 }

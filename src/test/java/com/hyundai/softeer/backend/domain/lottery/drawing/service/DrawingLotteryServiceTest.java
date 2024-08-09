@@ -3,10 +3,15 @@ package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
+import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
+import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
+import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
+import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +21,15 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+@Slf4j
 class DrawingLotteryServiceTest {
 
     @InjectMocks
@@ -28,6 +37,9 @@ class DrawingLotteryServiceTest {
 
     @Mock
     private SubEventRepository subEventRepository;
+
+    @Mock
+    private DrawingLotteryRepository drawingLotteryRepository;
 
     @Mock
     private EventUserRepository eventUserRepository;
@@ -41,9 +53,9 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 추첨 이벤트 랜딩 페이지 조회 성공")
     void getDrawingLotteryLand() {
         // Given
-        User user = new User();
+        User user = User.builder().id(1L).build();
         Long eventId = 1L;
-        SubEvent drawingEvent = new SubEvent();
+        SubEvent drawingEvent = SubEvent.builder().id(1L).build();
         drawingEvent.setEventType(SubEventType.DRAWING);
         EventUser eventUser = new EventUser();
 
@@ -51,7 +63,7 @@ class DrawingLotteryServiceTest {
 
         // When
         when(subEventRepository.findByEventId(eventId)).thenReturn(events);
-        when(eventUserRepository.findByUserIdAndSubEventId(user.getId(), drawingEvent.getId())).thenReturn(eventUser);
+        when(eventUserRepository.findByUserIdAndSubEventId(user.getId(), drawingEvent.getId())).thenReturn(Optional.of(eventUser));
 
         // Then
         assertDoesNotThrow(() -> drawingLotteryService.getDrawingLotteryLand(eventId));
@@ -72,4 +84,31 @@ class DrawingLotteryServiceTest {
         // Then
         assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingLotteryLand(eventId));
     }
+
+    @Test
+    @DisplayName("드로잉 추첨 이벤트 랜딩 페이지 조회 실패")
+    void getWinners() {
+        // Given
+        List<EventUser> users = List.of(
+                EventUser.builder().id(1L).user(User.builder().id(1L).build()).gameScore(50.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
+                EventUser.builder().id(2L).user(User.builder().id(2L).build()).gameScore(30.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
+                EventUser.builder().id(3L).user(User.builder().id(3L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
+                EventUser.builder().id(4L).user(User.builder().id(4L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
+                EventUser.builder().id(5L).user(User.builder().id(5L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
+                EventUser.builder().id(6L).user(User.builder().id(6L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build());
+
+        Map<Integer, WinnerInfo> winnersMeta = Map.of(
+                1, new WinnerInfo(2, 1L, 1));
+        LotteryScoreWeight scoreWeight = new LotteryScoreWeight(1.0, 1.0, 1.0, 1.0);
+
+        // When
+        List<WinnerCandidate> winners = drawingLotteryService.getWinners(users, scoreWeight, 2);
+
+        // Then
+        assertThat(winners).hasSize(2);
+        assertThat(winners.get(0).getUserId()).isEqualTo(1L);
+        assertThat(winners.get(1).getUserId()).isEqualTo(2L);
+    }
 }
+
+

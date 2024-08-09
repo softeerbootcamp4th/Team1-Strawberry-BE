@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +32,9 @@ import org.springframework.web.bind.annotation.*;
 public class ExpectationController {
 
     private final ExpectationService expectationService;
+
+    @Value("${properties.event-id}")
+    private Long eventId;
 
     @Operation(summary = "기대평 랜딩 페이지 api", description = """
     기대평 페이지의 데이터를 반환하는 api
@@ -44,11 +49,9 @@ public class ExpectationController {
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터의 타입이 잘못되었거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트가 존재하지 않는 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @GetMapping("/api/v1/expectation/land")
-    public BaseResponse<ExpectationPageResponseDto> expectationLandApi(
-            @ModelAttribute ExpectationPageRequest expectationRequest
-    ) {
-        ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(expectationRequest);
+    @GetMapping("/api/v1/expectation")
+    public BaseResponse<ExpectationPageResponseDto> expectationLandApi() {
+        ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(eventId);
 
         return new BaseResponse<>(expectationPage);
     }
@@ -73,9 +76,9 @@ public class ExpectationController {
     })
     @GetMapping("/api/v1/expectation/page")
     public BaseResponse<ExpectationsResponseDto> expectationsApi(
-            @ModelAttribute ExpectationsRequest expectationsRequest
+            @Validated ExpectationsRequest expectationsRequest
     ) {
-        ExpectationsResponseDto expectations = expectationService.getExpectations(expectationsRequest);
+        ExpectationsResponseDto expectations = expectationService.getExpectations(expectationsRequest, eventId);
         return new BaseResponse<>(expectations);
     }
 
@@ -90,14 +93,14 @@ public class ExpectationController {
             @ApiResponse(responseCode = "201", description = "정상 반환 시", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터의 타입이 잘못되었거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @PostMapping("/api/v1/expectation/register")
+    @PostMapping("/api/v1/expectation")
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<Null> expectationRegisterApi(
-            @RequestBody ExpectationRegisterRequest expectationRegisterRequest,
+            @RequestBody @Validated ExpectationRegisterRequest expectationRegisterRequest,
             @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
-        expectationService.expectationRegisterApi(expectationRegisterRequest, authenticatedUser);
+        expectationService.expectationRegisterApi(expectationRegisterRequest, eventId, authenticatedUser);
 
-        return new BaseResponse<>(null);
+        return new BaseResponse<>(HttpStatus.CREATED.value(), "기대평 생성되었습니다.", null);
     }
 }

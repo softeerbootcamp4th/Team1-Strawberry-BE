@@ -27,8 +27,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.*;
 
 @Slf4j
 class ExpectationServiceTest {
@@ -47,42 +47,44 @@ class ExpectationServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
     @Test
     @DisplayName("기대평 api: 정상 반환인 경우")
     void expectationTest() {
         // given
-        int pageNumber= 0;
+        int pageNumber = 0;
+        long eventId = 1L;
         ExpectationPageResponseDto expectationPageResponseDto = new ExpectationPageResponseDto(
                 "www.naver.com"
         );
 
         Event event = new Event();
         event.setExpectationBannerImgUrl("www.eBanner.com");
-        ExpectationPageRequest expectationPageRequest = new ExpectationPageRequest(1L);
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
 
         // when
-        ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(expectationPageRequest);
+        ExpectationPageResponseDto expectationPage = expectationService.getExpectationPage(eventId);
 
         // then
-        assertThat(expectationPage.getExpectationBannerImgUrl()).isEqualTo(event.getExpectationBannerImgUrl());
+        assertThat(expectationPage.getBannerImgUrl()).isEqualTo(event.getExpectationBannerImgUrl());
     }
 
     @Test
     @DisplayName("기대평 api: 이벤트가 존재하지 않는 경우")
     void expectationNotExistEventTest() {
         // given
-        int pageNumber= 0;
+        int pageNumber = 0;
+        long eventId = 1L;
         ExpectationPageResponseDto expectationPageResponseDto = new ExpectationPageResponseDto(
                 "www.naver.com"
         );
 
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.empty());
-        ExpectationPageRequest expectationPageRequest = new ExpectationPageRequest(100L);
+        ExpectationPageRequest expectationPageRequest = new ExpectationPageRequest();
 
         // when
         Assertions.assertThatThrownBy(() -> {
-            expectationService.getExpectationPage(expectationPageRequest);
+            expectationService.getExpectationPage(eventId);
         }).isInstanceOf(EventNotFoundException.class);
     }
 
@@ -101,17 +103,17 @@ class ExpectationServiceTest {
                 Sort.by("createdAt").ascending()
         );
 
-        Page<Expectation> pages = new PageImpl<>(expectations, pageable,22);
+        Page<Expectation> pages = new PageImpl<>(expectations, pageable, 22);
 
         when(expectationRepository.findByEventId(any(Long.class), any(Pageable.class))).thenReturn(pages);
-        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1, 1L);
+        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1);
 
         // when
-        ExpectationsResponseDto expectationsDto = expectationService.getExpectations(expectationsRequest);
+        ExpectationsResponseDto expectationsDto = expectationService.getExpectations(expectationsRequest, 1L);
 
         // then
         assertThat(expectationsDto.getTotalPages()).isEqualTo(2);
-        assertThat(expectationsDto.getExpectationContents()).containsExactlyElementsOf(expectationContentDtos);
+        assertThat(expectationsDto.getComments()).containsExactlyElementsOf(expectationContentDtos);
     }
 
     @Test
@@ -122,17 +124,17 @@ class ExpectationServiceTest {
         Pageable pageable = PageRequest.of(
                 0,
                 11,
-                Sort.by("createdAt").ascending()
+                Sort.by("createdAt").descending()
         );
 
         Page<Expectation> pages = new PageImpl<>(new ArrayList<>(), pageable, 0);
 
         when(expectationRepository.findByEventId(any(Long.class), any(Pageable.class))).thenReturn(pages);
-        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1, 1L);
+        ExpectationsRequest expectationsRequest = new ExpectationsRequest(1);
 
         // when
         Assertions.assertThatThrownBy(() -> {
-            expectationService.getExpectations(expectationsRequest);
+            expectationService.getExpectations(expectationsRequest, 1L);
         }).isInstanceOf(ExpectationNotFoundException.class);
     }
 
@@ -142,16 +144,16 @@ class ExpectationServiceTest {
         // Arrange
         long eventId = 1L;
         String comment = "Test comment";
-        ExpectationRegisterRequest request = new ExpectationRegisterRequest(eventId, comment);
-        User authenticatedUser = new User(
-                "minjun@naver.com",
-                "김민준",
-                "010-6860-6823",
-                LocalDate.now(),
-                OAuthProvider.NAVER
-        );
+        ExpectationRegisterRequest request = new ExpectationRegisterRequest();
+        User authenticatedUser = User.builder()
+                .name("김민준")
+                .email("minjun@naver.com")
+                .phoneNumber("010-6860-6823")
+                .birthDate(LocalDate.now())
+                .oAuthProvider(OAuthProvider.NAVER)
+                .build();
 
-        Event mockEvent = new Event(); // 필요한 경우 이벤트 정보 설정
+        Event mockEvent = Event.builder().build();
         mockEvent.setId(1L);
         mockEvent.setEventName("산타페 이벤트");
 
@@ -159,7 +161,7 @@ class ExpectationServiceTest {
         when(expectationRepository.save(any(Expectation.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Expectation result = expectationService.expectationRegisterApi(request, authenticatedUser);
+        Expectation result = expectationService.expectationRegisterApi(request, eventId, authenticatedUser);
         Event resultEvent = result.getEvent();
         User resultUser = result.getUser();
 
@@ -180,8 +182,8 @@ class ExpectationServiceTest {
     private List<ExpectationContentDto> makeMockExpectationContent() {
         List<ExpectationContentDto> result = new ArrayList<>();
 
-        for(int i = 1; i <= 11; i++) {
-           result.add(new ExpectationContentDto("김민준" + i, "안녕하세요" + i));
+        for (int i = 1; i <= 11; i++) {
+            result.add(new ExpectationContentDto("김민준" + i, "안녕하세요" + i));
         }
         return result;
     }
@@ -189,11 +191,17 @@ class ExpectationServiceTest {
     private List<Expectation> makeMockExpectation() {
         List<Expectation> expectations = new ArrayList<>();
 
-        for(int i = 1; i <= 11; i++) {
+        for (int i = 1; i <= 11; i++) {
             Expectation expectation = new Expectation();
             expectation.setExpectationComment("안녕하세요" + i);
             expectation.setCreatedAt(LocalDateTime.now().plusDays(i));
-            User user = new User("a", "김민준" + i, "s", LocalDate.now() ,OAuthProvider.KAKAO);
+            User user = User.builder()
+                    .name("김민준" + i)
+                    .email("a")
+                    .phoneNumber("s")
+                    .birthDate(LocalDate.now())
+                    .oAuthProvider(OAuthProvider.KAKAO)
+                    .build();
             expectation.setUser(user);
             expectations.add(expectation);
         }

@@ -6,5 +6,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ExpectationPageResponseDto {
-    private String expectationBannerImgUrl;
+    private String bannerImgUrl;
 }

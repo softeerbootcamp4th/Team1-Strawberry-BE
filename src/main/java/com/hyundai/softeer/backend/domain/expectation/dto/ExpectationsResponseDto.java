@@ -10,5 +10,5 @@ import java.util.List;
 public class ExpectationsResponseDto {
 
     private int totalPages;
-    private List<ExpectationContentDto> expectationContents;
+    private List<ExpectationContentDto> comments;
 }

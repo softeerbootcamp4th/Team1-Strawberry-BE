@@ -25,7 +25,7 @@ public class DrawingLotteryService implements LotteryService {
     private final EventUserRepository eventUserRepository;
 
     @Transactional(readOnly = true)
-    public DrawingLotteryLandDto getDrawingLotteryLand(Long eventId) {
+    public DrawingLotteryLandDto getDrawingLotteryLand(long eventId) {
         List<SubEvent> events = subEventRepository.findByEventId(eventId);
         SubEvent drawing = findDrawingEvent(events);
 
@@ -45,8 +45,9 @@ public class DrawingLotteryService implements LotteryService {
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<RankDto> getRankList(Long subEventId, int rankCount) {
+    public List<RankDto> getRankList(long subEventId, int rankCount) {
         Pageable pageable = PageRequest.of(0, rankCount);
         List<RankDto> topNBySubEventId = eventUserRepository.findTopNBySubEventId(subEventId, pageable);
 
@@ -58,4 +59,6 @@ public class DrawingLotteryService implements LotteryService {
 
         return topNBySubEventId;
     }
+
+
 }

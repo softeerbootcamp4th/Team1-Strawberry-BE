@@ -2,17 +2,15 @@ package com.hyundai.softeer.backend.domain.expectation.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.springdoc.core.annotations.ParameterObject;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
+@NoArgsConstructor
 @ParameterObject
 public class ExpectationPageRequest {
-    @NotBlank
+    @NotNull
     @Parameter
     private Long eventId;
 }

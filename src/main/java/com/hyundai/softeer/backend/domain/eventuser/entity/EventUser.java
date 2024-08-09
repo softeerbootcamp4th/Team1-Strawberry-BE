@@ -26,6 +26,7 @@ public class EventUser {
 
     private LocalDateTime lastVisitedAt;
 
+    @Column(unique = true)
     private String sharedUrl;
 
     @Builder.Default
@@ -56,4 +57,8 @@ public class EventUser {
     @JoinColumn(name = "sub_event_id", nullable = false)
     private SubEvent subEvent;
 
+    public void updateSharedUrl(String sharedUrl) {
+        this.sharedUrl = sharedUrl;
+        this.shareBonusChance = 1;
+    }
 }

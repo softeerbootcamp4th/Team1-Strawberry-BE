@@ -9,5 +9,5 @@ import lombok.*;
 @Setter
 public class ExpectationContentDto {
     private final String name;
-    private final String expectationComment;
+    private final String comment;
 }
