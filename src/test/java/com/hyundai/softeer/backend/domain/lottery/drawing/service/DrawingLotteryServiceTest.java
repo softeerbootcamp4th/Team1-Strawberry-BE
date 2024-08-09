@@ -2,9 +2,12 @@ package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingInfoDtos;
+import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
@@ -27,6 +30,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -108,6 +112,41 @@ class DrawingLotteryServiceTest {
         assertThat(winners).hasSize(2);
         assertThat(winners.get(0).getUserId()).isEqualTo(1L);
         assertThat(winners.get(1).getUserId()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 드로잉 이벤트가 없는 경우")
+    void getDrawingGameInfo_DrawingNotFound() {
+        // Given
+        SubEventRequest subEventRequest = new SubEventRequest(1L);
+        List<DrawingLotteryEvent> drawingEvents = List.of();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+
+        // Then
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(subEventRequest));
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 성공")
+    void getDrawingGameInfo_success() {
+        // Given
+        SubEventRequest subEventRequest = new SubEventRequest(1L);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).build()
+        );
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+
+        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(subEventRequest);
+
+        // Then
+        assertThat(drawingGameInfos.getGameInfos()).hasSize(3);
+        assertThat(drawingGameInfos.getGameInfos().get(0).getSequence()).isEqualTo(1);
     }
 }
 

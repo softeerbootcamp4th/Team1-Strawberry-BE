@@ -35,6 +35,7 @@ jobs:
           echo "${{ secrets.APPLICATION_TEST_YML }}" > ${{ secrets.APPLICATION_TEST_PATH }}/application-test.yml
 
 
+
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build -Pspring.profiles.active=test
 
