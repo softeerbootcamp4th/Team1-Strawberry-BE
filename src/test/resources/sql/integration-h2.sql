@@ -53,6 +53,6 @@ VALUES (1, 1, 1, '기대됩니다.', '2024-07-01 10:00:00', '2024-07-01 10:00:00
 INSERT INTO event_users (id, is_write_expectation, last_visited_at, shared_url, shared_score, priority_Score,
                          lotto_Score,
                          game_Score, chance, expectation_Bonus_Chance, share_Bonus_Chance, user_id, sub_event_id)
-VALUES (1, 1, '2024-07-01 10:00:00', 'www.naver.com', 0, 0, 0, 0, 0, 0, 0, 1, 1),
-       (2, 1, '2024-07-02 10:00:00', 'www.naver.com', 0, 0, 0, 0, 0, 0, 0, 2, 1),
-       (3, 1, '2024-07-03 10:00:00', 'www.naver.com', 0, 0, 0, 0, 0, 0, 0, 3, 1);
+VALUES (1, 1, '2024-07-01 10:00:00', 'www.naver1.com', 0, 0, 0, 0, 0, 0, 0, 1, 1),
+       (2, 1, '2024-07-02 10:00:00', 'www.naver2.com', 0, 0, 0, 0, 0, 0, 0, 2, 1),
+       (3, 1, '2024-07-03 10:00:00', 'www.naver3.com', 0, 0, 0, 0, 0, 0, 0, 3, 1);
