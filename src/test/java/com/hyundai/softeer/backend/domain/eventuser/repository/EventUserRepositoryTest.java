@@ -3,6 +3,7 @@ package com.hyundai.softeer.backend.domain.eventuser.repository;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class EventUserRepositoryTest {
     @Autowired
     private EventUserRepository eventUserRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("findByUserIdAndSubEventId success")
@@ -106,4 +109,73 @@ class EventUserRepositoryTest {
         assertThat(result).isEqualTo(1000L);
     }
 
+    @Test
+    @DisplayName("findByEmailOrPhoneNumber 이메일로 유저 검색")
+        // Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
+    void findByEmailOrPhoneNumber_Email() {
+        // given
+
+        //when
+        List<User> result = userRepository.findByEmailOrPhoneNumber("sarang@naver.com", "010-1234-5678");
+
+        //then
+        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.get(0).getEmail()).isEqualTo("sarang@naver.com");
+    }
+
+    @Test
+    @DisplayName("findByEmailOrPhoneNumber 전화번호로 유저 검색")
+        // Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
+    void findByEmailOrPhoneNumber_PhoneNumber() {
+        // given
+
+        //when
+        List<User> result = userRepository.findByEmailOrPhoneNumber("empty@naver.com", "010-5432-4234");
+
+        //then
+        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.get(0).getEmail()).isEqualTo("sarang@naver.com");
+    }
+
+    @Test
+    @DisplayName("findByEmailOrPhoneNumber 이메일, 전화번호로 유저 검색")
+        // Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
+    void findByEmailOrPhoneNumber_EmailAndPhoneNumber() {
+        // given
+
+        //when
+        List<User> result = userRepository.findByEmailOrPhoneNumber("sarang@naver.com", "010-5432-4234");
+
+        //then
+        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.get(0).getEmail()).isEqualTo("sarang@naver.com");
+    }
+
+    @Test
+    @DisplayName("findByEmailOrPhoneNumber 이메일, 전화번호로 두 유저 검색")
+        // Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
+    void findByEmailOrPhoneNumber_EmailAndPhoneNumber_Other() {
+        // given
+
+        //when
+        List<User> result = userRepository.findByEmailOrPhoneNumber("sarang@naver.com", "010-1234-4234");
+
+        //then
+        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+
+    @Test
+    @DisplayName("findByEmailOrPhoneNumber Not Found")
+        // Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
+    void findByEmailOrPhoneNumber_NotFound() {
+        // given
+
+        //when
+        List<User> result = userRepository.findByEmailOrPhoneNumber("123@naver.com", "010-0000-4234");
+
+        //then
+        assertThat(result.isEmpty()).isTrue();
+    }
 }

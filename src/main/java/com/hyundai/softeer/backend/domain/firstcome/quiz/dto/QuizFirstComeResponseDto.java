@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class QuizResponseDto {
+public class QuizFirstComeResponseDto {
 
     @Schema(description = "퀴즈 이벤트 ID", example = "1")
     private Long subEventId;

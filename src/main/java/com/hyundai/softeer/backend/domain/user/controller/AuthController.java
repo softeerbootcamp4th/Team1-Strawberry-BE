@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.domain.user.controller;
 
+import com.hyundai.softeer.backend.domain.user.dto.CallBackRequest;
 import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.service.HyundaiOauthService;
 import com.hyundai.softeer.backend.domain.user.service.NaverOauthService;
@@ -11,9 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -65,10 +66,9 @@ public class AuthController {
             description = "로그인 성공 응답을 반환합니다.",
             useReturnTypeSchema = true)
     public BaseResponse<LoginResponseDto> callbackNaver(
-            @RequestParam String code,
-            @RequestParam String state
+            @Validated CallBackRequest callBackRequest
     ) throws IOException {
-        return new BaseResponse<>(naverOauthService.callback(code, state));
+        return new BaseResponse<>(naverOauthService.callback(callBackRequest));
     }
 
     @GetMapping("/hyundai")
@@ -109,7 +109,9 @@ public class AuthController {
             responseCode = "200",
             description = "로그인 성공 응답을 반환합니다.",
             useReturnTypeSchema = true)
-    public BaseResponse<LoginResponseDto> callbackHyundai(@RequestParam String code, @RequestParam String state) throws IOException {
-        return new BaseResponse<>(hyundaiOauthService.callback(code, state));
+    public BaseResponse<LoginResponseDto> callbackHyundai(
+            @Validated CallBackRequest callBackRequest
+    ) throws IOException {
+        return new BaseResponse<>(hyundaiOauthService.callback(callBackRequest));
     }
 }

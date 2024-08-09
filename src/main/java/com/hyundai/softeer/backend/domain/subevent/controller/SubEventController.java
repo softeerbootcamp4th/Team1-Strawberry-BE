@@ -75,6 +75,6 @@ public class SubEventController {
             throw new IllegalArgumentException("Invalid API Key");
         }
 
-        return new BaseResponse<>(subEventService.drawWinner(subEventRequest.getSubEventId()));
+        return new BaseResponse<>(subEventService.drawWinner(subEventRequest));
     }
 }

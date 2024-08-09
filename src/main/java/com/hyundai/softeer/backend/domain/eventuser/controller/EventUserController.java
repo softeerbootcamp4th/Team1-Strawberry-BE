@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/eventuser")
 public class EventUserController {
     private final EventUserService eventUserService;
+
+    @Value("${properties.event-id}")
+    private Long eventId;
 
     @GetMapping("/info")
     @Operation(summary = "이벤트 참가 유저 정보 조회", description = """

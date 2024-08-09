@@ -1,7 +1,7 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.controller;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.controller;
 
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.*;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service.QuizService;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.service.QuizFirstComeService;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import com.hyundai.softeer.backend.global.exception.ApiErrorResponse;
@@ -19,14 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class QuizController {
+public class QuizFirstComeController {
 
-    private final QuizService quizService;
+    private final QuizFirstComeService quizFirstComeService;
 
     @Value("${properties.event-id}")
     private Long eventId;
@@ -49,11 +52,11 @@ public class QuizController {
             @ApiResponse(responseCode = "401", description = "로그인x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"로그인이 되지 않았습니다.\",\"status\":401}"))}),
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/fisrtcome/quiz/info")
-    public BaseResponse<QuizResponseDto> getQuiz(
-            @ModelAttribute @Valid QuizRequest quizRequest
+    @GetMapping("/api/v1/firstcome/quiz/info")
+    public BaseResponse<QuizFirstComeResponseDto> getQuiz(
+            @Valid QuizFirstComeRequest quizFirstComeRequest
     ) {
-        QuizResponseDto quizResponse = quizService.getQuiz(quizRequest);
+        QuizFirstComeResponseDto quizResponse = quizFirstComeService.getQuiz(quizFirstComeRequest);
 
         return new BaseResponse<>(quizResponse);
     }
@@ -76,9 +79,9 @@ public class QuizController {
             @ApiResponse(responseCode = "400", description = "GET 요청의 query parameter가 숫자가 아니거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/fisrtcome/quiz")
-    public BaseResponse<QuizLandResponseDto> getQuizLandingPage() {
-        QuizLandResponseDto getQuizResponseDto = quizService.getQuizLand(eventId);
+    @GetMapping("/api/v1/firstcome/quiz/land")
+    public BaseResponse<QuizFirstComeLandResponseDto> getQuizLandingPage() {
+        QuizFirstComeLandResponseDto getQuizResponseDto = quizFirstComeService.getQuizLand(eventId);
         return new BaseResponse<>(getQuizResponseDto);
     }
 
@@ -101,15 +104,15 @@ public class QuizController {
                     useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @PostMapping("/api/v1/fisrtcome/quiz")
-    public BaseResponse<QuizSubmitResponseDto> quizSubmit(
-            @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
+    @PostMapping("/api/v1/firstcome/quiz")
+    public BaseResponse<QuizFirstComeSubmitResponseDto> quizSubmit(
+            @RequestBody @Validated QuizFirstComeSubmitRequest quizFirstComeSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
     ) {
-        QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);
+        QuizFirstComeSubmitResponseDto quizFirstComeSubmitResponseDto = quizFirstComeService.quizSubmit(quizFirstComeSubmitRequest, user);
 
-        return BaseResponse.<QuizSubmitResponseDto>builder()
-                .data(quizSubmitResponseDto)
+        return BaseResponse.<QuizFirstComeSubmitResponseDto>builder()
+                .data(quizFirstComeSubmitResponseDto)
                 .status(HttpStatus.CREATED.value())
                 .message(HttpStatus.CREATED.getReasonPhrase())
                 .build();
