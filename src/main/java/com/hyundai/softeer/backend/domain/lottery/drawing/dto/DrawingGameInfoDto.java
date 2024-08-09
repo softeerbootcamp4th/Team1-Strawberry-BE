@@ -25,6 +25,8 @@ public class DrawingGameInfoDto {
     @Schema(example = "gameMsg")
     private String gameMsg;
 
+    private PositionDto startPosition;
+
     public static DrawingGameInfoDto fromEntity(DrawingLotteryEvent drawingLotteryEvent) {
         return DrawingGameInfoDto.builder()
                 .contourImgUrl(drawingLotteryEvent.getContourImgUrl())
@@ -32,6 +34,7 @@ public class DrawingGameInfoDto {
                 .sequence(drawingLotteryEvent.getSequence())
                 .onBoardingMsg(drawingLotteryEvent.getOnBoardingDesc())
                 .gameMsg(drawingLotteryEvent.getGameDesc())
+                .startPosition(new PositionDto(drawingLotteryEvent.getStartPosX(), drawingLotteryEvent.getStartPosY()))
                 .build();
     }
 }

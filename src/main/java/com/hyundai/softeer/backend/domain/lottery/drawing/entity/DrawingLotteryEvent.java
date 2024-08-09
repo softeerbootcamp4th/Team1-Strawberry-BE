@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.entity;
 
 import com.hyundai.softeer.backend.domain.lottery.entity.LotteryEvent;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -26,4 +27,10 @@ public class DrawingLotteryEvent extends LotteryEvent {
     private String onBoardingDesc;
 
     private String gameDesc;
+
+    @Column(name = "start_pos_x")
+    private Double startPosX;
+
+    @Column(name = "start_pos_y")
+    private Double startPosY;
 }
