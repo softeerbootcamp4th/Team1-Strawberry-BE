@@ -1,7 +1,9 @@
 package com.hyundai.softeer.backend.global.exception;
 
-public class UsernameNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UsernameNotFoundException extends BaseException {
     public UsernameNotFoundException(String email) {
-        super(email + " not found");
+        super(HttpStatus.UNAUTHORIZED, email + " not found");
     }
 }
