@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,7 +54,7 @@ public class QuizFirstComeController {
     })
     @GetMapping("/api/v1/firstcome/quiz/info")
     public BaseResponse<QuizFirstComeResponseDto> getQuiz(
-            @ModelAttribute @Valid QuizFirstComeRequest quizFirstComeRequest
+            @Valid QuizFirstComeRequest quizFirstComeRequest
     ) {
         QuizFirstComeResponseDto quizResponse = quizFirstComeService.getQuiz(quizFirstComeRequest);
 

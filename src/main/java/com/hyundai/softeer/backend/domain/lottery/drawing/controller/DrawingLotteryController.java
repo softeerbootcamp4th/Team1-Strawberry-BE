@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +32,11 @@ import java.util.List;
 @RequestMapping("/api/v1/lottery/drawing")
 public class DrawingLotteryController {
     public static final int RANK_COUNT = 20;
+
     private final DrawingLotteryService drawingLotteryService;
-    private final EventService eventService;
+
+    @Value("${properties.event-id}")
+    private Long eventId;
 
     @GetMapping("/land")
     @Tag(name = "Drawing Lottery")
@@ -51,10 +55,8 @@ public class DrawingLotteryController {
             @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 랜딩 페이지 조회 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
-    public BaseResponse<DrawingLotteryLandDto> getDrawingLandingPage(
-            @Validated EventRequest eventRequest
-    ) {
-        return new BaseResponse<>(drawingLotteryService.getDrawingLotteryLand(eventRequest.getEventId()));
+    public BaseResponse<DrawingLotteryLandDto> getDrawingLandingPage() {
+        return new BaseResponse<>(drawingLotteryService.getDrawingLotteryLand(eventId));
     }
 
     @GetMapping("/rank")
@@ -77,7 +79,7 @@ public class DrawingLotteryController {
     public BaseResponse<List<RankDto>> getRankList(
             @Validated SubEventRequest subEventRequest
     ) {
-        return new BaseResponse<>(drawingLotteryService.getRankList(subEventRequest.getSubEventId(), RANK_COUNT));
+        return new BaseResponse<>(drawingLotteryService.getRankList(subEventRequest, RANK_COUNT));
     }
 
     @GetMapping("")

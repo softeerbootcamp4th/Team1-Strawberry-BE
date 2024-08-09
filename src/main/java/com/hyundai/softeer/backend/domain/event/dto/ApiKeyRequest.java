@@ -17,9 +17,6 @@ public class ApiKeyRequest {
     private String apiKey;
 
     public boolean validateApiKey(String apiKeySecret) {
-        if (apiKey.equals(apiKeySecret)) {
-            return true;
-        }
-        return false;
+        return apiKey.equals(apiKeySecret);
     }
 }

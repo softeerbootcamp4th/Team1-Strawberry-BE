@@ -7,6 +7,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLottery
 import com.hyundai.softeer.backend.domain.lottery.exception.AlreadyDrawedException;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
@@ -35,7 +36,8 @@ public class SubEventService {
     private final DrawingLotteryService drawingLotteryService;
 
     @Transactional
-    public List<WinnerCandidate> drawWinner(long subEventId) {
+    public List<WinnerCandidate> drawWinner(SubEventRequest subEventRequest) {
+        Long subEventId = subEventRequest.getSubEventId();
         SubEvent subEvent = validateSubEventId(subEventId);
 
         // 당첨자 정보 파싱

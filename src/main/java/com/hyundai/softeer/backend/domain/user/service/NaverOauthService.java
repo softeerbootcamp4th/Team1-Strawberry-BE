@@ -3,6 +3,7 @@ package com.hyundai.softeer.backend.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hyundai.softeer.backend.domain.user.dto.CallBackRequest;
 import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.dto.NaverUserInfo;
 import com.hyundai.softeer.backend.domain.user.dto.UserInfoDto;
@@ -61,7 +62,10 @@ public class NaverOauthService {
     }
 
 
-    public LoginResponseDto callback(String code, String state) throws JsonProcessingException {
+    public LoginResponseDto callback(CallBackRequest callBackRequest) throws JsonProcessingException {
+        String code = callBackRequest.getCode();
+        String state = callBackRequest.getState();
+
         String naverAccessToken = requestAccessToken(code, state);
         NaverUserInfo userInfo = getNaverUserInfo(naverAccessToken);
         List<User> user = userRepository.findByEmailOrPhoneNumber(userInfo.getEmail(), userInfo.getMobile());

@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.eventuser.controller;
 
 import com.hyundai.softeer.backend.domain.eventuser.dto.RedirectUrlDto;
+import com.hyundai.softeer.backend.domain.eventuser.dto.SharedUrlRequest;
 import com.hyundai.softeer.backend.domain.eventuser.service.EventUserService;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +40,7 @@ public class SharedUrlController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 참가자", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"잘못된 공유 주소입니다.\",\"status\":404}"))}),
     })
     public BaseResponse<RedirectUrlDto> getSharedUrl(
-            @PathVariable String sharedUrl
+            @PathVariable @Validated SharedUrlRequest sharedUrl
     ) {
         return new BaseResponse<>(eventUserService.getRedirectUrl(sharedUrl));
     }

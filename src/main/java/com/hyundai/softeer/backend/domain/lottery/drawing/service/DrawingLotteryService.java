@@ -53,9 +53,9 @@ public class DrawingLotteryService implements LotteryService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<RankDto> getRankList(long subEventId, int rankCount) {
+    public List<RankDto> getRankList(SubEventRequest subEventRequest, int rankCount) {
         Pageable pageable = PageRequest.of(0, rankCount);
-        List<RankDto> topNBySubEventId = eventUserRepository.findTopNBySubEventId(subEventId, pageable);
+        List<RankDto> topNBySubEventId = eventUserRepository.findTopNBySubEventId(subEventRequest.getSubEventId(), pageable);
 
         for (int i = 0; i < topNBySubEventId.size(); i++) {
             topNBySubEventId.get(i).setRank(i + 1);
