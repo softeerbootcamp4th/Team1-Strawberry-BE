@@ -36,7 +36,7 @@ jobs:
 
 
       - name: Build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew clean build -Pspring.profiles.active=test
 
       - name: AWS credential
         uses: aws-actions/configure-aws-credentials@v4
