@@ -59,7 +59,7 @@ VALUES (1, 1, '2024-07-01 10:00:00', 'www.naver1.com', 0, 0, 0, 0, 0, 0, 0, 1, 1
        (2, 1, '2024-07-02 10:00:00', 'www.naver2.com', 0, 0, 0, 0, 0, 0, 0, 2, 1),
        (3, 1, '2024-07-03 10:00:00', 'www.naver3.com', 0, 0, 0, 0, 0, 0, 0, 3, 1);
 
-INSERT INTO drawing_lottery_events (id, sub_event_id, alias, sequence, contour_img_url, img_url, draw_points_json_url)
-VALUES (1, 4, '1차 드로잉', 1, 'www.contour1.com', 'www.img1.com', 'www.draw1.com'),
-       (2, 4, '2차 드로잉', 2, 'www.contour2.com', 'www.img2.com', 'www.draw2.com'),
-       (3, 4, '3차 드로잉', 3, 'www.contour3.com', 'www.img3.com', 'www.draw3.com');
+INSERT INTO drawing_lottery_events (id, sub_event_id, alias, sequence, contour_img_url, img_url, draw_points_json_url, start_pos_x, start_pos_y)
+VALUES (1, 4, '1차 드로잉', 1, 'www.contour1.com', 'www.img1.com', 'www.draw1.com', 1.0, 3.5),
+       (2, 4, '2차 드로잉', 2, 'www.contour2.com', 'www.img2.com', 'www.draw2.com', 5.5, 4.0),
+       (3, 4, '3차 드로잉', 3, 'www.contour3.com', 'www.img3.com', 'www.draw3.com', 3.5, 2.0);
