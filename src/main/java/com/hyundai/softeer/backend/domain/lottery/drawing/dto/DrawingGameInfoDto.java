@@ -19,11 +19,19 @@ public class DrawingGameInfoDto {
     @Schema(example = "1")
     private Integer sequence;
 
+    @Schema(example = "onBoardingMsg")
+    private String onBoardingMsg;
+
+    @Schema(example = "gameMsg")
+    private String gameMsg;
+
     public static DrawingGameInfoDto fromEntity(DrawingLotteryEvent drawingLotteryEvent) {
         return DrawingGameInfoDto.builder()
                 .contourImgUrl(drawingLotteryEvent.getContourImgUrl())
                 .imgUrl(drawingLotteryEvent.getImgUrl())
                 .sequence(drawingLotteryEvent.getSequence())
+                .onBoardingMsg(drawingLotteryEvent.getOnBoardingDesc())
+                .gameMsg(drawingLotteryEvent.getGameDesc())
                 .build();
     }
 }

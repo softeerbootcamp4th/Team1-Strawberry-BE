@@ -22,4 +22,8 @@ public class DrawingLotteryEvent extends LotteryEvent {
     private Integer sequence;
 
     private String alias;
+
+    private String onBoardingDesc;
+
+    private String gameDesc;
 }
