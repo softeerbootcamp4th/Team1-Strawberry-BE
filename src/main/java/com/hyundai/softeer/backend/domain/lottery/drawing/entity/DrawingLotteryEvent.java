@@ -18,4 +18,8 @@ public class DrawingLotteryEvent extends LotteryEvent {
     private String contourImgUrl;
 
     private String imgUrl;
+
+    private Integer sequence;
+
+    private String alias;
 }
