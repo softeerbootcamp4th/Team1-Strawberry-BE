@@ -1,12 +1,12 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.service;
 
 import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizLandResponseDto;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizRequest;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.QuizResponseDto;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity.Quiz;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.repository.QuizRepository;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeLandResponseDto;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeRequest;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeResponseDto;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
@@ -29,16 +29,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class QuizServiceTest {
+class QuizFirstComeServiceTest {
 
     @Autowired
-    QuizService quizService;
+    QuizFirstComeService quizFirstComeService;
 
     @MockBean
     SubEventRepository subEventRepository;
 
     @MockBean
-    QuizRepository quizRepository;
+    QuizFirstComeRepository quizFirstComeRepository;
 
     @MockBean
     EventRepository eventRepository;
@@ -50,9 +50,9 @@ class QuizServiceTest {
     @DisplayName("quiz 테스트: 퀴즈를 받아오는데 성공한 경우")
     void getQuizSuccessTest() {
         // given
-        QuizRequest quizRequest = new QuizRequest(1L);
+        QuizFirstComeRequest quizFirstComeRequest = new QuizFirstComeRequest(1L);
 
-        Quiz quiz1 = quizGenerator(1L);
+        QuizFirstCome quizFirstCome1 = quizGenerator(1L);
         SubEvent subEvent1 = SubEvent.subEventGenerator(1L);
 
         Instant fixedInstant = Instant.parse("2024-06-25T00:00:00Z");
@@ -60,26 +60,26 @@ class QuizServiceTest {
         when(clock.instant()).thenReturn(fixedInstant);
         when(clock.getZone()).thenReturn(fixedClock.getZone());
 
-        when(quizRepository.findBySubEventId(any(Long.class))).thenReturn(Optional.of(quiz1));
+        when(quizFirstComeRepository.findBySubEventId(any(Long.class))).thenReturn(Optional.of(quizFirstCome1));
         when(subEventRepository.findById(any(Long.class))).thenReturn(Optional.of(subEvent1));
 
         // when
-        QuizResponseDto quizResponseDto = quizService.getQuiz(quizRequest);
+        QuizFirstComeResponseDto quizFirstComeResponseDto = quizFirstComeService.getQuiz(quizFirstComeRequest);
 
         // then
-        assertThat(quizResponseDto).isNotNull();
-        assertThat(quizResponseDto.getCarInfo()).isEqualTo("산타페는 어쩌구저쩌구1");
-        assertThat(quizResponseDto.getInitConsonant()).isEqualTo("ㅅㅇㅈㅇ1");
-        assertThat(quizResponseDto.getSubEventId()).isEqualTo(1L);
+        assertThat(quizFirstComeResponseDto).isNotNull();
+        assertThat(quizFirstComeResponseDto.getCarInfo()).isEqualTo("산타페는 어쩌구저쩌구1");
+        assertThat(quizFirstComeResponseDto.getInitConsonant()).isEqualTo("ㅅㅇㅈㅇ1");
+        assertThat(quizFirstComeResponseDto.getSubEventId()).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("quiz 테스트: 이벤트 시간이 아닌 경우")
     void getQuizNotWithinEventTest() {
         // given
-        QuizRequest quizRequest = new QuizRequest(1L);
+        QuizFirstComeRequest quizFirstComeRequest = new QuizFirstComeRequest(1L);
 
-        Quiz quiz1 = quizGenerator(1L);
+        QuizFirstCome quizFirstCome1 = quizGenerator(1L);
         SubEvent subEvent1 = SubEvent.subEventGenerator(1L);
 
         Instant fixedInstant = Instant.parse("2024-07-03T00:00:00Z");
@@ -87,12 +87,12 @@ class QuizServiceTest {
         when(clock.instant()).thenReturn(fixedInstant);
         when(clock.getZone()).thenReturn(fixedClock.getZone());
 
-        when(quizRepository.findBySubEventId(any(Long.class))).thenReturn(Optional.of(quiz1));
+        when(quizFirstComeRepository.findBySubEventId(any(Long.class))).thenReturn(Optional.of(quizFirstCome1));
         when(subEventRepository.findById(any(Long.class))).thenReturn(Optional.of(subEvent1));
 
         // when
         Assertions.assertThatThrownBy(() -> {
-            quizService.getQuiz(quizRequest);
+            quizFirstComeService.getQuiz(quizFirstComeRequest);
         }).isInstanceOf(SubEventNotWithinPeriodException.class);
     }
 
@@ -109,23 +109,23 @@ class QuizServiceTest {
 
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(Event.testEventGenerator(eventId)));
         when(subEventRepository.findByEventIdAndExecuteType(any(Long.class), any(SubEventExecuteType.class))).thenReturn(SubEvent.subEventsGenerator(3L));
-        when(quizRepository.findBySubEventId(any(Long.class))).thenReturn(Optional.ofNullable(quizGenerator(1L)));
+        when(quizFirstComeRepository.findBySubEventId(any(Long.class))).thenReturn(Optional.ofNullable(quizGenerator(1L)));
 
         // when
-        QuizLandResponseDto quizLandResponseDto = quizService.getQuizLand(eventId);
+        QuizFirstComeLandResponseDto quizFirstComeLandResponseDto = quizFirstComeService.getQuizLand(eventId);
 
         // then
-        assertThat(quizLandResponseDto.getLastQuizNumber()).isEqualTo(3);
-        assertThat(quizLandResponseDto.getHint()).isEqualTo("ㅎㅇ1");
-        assertThat(quizLandResponseDto.isValid()).isTrue();
+        assertThat(quizFirstComeLandResponseDto.getLastQuizNumber()).isEqualTo(3);
+        assertThat(quizFirstComeLandResponseDto.getHint()).isEqualTo("ㅎㅇ1");
+        assertThat(quizFirstComeLandResponseDto.isValid()).isTrue();
     }
 
     private Prize prizeGenerator(long i) {
         return Prize.builder().price((int) (1000 + i)).id((Long) i).prizeImgUrl("www.prize" + i + ".com").productName("python" + i).build();
     }
 
-    private Quiz quizGenerator(long i) {
-        return Quiz.builder()
+    private QuizFirstCome quizGenerator(long i) {
+        return QuizFirstCome.builder()
                 .sequence((int) i)
                 .overview("산타페는 일상의 머시기" + i)
                 .problem("산타페의 연비는?")

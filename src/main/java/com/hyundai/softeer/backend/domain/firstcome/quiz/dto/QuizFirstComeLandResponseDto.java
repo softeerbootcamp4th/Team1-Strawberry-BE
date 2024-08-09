@@ -1,6 +1,5 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.dto;
 
-import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.util.Map;
 
 @Builder
 @Getter
-public class QuizLandResponseDto {
+public class QuizFirstComeLandResponseDto {
 
     @Schema(description = "이벤트 유효 여부", example = "true")
     private boolean valid;
@@ -56,9 +55,9 @@ public class QuizLandResponseDto {
     private int winners;
 
 
-    public static QuizLandResponseDto eventNotValid() {
-       return QuizLandResponseDto.builder()
-               .valid(false)
-               .build();
+    public static QuizFirstComeLandResponseDto eventNotValid() {
+        return QuizFirstComeLandResponseDto.builder()
+                .valid(false)
+                .build();
     }
 }

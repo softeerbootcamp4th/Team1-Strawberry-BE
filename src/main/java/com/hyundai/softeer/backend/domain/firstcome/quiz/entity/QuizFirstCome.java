@@ -1,12 +1,11 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.entity;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.entity;
 
-import com.hyundai.softeer.backend.domain.firstcomeevent.entity.FirstComeEvent;
+import com.hyundai.softeer.backend.domain.firstcome.entity.FirstComeEvent;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Quiz extends FirstComeEvent {
+public class QuizFirstCome extends FirstComeEvent {
 
     private Integer sequence;
 

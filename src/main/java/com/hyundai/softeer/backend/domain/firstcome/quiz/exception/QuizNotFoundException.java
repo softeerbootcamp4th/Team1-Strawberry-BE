@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.exception;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.exception;
 
 import com.hyundai.softeer.backend.global.exception.BaseException;
 import org.springframework.http.HttpStatus;

@@ -1,7 +1,7 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.controller;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.controller;
 
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto.*;
-import com.hyundai.softeer.backend.domain.firstcomeevent.quiz.service.QuizService;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.service.QuizFirstComeService;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import com.hyundai.softeer.backend.global.exception.ApiErrorResponse;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class QuizController {
+public class QuizFirstComeController {
 
-    private final QuizService quizService;
+    private final QuizFirstComeService quizFirstComeService;
 
     @Value("${properties.event-id}")
     private Long eventId;
@@ -50,10 +50,10 @@ public class QuizController {
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/api/v1/firstcome/quiz/info")
-    public BaseResponse<QuizResponseDto> getQuiz(
-            @ModelAttribute @Valid QuizRequest quizRequest
+    public BaseResponse<QuizFirstComeResponseDto> getQuiz(
+            @ModelAttribute @Valid QuizFirstComeRequest quizFirstComeRequest
     ) {
-        QuizResponseDto quizResponse = quizService.getQuiz(quizRequest);
+        QuizFirstComeResponseDto quizResponse = quizFirstComeService.getQuiz(quizFirstComeRequest);
 
         return new BaseResponse<>(quizResponse);
     }
@@ -77,8 +77,8 @@ public class QuizController {
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/api/v1/firstcome/quiz")
-    public BaseResponse<QuizLandResponseDto> getQuizLandingPage() {
-        QuizLandResponseDto getQuizResponseDto = quizService.getQuizLand(eventId);
+    public BaseResponse<QuizFirstComeLandResponseDto> getQuizLandingPage() {
+        QuizFirstComeLandResponseDto getQuizResponseDto = quizFirstComeService.getQuizLand(eventId);
         return new BaseResponse<>(getQuizResponseDto);
     }
 
@@ -102,14 +102,14 @@ public class QuizController {
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
     @PostMapping("/api/v1/firstcome/quiz")
-    public BaseResponse<QuizSubmitResponseDto> quizSubmit(
-            @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
+    public BaseResponse<QuizFirstComeSubmitResponseDto> quizSubmit(
+            @RequestBody @Validated QuizFirstComeSubmitRequest quizFirstComeSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
     ) {
-        QuizSubmitResponseDto quizSubmitResponseDto = quizService.quizSubmit(quizSubmitRequest, user);
+        QuizFirstComeSubmitResponseDto quizFirstComeSubmitResponseDto = quizFirstComeService.quizSubmit(quizFirstComeSubmitRequest, user);
 
-        return BaseResponse.<QuizSubmitResponseDto>builder()
-                .data(quizSubmitResponseDto)
+        return BaseResponse.<QuizFirstComeSubmitResponseDto>builder()
+                .data(quizFirstComeSubmitResponseDto)
                 .status(HttpStatus.CREATED.value())
                 .message(HttpStatus.CREATED.getReasonPhrase())
                 .build();

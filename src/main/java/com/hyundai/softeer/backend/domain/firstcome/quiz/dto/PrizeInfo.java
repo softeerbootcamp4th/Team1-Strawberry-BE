@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.firstcomeevent.quiz.dto;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
