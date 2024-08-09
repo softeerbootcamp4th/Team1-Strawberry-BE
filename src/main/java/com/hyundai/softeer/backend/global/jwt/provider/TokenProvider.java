@@ -50,15 +50,15 @@ public class TokenProvider {
                     .parseClaimsJws(accessToken)
                     .getBody();
         } catch (SecurityException | MalformedJwtException e) {
-            throw new IllegalArgumentException("잘못된 JWT 서명입니다.");
+            throw new JwtException("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            throw new IllegalArgumentException("만료된 JWT 토큰입니다.");
+            throw new JwtException("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            throw new IllegalArgumentException("지원되지 않는 JWT 토큰입니다.");
+            throw new JwtException("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("JWT 토큰이 잘못되었습니다.");
+            throw new JwtException("JWT 토큰이 잘못되었습니다.");
         } catch (Exception e) {
-            throw new IllegalArgumentException("JWT 파싱 중 오류가 발생했습니다.");
+            throw new JwtException("JWT 파싱 중 오류가 발생했습니다.");
         }
     }
 
