@@ -7,6 +7,7 @@ import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.dto.NaverUserInfo;
 import com.hyundai.softeer.backend.domain.user.dto.UserInfoDto;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.domain.user.exception.DuplicateUserException;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import com.hyundai.softeer.backend.global.jwt.provider.NaverTokens;
@@ -25,8 +26,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,12 +64,15 @@ public class NaverOauthService {
     public LoginResponseDto callback(String code, String state) throws JsonProcessingException {
         String naverAccessToken = requestAccessToken(code, state);
         NaverUserInfo userInfo = getNaverUserInfo(naverAccessToken);
-        Optional<User> user = userRepository.findByEmail(userInfo.getEmail());
+        List<User> user = userRepository.findByEmailOrPhoneNumber(userInfo.getEmail(), userInfo.getMobile());
 
         // 등록된 회원이라면 로그인처리
-        if (user.isPresent()) {
+        if (!user.isEmpty()) {
+            if (user.size() > 1) {
+                throw new DuplicateUserException();
+            }
             return LoginResponseDto.builder()
-                    .user(UserInfoDto.fromEntity(user.get()))
+                    .user(UserInfoDto.fromEntity(user.get(0)))
                     .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))
                     .build();
         }
