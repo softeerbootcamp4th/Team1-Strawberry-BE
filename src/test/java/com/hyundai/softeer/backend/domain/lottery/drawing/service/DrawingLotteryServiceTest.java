@@ -134,9 +134,9 @@ class DrawingLotteryServiceTest {
         // Given
         SubEventRequest subEventRequest = new SubEventRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
-                DrawingLotteryEvent.builder().id(1L).sequence(1).build(),
-                DrawingLotteryEvent.builder().id(2L).sequence(2).build(),
-                DrawingLotteryEvent.builder().id(3L).sequence(3).build()
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
         );
 
         // When
