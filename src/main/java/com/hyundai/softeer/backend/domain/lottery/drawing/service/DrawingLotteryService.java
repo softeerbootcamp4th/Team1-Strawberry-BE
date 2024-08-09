@@ -9,6 +9,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFo
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.lottery.service.LotteryService;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
@@ -65,8 +66,8 @@ public class DrawingLotteryService implements LotteryService {
         return topNBySubEventId;
     }
 
-    public DrawingInfoDtos getDrawingGameInfo(long subEventId) {
-        List<DrawingLotteryEvent> drawingEvents = drawingLotteryRepository.findBySubEventId(subEventId);
+    public DrawingInfoDtos getDrawingGameInfo(SubEventRequest subEventRequest) {
+        List<DrawingLotteryEvent> drawingEvents = drawingLotteryRepository.findBySubEventId(subEventRequest.getSubEventId());
 
         if (drawingEvents.isEmpty()) {
             throw new DrawingNotFoundException();

@@ -7,6 +7,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryE
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
@@ -117,21 +118,21 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 드로잉 이벤트가 없는 경우")
     void getDrawingGameInfo_DrawingNotFound() {
         // Given
-        Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of();
 
         // When
         when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(subEventId));
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(subEventRequest));
     }
 
     @Test
     @DisplayName("드로잉 이벤트 게임 정보 조회 성공")
     void getDrawingGameInfo_success() {
         // Given
-        Long subEventId = 1L;
+        SubEventRequest subEventRequest = new SubEventRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).build(),
@@ -141,7 +142,7 @@ class DrawingLotteryServiceTest {
         // When
         when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
 
-        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(subEventId);
+        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(subEventRequest);
 
         // Then
         assertThat(drawingGameInfos.getGameInfos()).hasSize(3);
