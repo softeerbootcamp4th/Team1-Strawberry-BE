@@ -49,7 +49,7 @@ public class QuizController {
             @ApiResponse(responseCode = "401", description = "로그인x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"로그인이 되지 않았습니다.\",\"status\":401}"))}),
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/fisrtcome/quiz/info")
+    @GetMapping("/api/v1/firstcome/quiz/info")
     public BaseResponse<QuizResponseDto> getQuiz(
             @ModelAttribute @Valid QuizRequest quizRequest
     ) {
@@ -76,7 +76,7 @@ public class QuizController {
             @ApiResponse(responseCode = "400", description = "GET 요청의 query parameter가 숫자가 아니거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/fisrtcome/quiz")
+    @GetMapping("/api/v1/firstcome/quiz")
     public BaseResponse<QuizLandResponseDto> getQuizLandingPage() {
         QuizLandResponseDto getQuizResponseDto = quizService.getQuizLand(eventId);
         return new BaseResponse<>(getQuizResponseDto);
@@ -101,7 +101,7 @@ public class QuizController {
                     useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @PostMapping("/api/v1/fisrtcome/quiz")
+    @PostMapping("/api/v1/firstcome/quiz")
     public BaseResponse<QuizSubmitResponseDto> quizSubmit(
             @RequestBody @Validated QuizSubmitRequest quizSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
