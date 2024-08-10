@@ -5,12 +5,16 @@ import com.hyundai.softeer.backend.global.constant.ExecuteEnvironment;
 import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.context.annotation.Profile;
 
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Builder
@@ -29,15 +33,35 @@ public class Event extends BaseEntity {
     private Car car;
 
     private String eventName;
+
     private LocalDateTime startAt;
+
     private LocalDateTime endAt;
+
     private LocalDateTime eventRegisteredAt;
+
     private Integer winnerCount;
+
     private Boolean eventStatus;
+
     private String expectationBannerImgUrl;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> eventImgUrls;
 
     @Profile(ExecuteEnvironment.TEST)
     public static Event testEventGenerator(Long i) {
+        Map<String, Object> imgUrls = new HashMap<>() {{
+            put("mainImgUrl", "www.mainimg.com");
+            put("scrolledImgUrl", "www.scroll.com");
+            put("eventInfoImg", "www.eventinfo.com");
+            put("quizMainImg", "www.quizmain.com");
+            put("quizPrizeImg", "www.qprize.com");
+            put("drawingMainImg", "www.drawingmain.com");
+            put("drawingPrizeImg", "www.drawingprize.com");
+        }};
+
         return Event.builder()
                 .id(i)
                 .car(null)
@@ -48,6 +72,7 @@ public class Event extends BaseEntity {
                 .winnerCount(1)
                 .eventStatus(true)
                 .expectationBannerImgUrl("www.expect" + i + "com")
+                .eventImgUrls(imgUrls)
                 .build();
     }
 
