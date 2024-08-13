@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,8 +46,8 @@ class MainServiceTest {
         // given
         long eventId = 1L;
 
-        when(eventRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(Event.testEventGenerator(eventId)));
-        when(subEventRepository.findByEventId(any(Long.class))).thenReturn(SubEvent.subEventsGenerator(3L));
+        when(eventRepository.findById(anyLong())).thenReturn(Optional.ofNullable(Event.testEventGenerator(eventId)));
+        when(subEventRepository.findByEventId(anyLong())).thenReturn(SubEvent.subEventsGenerator(3L));
         when(dateUtil.findClosestSubEvent(any(List.class))).thenReturn(SubEvent.subEventGenerator(1L));
         when(dateUtil.startBetweenCurrentDiff(any(SubEvent.class))).thenReturn(1000L);
 
@@ -66,8 +67,8 @@ class MainServiceTest {
         // given
         long eventId = 2L;
 
-        when(eventRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(Event.testEventGenerator(eventId)));
-        when(subEventRepository.findByEventId(any(Long.class))).thenReturn(SubEvent.subEventsGenerator(3L));
+        when(eventRepository.findById(anyLong())).thenReturn(Optional.ofNullable(Event.testEventGenerator(eventId)));
+        when(subEventRepository.findByEventId(anyLong())).thenReturn(SubEvent.subEventsGenerator(3L));
         when(dateUtil.findClosestSubEvent(any(List.class))).thenReturn(null);
 
         // when
@@ -81,7 +82,7 @@ class MainServiceTest {
         // given
         long eventId = 2L;
 
-        when(eventRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+        when(eventRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // when
         Assertions.assertThatThrownBy(() -> mainService.mainLand(eventId))
