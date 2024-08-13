@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.main.dto;
+package com.hyundai.softeer.backend.domain.event.dto;
 
 import lombok.Builder;
 import lombok.Getter;

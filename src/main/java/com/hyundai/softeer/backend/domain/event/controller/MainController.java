@@ -1,7 +1,7 @@
-package com.hyundai.softeer.backend.domain.main.controller;
+package com.hyundai.softeer.backend.domain.event.controller;
 
-import com.hyundai.softeer.backend.domain.main.dto.MainLandDto;
-import com.hyundai.softeer.backend.domain.main.service.MainService;
+import com.hyundai.softeer.backend.domain.event.dto.MainLandDto;
+import com.hyundai.softeer.backend.domain.event.service.MainService;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import com.hyundai.softeer.backend.global.exception.ApiErrorResponse;
 
