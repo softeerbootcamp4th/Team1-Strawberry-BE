@@ -38,8 +38,6 @@ public class Event extends BaseEntity {
 
     private LocalDateTime endAt;
 
-    private LocalDateTime eventRegisteredAt;
-
     private Integer winnerCount;
 
     private Boolean eventStatus;
@@ -68,7 +66,6 @@ public class Event extends BaseEntity {
                 .eventName("산타페" + i)
                 .startAt(LocalDateTime.of(2024,6,24,0,0,0).plusHours(i))
                 .endAt(LocalDateTime.of(2024,6,26,0,0,0).plusHours(i))
-                .eventRegisteredAt(LocalDateTime.of(2024,6,1,0,0,0).plusHours(i))
                 .winnerCount(1)
                 .eventStatus(true)
                 .expectationBannerImgUrl("www.expect" + i + "com")

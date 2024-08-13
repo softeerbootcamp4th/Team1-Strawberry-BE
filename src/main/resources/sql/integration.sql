@@ -11,8 +11,8 @@ value ("alswnssl0528@naver.com", "김민준", "010-6833-4234", "1998-05-28", 0),
 INSERT INTO cars (id, brand_name, car_name_eng, car_name_kor, model_line, price, release_date)
 values (1, 0, "santafe", "산타페", 0, 30000000, "2024-07-01 10:00:00");
 
-INSERT INTO events (id, end_at, event_name, event_registered_at, event_status, start_at, winner_count, car_id, event_img_urls)
-VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', '2024-06-28 00:00:00', 0, '2024-06-25 10:00:00', 10, 1, JSON_OBJECT(
+INSERT INTO events (id, end_at, event_name, event_status, start_at, winner_count, car_id, event_img_urls)
+VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10, 1, JSON_OBJECT(
         "mainImgUrl", "www.mainimg.com",
         "scrolledImgUrl", "www.scroll.com",
         "eventInfoImg", "www.eventinfo.com",
