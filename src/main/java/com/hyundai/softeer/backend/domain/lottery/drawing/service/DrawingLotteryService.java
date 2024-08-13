@@ -2,6 +2,7 @@ package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.exception.EventUserNotFoundException;
+import com.hyundai.softeer.backend.domain.eventuser.exception.NoChanceUserException;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.lottery.drawing.dto.*;
 import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,16 +79,39 @@ public class DrawingLotteryService implements LotteryService {
         return topNBySubEventId;
     }
 
-    public DrawingInfoDtos getDrawingGameInfo(SubEventRequest subEventRequest) {
+    public DrawingInfoDtos getDrawingGameInfo(User authenticatedUser, SubEventRequest subEventRequest) {
         List<DrawingLotteryEvent> drawingEvents = drawingLotteryRepository.findBySubEventId(subEventRequest.getSubEventId());
 
         if (drawingEvents.isEmpty()) {
             throw new DrawingNotFoundException();
         }
 
-        return new DrawingInfoDtos(drawingEvents.stream()
-                .map(DrawingGameInfoDto::fromEntity)
-                .toList());
+        LocalDateTime now = LocalDateTime.now();
+
+        EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventRequest.getSubEventId())
+                .orElseGet(() -> EventUser.builder()
+                        .user(authenticatedUser)
+                        .subEvent(subEventRepository.getReferenceById(subEventRequest.getSubEventId()))
+                        .lastVisitedAt(now)
+                        .lastChargeAt(now)
+                        .build());
+
+        eventUser.updateLastVisitedAtAndLastChargeAt();
+
+        if (eventUser.getChance() == 0) {
+            throw new NoChanceUserException();
+        }
+
+        eventUser.useChance();
+
+        eventUserRepository.save(eventUser);
+
+        return DrawingInfoDtos.builder()
+                .gameInfos(drawingEvents.stream()
+                        .map(DrawingGameInfoDto::fromEntity)
+                        .toList())
+                .chance(eventUser.getChance())
+                .build();
     }
 
     public DrawingScoreDto getDrawingScore(User authenticatedUser, DrawingScoreRequest drawingScoreRequest) {

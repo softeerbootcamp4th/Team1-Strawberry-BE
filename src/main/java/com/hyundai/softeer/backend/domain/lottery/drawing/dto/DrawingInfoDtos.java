@@ -1,12 +1,18 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.dto;
 
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@Builder
+@ToString
 public class DrawingInfoDtos {
-    List<DrawingGameInfoDto> gameInfos;
+    private List<DrawingGameInfoDto> gameInfos;
+
+    @Schema(example = "1")
+    private int chance;
 }
