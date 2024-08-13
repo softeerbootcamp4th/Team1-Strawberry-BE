@@ -56,7 +56,7 @@ public class EventUser {
     private Map<String, Object> scores = new HashMap<>();
 
     @Builder.Default
-    private Integer chance = 1;
+    private Integer chance = 2;
 
     @Builder.Default
     private Integer expectationBonusChance = -1;

@@ -190,6 +190,28 @@ class DrawingLotteryServiceTest {
     }
 
     @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 첫 참여 유저")
+    void getDrawingGameInfo_first_playing() {
+        // Given
+        SubEventRequest subEventRequest = new SubEventRequest(1L);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, subEventRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+    }
+
+    @Test
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 4시간 미만일 경우")
     void getDrawingGameInfo_1_chance_less_than_4hours_last_played() {
         // Given
