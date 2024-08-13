@@ -102,4 +102,12 @@ public class EventUser {
     public void useChance() {
         this.chance -= 1;
     }
+
+    public void useExpectationBonusChance() {
+        this.expectationBonusChance -= 1;
+    }
+
+    public void useShareBonusChance() {
+        this.shareBonusChance -= 1;
+    }
 }
