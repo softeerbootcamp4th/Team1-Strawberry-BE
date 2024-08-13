@@ -27,7 +27,6 @@ public class MainController {
     private final MainService mainService;
 
     @Value("${properties.event-id}")
-    @NotNull
     private Long eventId;
 
     @Operation(summary = "메인 랜딩 페이지 api", description = """
