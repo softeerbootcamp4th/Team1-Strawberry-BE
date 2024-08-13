@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -25,12 +27,16 @@ public class EventUser {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private Boolean isWriteExpectation;
+    @Builder.Default
+    private Boolean isWriteExpectation = false;
 
     private LocalDateTime lastVisitedAt;
 
+    private LocalDateTime lastChargeAt;
+
     @Column(unique = true)
-    private String sharedUrl;
+    @Builder.Default
+    private String sharedUrl = "";
 
     @Builder.Default
     private Double sharedScore = 0.0;
@@ -46,9 +52,11 @@ public class EventUser {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
-    private Map<String, Object> scores;
+    @Builder.Default
+    private Map<String, Object> scores = new HashMap<>();
 
-    private Integer chance;
+    @Builder.Default
+    private Integer chance = 1;
 
     @Builder.Default
     private Integer expectationBonusChance = -1;
@@ -71,5 +79,27 @@ public class EventUser {
 
     public void updateScores(String key, Object value) {
         this.scores.put(key, value);
+    }
+
+    public void updateLastVisitedAtAndLastChargeAt() {
+        this.lastVisitedAt = LocalDateTime.now();
+
+        long diff = Duration.between(this.lastChargeAt, this.lastVisitedAt).toHours();
+
+        if (diff >= 4 && diff < 8) {
+            // 4시간 이상 8시간 미만 시 충전 시간을 4시간 뒤로 설정
+            this.lastChargeAt = this.lastVisitedAt.plusHours(4);
+            // 기회 1회 추가
+            this.chance = Math.min(2, this.chance + 1);
+        } else if (diff >= 8) {
+            // 8시간 이상 시 충전 시간을 현재 시간으로 설정
+            this.lastChargeAt = this.lastVisitedAt;
+            // 기회 2회 추가
+            this.chance = Math.min(2, this.chance + 2);
+        }
+    }
+
+    public void useChance() {
+        this.chance -= 1;
     }
 }
