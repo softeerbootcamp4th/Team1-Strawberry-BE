@@ -7,8 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Table(name = "event_users")
@@ -41,6 +44,10 @@ public class EventUser {
     @Builder.Default
     private Double gameScore = 0.0;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json")
+    private Map<String, Object> scores;
+
     private Integer chance;
 
     @Builder.Default
@@ -60,5 +67,9 @@ public class EventUser {
     public void updateSharedUrl(String sharedUrl) {
         this.sharedUrl = sharedUrl;
         this.shareBonusChance = 1;
+    }
+
+    public void updateScores(String key, Object value) {
+        this.scores.put(key, value);
     }
 }
