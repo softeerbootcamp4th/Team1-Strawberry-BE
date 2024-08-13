@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -155,18 +156,19 @@ class DrawingLotteryServiceTest {
     void getDrawingScore_DrawingNotFound() {
         // Given
         List<PositionDto> positions = List.of(new PositionDto(1.0, 1.5));
-
         DrawingScoreRequest drawingScoreRequest = DrawingScoreRequest.builder()
                 .positions(positions)
                 .subEventId(1L)
                 .sequence(1)
                 .build();
 
+        User user = User.builder().id(1L).build();
+
         // When
         when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.empty());
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingScore(drawingScoreRequest));
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingScore(user, drawingScoreRequest));
     }
 
     @Test
@@ -183,10 +185,15 @@ class DrawingLotteryServiceTest {
 
         DrawingLotteryEvent drawingEvent = DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).drawPointsJsonUrl("https://softeer-static.s3.ap-northeast-2.amazonaws.com/drawingLottery/answer/contour_points_01.json").build();
 
+        User user = User.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder().user(user).scores(new HashMap<>()).subEvent(SubEvent.builder().id(1L).build()).build();
+
         // When
         when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.of(drawingEvent));
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(eventUser);
 
-        DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(drawingScoreRequest);
+        DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(user, drawingScoreRequest);
 
         // Then
         assertThat(drawingScore.getScore()).isInstanceOf(Double.class);
@@ -374,10 +381,15 @@ class DrawingLotteryServiceTest {
 
         DrawingLotteryEvent drawingEvent = DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).drawPointsJsonUrl("https://softeer-static.s3.ap-northeast-2.amazonaws.com/drawingLottery/answer/contour_points_01.json").build();
 
+        User user = User.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder().user(user).scores(new HashMap<>()).subEvent(SubEvent.builder().id(1L).build()).build();
+
         // When
         when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.of(drawingEvent));
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(eventUser);
 
-        DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(drawingScoreRequest);
+        DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(user, drawingScoreRequest);
 
         // Then
         assertThat(drawingScore.getScore()).isInstanceOf(Double.class);
