@@ -23,12 +23,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DrawingLotteryService implements LotteryService {
+    public static final String FIRST_GAME_SCORE = "1_game_score";
+    public static final String SECOND_GAME_SCORE = "2_game_score";
+    public static final String THIRD_GAME_SCORE = "3_game_score";
+    public static final String GAME_SCORE = "game_score";
+    public static final List<Double> SCORE_WEIGHTS = List.of(0.25, 0.35, 0.4);
+
     private final SubEventRepository subEventRepository;
     private final EventUserRepository eventUserRepository;
     private final DrawingLotteryRepository drawingLotteryRepository;
@@ -153,5 +160,31 @@ public class DrawingLotteryService implements LotteryService {
         }
 
         return totalSimilarity / count;
+    }
+
+    public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
+        EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventRequest.getSubEventId())
+                .orElseThrow(() -> new EventUserNotFoundException());
+
+        Map<String, Object> scores = eventUser.getScores();
+
+        double firstScore = (double) scores.getOrDefault(FIRST_GAME_SCORE, 0.0);
+        double secondScore = (double) scores.getOrDefault(SECOND_GAME_SCORE, 0.0);
+        double thirdScore = (double) scores.getOrDefault(THIRD_GAME_SCORE, 0.0);
+
+        double totalScore = firstScore * SCORE_WEIGHTS.get(0) + secondScore * SCORE_WEIGHTS.get(1) + thirdScore * SCORE_WEIGHTS.get(2);
+        double maxScore = (double) scores.getOrDefault(GAME_SCORE, 0.0);
+
+        if (totalScore > maxScore) {
+            eventUser.updateScores(GAME_SCORE, totalScore);
+            maxScore = totalScore;
+            eventUserRepository.save(eventUser);
+        }
+
+        return DrawingTotalScoreDto.builder()
+                .totalScore(totalScore)
+                .maxScore(maxScore)
+                .chance(eventUser.getChance())
+                .build();
     }
 }
