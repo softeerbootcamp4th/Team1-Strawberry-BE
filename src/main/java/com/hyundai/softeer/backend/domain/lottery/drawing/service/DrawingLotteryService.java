@@ -82,12 +82,27 @@ public class DrawingLotteryService implements LotteryService {
                 .orElseThrow(DrawingNotFoundException::new);
 
         List<PositionDto> answerPoints = ParseUtil.parsePositionsFromJson(drawingEvent.getDrawPointsJsonUrl());
-        double accuracy = calculateAccuracy(drawingScoreRequest.getPositions(), answerPoints);
+        double accuracy = calculateAverageEuclideanDistance(drawingScoreRequest.getPositions(), answerPoints);
 
         return DrawingScoreDto.builder().score(accuracy).build();
     }
 
-    public static double calculateAccuracy(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
-        return 0.0;
+    public static double calculateAverageEuclideanDistance(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
+        double totalDistance = 0.0;
+        int count = 0;
+        double maxDistance = 100 * Math.sqrt(2);
+
+        for (PositionDto points : answerPoints){
+            double minDistance = Double.MAX_VALUE;
+            for (PositionDto userPoint : userPoints){
+                double distance = Math.sqrt(Math.pow(points.getX() - userPoint.getX(), 2) + Math.pow(points.getY() - userPoint.getY(), 2));
+                minDistance = Math.min(minDistance, distance);
+            }
+            double score = 100 * (1 - (minDistance / maxDistance));
+            totalDistance += score;
+            count++;
+        }
+
+        return totalDistance / count;
     }
 }
