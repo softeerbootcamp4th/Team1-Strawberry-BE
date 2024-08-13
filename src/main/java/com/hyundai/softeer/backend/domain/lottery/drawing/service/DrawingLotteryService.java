@@ -84,7 +84,10 @@ public class DrawingLotteryService implements LotteryService {
         List<PositionDto> answerPoints = ParseUtil.parsePositionsFromJson(drawingEvent.getDrawPointsJsonUrl());
         double accuracy = calculateAverageEuclideanDistance(drawingScoreRequest.getPositions(), answerPoints);
 
-        return DrawingScoreDto.builder().score(accuracy).build();
+        return DrawingScoreDto.builder()
+                .score(accuracy)
+                .blurImgUrl(drawingEvent.getBlurImgUrl())
+                .build();
     }
 
     private double calculateAverageEuclideanDistance(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
@@ -123,9 +126,9 @@ public class DrawingLotteryService implements LotteryService {
         double totalSimilarity = 0;
         int count = 0;
 
-        for (PositionDto points : answerPoints){
+        for (PositionDto points : answerPoints) {
             double maxSimilarity = -1;
-            for (PositionDto userPoint : userPoints){
+            for (PositionDto userPoint : userPoints) {
                 double similarity = (points.getX() * userPoint.getX() + points.getY() * userPoint.getY()) /
                         (Math.sqrt(Math.pow(points.getX(), 2) + Math.pow(points.getY(), 2)) * Math.sqrt(Math.pow(userPoint.getX(), 2) + Math.pow(userPoint.getY(), 2)));
                 maxSimilarity = Math.max(maxSimilarity, similarity);

@@ -11,4 +11,7 @@ import lombok.ToString;
 public class DrawingScoreDto {
     @Schema(example = "80.5")
     private double score;
+
+    @Schema(example = "https://www.example.com/blur.jpg")
+    private String blurImgUrl;
 }

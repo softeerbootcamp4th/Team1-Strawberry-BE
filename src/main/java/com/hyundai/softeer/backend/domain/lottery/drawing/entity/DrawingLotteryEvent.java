@@ -20,6 +20,8 @@ public class DrawingLotteryEvent extends LotteryEvent {
 
     private String imgUrl;
 
+    private String blurImgUrl;
+
     private Integer sequence;
 
     private String alias;
