@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 import java.util.*;
 
@@ -49,6 +50,9 @@ class DrawingLotteryServiceTest {
 
     @Mock
     private EventUserRepository eventUserRepository;
+
+    @Spy
+    private ScoreCalculator scoreCalculator;
 
     @BeforeEach
     void setUp() {
