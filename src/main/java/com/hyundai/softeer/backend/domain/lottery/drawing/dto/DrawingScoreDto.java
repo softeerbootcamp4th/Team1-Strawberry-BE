@@ -1,16 +1,12 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.dto;
 
-import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
-import java.util.List;
-
+@Getter
+@Builder
+@ToString
 public class DrawingScoreDto {
-    @NotNull
-    List<PositionDto> positions;
-
-    @NotNull
-    Long subEventId;
-
-    @NotNull
-    Integer sequence;
+    private double score;
 }

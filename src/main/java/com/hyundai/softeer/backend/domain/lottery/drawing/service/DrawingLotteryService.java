@@ -1,9 +1,7 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingGameInfoDto;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingInfoDtos;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingLotteryLandDto;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.*;
 import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
@@ -13,6 +11,7 @@ import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
+import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -76,5 +75,19 @@ public class DrawingLotteryService implements LotteryService {
         return new DrawingInfoDtos(drawingEvents.stream()
                 .map(DrawingGameInfoDto::fromEntity)
                 .toList());
+    }
+
+    public DrawingScoreDto getDrawingScore(DrawingScoreRequest drawingScoreRequest) {
+        DrawingLotteryEvent drawingEvent = drawingLotteryRepository.findBySubEventIdAndSequence(drawingScoreRequest.getSubEventId(), drawingScoreRequest.getSequence())
+                .orElseThrow(DrawingNotFoundException::new);
+
+        List<PositionDto> answerPoints = ParseUtil.parsePositionsFromJson(drawingEvent.getDrawPointsJsonUrl());
+        double accuracy = calculateAccuracy(drawingScoreRequest.getPositions(), answerPoints);
+
+        return DrawingScoreDto.builder().score(accuracy).build();
+    }
+
+    public static double calculateAccuracy(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
+        return 0.0;
     }
 }
