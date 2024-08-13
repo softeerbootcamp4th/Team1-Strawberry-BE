@@ -3,6 +3,9 @@ package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingInfoDtos;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingScoreDto;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingScoreRequest;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.PositionDto;
 import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
@@ -14,6 +17,7 @@ import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -147,6 +151,49 @@ class DrawingLotteryServiceTest {
         // Then
         assertThat(drawingGameInfos.getGameInfos()).hasSize(3);
         assertThat(drawingGameInfos.getGameInfos().get(0).getSequence()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 점수 채점 시 드로잉 이벤트가 없는 경우")
+    void getDrawingScore_DrawingNotFound() {
+        // Given
+        List<PositionDto> positions = List.of(new PositionDto(1.0, 1.5));
+
+        DrawingScoreRequest drawingScoreRequest = DrawingScoreRequest.builder()
+                .positions(positions)
+                .subEventId(1L)
+                .sequence(1)
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.empty());
+
+        // Then
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingScore(drawingScoreRequest));
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 점수 채점 성공")
+    void getDrawingScore_success() {
+        // Given
+        List<PositionDto> positions = ParseUtil.parsePositionsFromJson("https://softeer-static.s3.ap-northeast-2.amazonaws.com/drawingLottery/answer/userPoints_example_01.json");
+
+        DrawingScoreRequest drawingScoreRequest = DrawingScoreRequest.builder()
+                .positions(positions)
+                .subEventId(1L)
+                .sequence(1)
+                .build();
+
+        DrawingLotteryEvent drawingEvent = DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).drawPointsJsonUrl("https://softeer-static.s3.ap-northeast-2.amazonaws.com/drawingLottery/answer/contour_points_01.json").build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.of(drawingEvent));
+
+        DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(drawingScoreRequest);
+
+        // Then
+        assertThat(drawingScore.getScore()).isInstanceOf(Double.class);
+        log.info("drawingScore: {}", drawingScore);
     }
 }
 
