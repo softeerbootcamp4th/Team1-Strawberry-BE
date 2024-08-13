@@ -1,5 +1,7 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
+import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.exception.EventUserNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.lottery.drawing.dto.*;
 import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
@@ -11,6 +13,7 @@ import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
+import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,12 +81,22 @@ public class DrawingLotteryService implements LotteryService {
                 .toList());
     }
 
-    public DrawingScoreDto getDrawingScore(DrawingScoreRequest drawingScoreRequest) {
+    public DrawingScoreDto getDrawingScore(User authenticatedUser, DrawingScoreRequest drawingScoreRequest) {
         DrawingLotteryEvent drawingEvent = drawingLotteryRepository.findBySubEventIdAndSequence(drawingScoreRequest.getSubEventId(), drawingScoreRequest.getSequence())
                 .orElseThrow(DrawingNotFoundException::new);
 
         List<PositionDto> answerPoints = ParseUtil.parsePositionsFromJson(drawingEvent.getDrawPointsJsonUrl());
         double accuracy = calculateAverageEuclideanDistance(drawingScoreRequest.getPositions(), answerPoints);
+
+        Optional<EventUser> optionalEventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), drawingScoreRequest.getSubEventId());
+
+        optionalEventUser
+                .ifPresent(eventUser -> {
+                    eventUser.updateScores(drawingEvent.getSequence().toString() + "_game_score", accuracy);
+                    eventUserRepository.save(eventUser);
+                });
+        optionalEventUser.orElseThrow(() -> new EventUserNotFoundException());
+
 
         return DrawingScoreDto.builder()
                 .score(accuracy)
