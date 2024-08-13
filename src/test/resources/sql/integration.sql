@@ -11,8 +11,16 @@ VALUES (1, 'alswnssl0528@naver.com', '김민준', '010-6833-4234', '1998-05-28',
 INSERT INTO cars (id, brand_name, car_name_eng, car_name_kor, model_line, price, release_date)
 VALUES (1, 0, 'santafe', '산타페', 0, 30000000, '2024-07-01 10:00:00');
 
-INSERT INTO events (id, end_at, event_name, event_registered_at, event_status, start_at, winner_count, car_id)
-VALUES (1, '2024-07-01 10:00:00', '별 헤는 밤', '2024-06-28 00:00:00', 0, '2024-06-25 10:00:00', 10, 1);
+INSERT INTO events (id, end_at, event_name, event_status, start_at, winner_count, car_id, event_img_urls)
+VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10, 1, JSON_OBJECT(
+        "mainImgUrl", "www.mainimg.com",
+        "scrolledImgUrl", "www.scroll.com",
+        "eventInfoImg", "www.eventinfo.com",
+        "quizMainImg", "www.quizmain.com",
+        "quizPrizeImg", "www.qprize.com",
+        "drawingMainImg", "www.drawingmain.com",
+        "drawingPrizeImg", "www.drawingprize.com"
+        ));
 
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls,
                         winners_meta)
