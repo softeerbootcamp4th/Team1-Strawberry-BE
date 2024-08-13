@@ -87,7 +87,7 @@ public class DrawingLotteryService implements LotteryService {
         return DrawingScoreDto.builder().score(accuracy).build();
     }
 
-    public static double calculateAverageEuclideanDistance(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
+    private double calculateAverageEuclideanDistance(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
         double totalScore = 0.0;
         int count = 0;
         double maxDistance = 100 * Math.sqrt(2); // 최대 거리 계산
@@ -119,7 +119,7 @@ public class DrawingLotteryService implements LotteryService {
     }
 
 
-    private static double calculateAverageCosineSimilarity(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
+    private double calculateAverageCosineSimilarity(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
         double totalSimilarity = 0;
         int count = 0;
 

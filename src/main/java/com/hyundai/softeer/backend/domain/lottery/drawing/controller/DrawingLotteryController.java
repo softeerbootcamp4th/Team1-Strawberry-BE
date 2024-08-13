@@ -121,6 +121,6 @@ public class DrawingLotteryController {
     public BaseResponse<DrawingScoreDto> getDrawingScore(
             @RequestBody @Validated DrawingScoreRequest drawingScoreRequest
             ) {
-        return new BaseResponse<>(null);
+        return new BaseResponse<>(drawingLotteryService.getDrawingScore(drawingScoreRequest));
     }
 }
