@@ -30,9 +30,11 @@ public class EventUser {
     @Builder.Default
     private Boolean isWriteExpectation = false;
 
-    private LocalDateTime lastVisitedAt;
+    @Builder.Default
+    private LocalDateTime lastVisitedAt = LocalDateTime.now();
 
-    private LocalDateTime lastChargeAt;
+    @Builder.Default
+    private LocalDateTime lastChargeAt = LocalDateTime.now();
 
     @Column(unique = true)
     @Builder.Default
