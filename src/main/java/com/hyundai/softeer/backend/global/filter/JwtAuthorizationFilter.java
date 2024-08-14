@@ -24,14 +24,16 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
     private final String[] whiteListUris = new String[]{
-            "/api/v1/oauth2/**",
             "/swagger-ui/**",
             "/v3/api-docs",
             "/v3/api-docs/**",
+            "/api/v1/oauth2/**",
+            "/api/v1/url/**",
             "/api/v1/expectation/land",
             "/api/v1/expectation/page",
             "/api/v1/firstcome/quiz/land",
             "/api/v1/lottery/drawing/land",
+            "/api/v1/lottery/drawing/rank",
             "/api/v1/land"
     };
 
