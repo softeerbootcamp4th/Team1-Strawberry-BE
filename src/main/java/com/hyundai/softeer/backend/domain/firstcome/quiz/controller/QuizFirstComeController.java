@@ -103,7 +103,7 @@ public class QuizFirstComeController {
             """)
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "퀴즈 채점이 정상적으로 처리되었을 때",
                     useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
