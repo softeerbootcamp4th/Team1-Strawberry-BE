@@ -61,4 +61,9 @@ public class DateUtil {
         }
         return closetSubEvent;
     }
+
+    public boolean isSubEventStarted(SubEvent subEvent) {
+        LocalDateTime current = LocalDateTime.now(clock);
+        return current.isAfter(subEvent.getStartAt());
+    }
 }
