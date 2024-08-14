@@ -30,9 +30,11 @@ public class EventUser {
     @Builder.Default
     private Boolean isWriteExpectation = false;
 
-    private LocalDateTime lastVisitedAt;
+    @Builder.Default
+    private LocalDateTime lastVisitedAt = LocalDateTime.now();
 
-    private LocalDateTime lastChargeAt;
+    @Builder.Default
+    private LocalDateTime lastChargeAt = LocalDateTime.now();
 
     @Column(unique = true)
     @Builder.Default
@@ -79,6 +81,10 @@ public class EventUser {
 
     public void updateScores(String key, Object value) {
         this.scores.put(key, value);
+    }
+
+    public void scoreSharedScore() {
+        this.sharedScore += 1;
     }
 
     public void updateLastVisitedAtAndLastChargeAt() {

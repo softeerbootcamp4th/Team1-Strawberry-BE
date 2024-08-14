@@ -34,8 +34,8 @@ public class DrawingGameInfoDto {
                 .contourImgUrl(drawingLotteryEvent.getContourImgUrl())
                 .imgUrl(drawingLotteryEvent.getImgUrl())
                 .sequence(drawingLotteryEvent.getSequence())
-                .onBoardingMsg(drawingLotteryEvent.getOnBoardingDesc())
-                .gameMsg(drawingLotteryEvent.getGameDesc())
+                .onBoardingMsg(drawingLotteryEvent.getOnBoardingMsg())
+                .gameMsg(drawingLotteryEvent.getPlayMsg())
                 .startPosition(new PositionDto(drawingLotteryEvent.getStartPosX(), drawingLotteryEvent.getStartPosY()))
                 .build();
     }

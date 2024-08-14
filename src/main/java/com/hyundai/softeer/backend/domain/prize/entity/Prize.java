@@ -19,6 +19,10 @@ public class Prize {
     private Long id;
 
     private String productName;
+
     private Integer price;
+
     private String prizeImgUrl;
+
+    private String prizeWinningImgUrl;
 }

@@ -165,6 +165,9 @@ public class DrawingLotteryService implements LotteryService {
         return DrawingScoreDto.builder()
                 .score(accuracy)
                 .blurImgUrl(drawingEvent.getBlurImgUrl())
+                // TODO 점수에 따른 랜덤 메세지 삽입
+                .resultMsg("좀 만 더하면 고득점!")
+                .resultDetail(drawingEvent.getResultDetail())
                 .build();
     }
 
