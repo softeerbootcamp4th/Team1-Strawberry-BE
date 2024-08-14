@@ -20,13 +20,17 @@ public class DrawingLotteryEvent extends LotteryEvent {
 
     private String imgUrl;
 
+    private String blurImgUrl;
+
     private Integer sequence;
 
     private String alias;
 
-    private String onBoardingDesc;
+    private String onBoardingMsg;
 
-    private String gameDesc;
+    private String playMsg;
+
+    private String resultDetail;
 
     @Column(name = "start_pos_x")
     private Double startPosX;

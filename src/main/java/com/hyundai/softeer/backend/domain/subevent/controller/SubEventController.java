@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -44,6 +45,7 @@ public class SubEventController {
              
             """)
     @ApiResponses(value = {})
+    @SecurityRequirement(name = "access-token")
     public BaseResponse<List<RankDto>> getWinnerList(
             @Validated SubEventRequest subEventRequest
     ) {
@@ -67,6 +69,7 @@ public class SubEventController {
             @ApiResponse(responseCode = "200", description = "드로잉 추첨 이벤트 추첨 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 정보", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"드로잉 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
     })
+    @SecurityRequirement(name = "access-token")
     public BaseResponse<List<WinnerCandidate>> drawWinner(
             @Validated SubEventRequest subEventRequest,
             @Validated ApiKeyRequest apiKeyRequest

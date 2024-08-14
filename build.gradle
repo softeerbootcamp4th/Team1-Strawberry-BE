@@ -45,6 +45,9 @@ dependencies {
     // Apache Commons
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
+    // Json
+    implementation 'org.json:json:20210307'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'com.mysql:mysql-connector-j'

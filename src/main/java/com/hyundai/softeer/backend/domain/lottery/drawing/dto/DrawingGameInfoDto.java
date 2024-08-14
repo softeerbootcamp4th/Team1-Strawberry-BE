@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@ToString
 public class DrawingGameInfoDto {
     @Schema(example = "https://example.s3.ap-northeast-2.amazonaws.com/drawing/contour_1.svg")
     private String contourImgUrl;
@@ -32,8 +34,8 @@ public class DrawingGameInfoDto {
                 .contourImgUrl(drawingLotteryEvent.getContourImgUrl())
                 .imgUrl(drawingLotteryEvent.getImgUrl())
                 .sequence(drawingLotteryEvent.getSequence())
-                .onBoardingMsg(drawingLotteryEvent.getOnBoardingDesc())
-                .gameMsg(drawingLotteryEvent.getGameDesc())
+                .onBoardingMsg(drawingLotteryEvent.getOnBoardingMsg())
+                .gameMsg(drawingLotteryEvent.getPlayMsg())
                 .startPosition(new PositionDto(drawingLotteryEvent.getStartPosX(), drawingLotteryEvent.getStartPosY()))
                 .build();
     }

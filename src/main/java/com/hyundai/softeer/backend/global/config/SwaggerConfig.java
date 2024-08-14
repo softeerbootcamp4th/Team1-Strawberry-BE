@@ -48,7 +48,12 @@ public class SwaggerConfig {
         return List.of(
                 new Tag().name("User").description("사용자 관련 API"),
                 new Tag().name("Drawing Lottery").description("드로잉 추첨 이벤트 관련 API"),
-                new Tag().name("Admin").description("관리자 전용 API")
+                new Tag().name("Admin").description("관리자 전용 API"),
+                new Tag().name("Quiz First Come").description("퀴즈 선착순 이벤트 관련 API"),
+                new Tag().name("Event User").description("이벤트 참가 유저 관련 API"),
+                new Tag().name("Expectation").description("기대평 관련 API"),
+                new Tag().name("Shared Url").description("공유 Url 관련 API"),
+                new Tag().name("Main").description("메인 페이지 관련 API")
         );
     }
 }

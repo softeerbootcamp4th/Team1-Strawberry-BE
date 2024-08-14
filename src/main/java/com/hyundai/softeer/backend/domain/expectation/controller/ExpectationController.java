@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Expectation")
 public class ExpectationController {
 
     private final ExpectationService expectationService;
@@ -90,6 +93,7 @@ public class ExpectationController {
     })
     @PostMapping("/api/v1/expectation")
     @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "access-token")
     public BaseResponse<Null> expectationRegisterApi(
             @RequestBody @Validated ExpectationRegisterRequest expectationRegisterRequest,
             @Parameter(hidden = true) @CurrentUser User authenticatedUser
