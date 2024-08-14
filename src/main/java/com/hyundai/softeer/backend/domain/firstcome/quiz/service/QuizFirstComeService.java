@@ -235,6 +235,6 @@ public class QuizFirstComeService {
         winner.setUser(user);
         winnerRepository.save(winner);
 
-        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeImgUrl());
+        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeWinningImgUrl());
     }
 }
