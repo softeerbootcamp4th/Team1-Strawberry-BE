@@ -42,3 +42,4 @@ src/main/resources/yaml/*.yml
 src/test/resources/*.yml
 src/main/resources/sql/integration.sql
 
+spring.log
