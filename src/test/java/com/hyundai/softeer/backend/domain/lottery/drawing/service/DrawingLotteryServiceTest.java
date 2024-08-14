@@ -1,19 +1,17 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.exception.NoChanceUserException;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingInfoDtos;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingScoreDto;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.DrawingScoreRequest;
-import com.hyundai.softeer.backend.domain.lottery.drawing.dto.PositionDto;
+import com.hyundai.softeer.backend.domain.lottery.drawing.dto.*;
 import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
-import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
+import com.hyundai.softeer.backend.domain.subevent.enums.EventPlayType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
@@ -22,11 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -124,35 +125,381 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 드로잉 이벤트가 없는 경우")
     void getDrawingGameInfo_DrawingNotFound() {
         // Given
-        SubEventRequest subEventRequest = new SubEventRequest(1L);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
         List<DrawingLotteryEvent> drawingEvents = List.of();
+        User authenticatedUser = User.builder().id(1L).build();
 
         // When
         when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(subEventRequest));
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
     }
 
     @Test
     @DisplayName("드로잉 이벤트 게임 정보 조회 성공")
     void getDrawingGameInfo_success() {
         // Given
-        SubEventRequest subEventRequest = new SubEventRequest(1L);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(1)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfos.getGameInfos()).hasSize(3);
+        assertThat(drawingGameInfos.getGameInfos().get(0).getSequence()).isEqualTo(1);
+        log.info("drawingGameInfos: {}", drawingGameInfos);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 0번인 경우")
+    void getDrawingGameInfo_no_chance() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(0)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+
+        // Then
+        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 첫 참여 유저")
+    void getDrawingGameInfo_first_playing() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 4시간 미만일 경우")
+    void getDrawingGameInfo_1_chance_less_than_4hours_last_played() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(1)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 0번, 충전 시간 4시간 이상일 경우")
+    void getDrawingGameInfo_no_chance_but_4hours_last_played() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(0)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now().minusHours(4))
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 4시간 이상일 경우")
+    void getDrawingGameInfo_1_chance_and_4hours_last_played() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(1)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now().minusHours(5))
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 0번, 충전 시간 8시간 이상일 경우")
+    void getDrawingGameInfo_0_chance_and_8hours_last_played() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(0)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now().minusHours(12))
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+    }
+
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 8시간 이상일 경우")
+    void getDrawingGameInfo_1_chance_and_8hours_last_played() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(1)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now().minusHours(12))
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 기대평을 작성하지 않았거나 이미 사용한 유저의 경우")
+    @ValueSource(ints = {0, -1})
+    void getDrawingGameInfo_no_chance_expectation(int expectationBonusChance) {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.EXPECTATION);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(0)
+                .expectationBonusChance(expectationBonusChance)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+
+        // Then
+        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 기대평 작성 기회를 사용하는 경우")
+    void getDrawingGameInfo_expectation_chance() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.EXPECTATION);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
         );
 
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(1)
+                .expectationBonusChance(1)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
         // When
         when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(subEventRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
 
         // Then
-        assertThat(drawingGameInfos.getGameInfos()).hasSize(3);
-        assertThat(drawingGameInfos.getGameInfos().get(0).getSequence()).isEqualTo(1);
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 공유 URL 을 생성하지 않았거나 이미 사용한 유저의 경우")
+    @ValueSource(ints = {0, -1})
+    void getDrawingGameInfo_no_chance_shared(int sharedBonusChance) {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.EXPECTATION);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(0)
+                .shareBonusChance(sharedBonusChance)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+
+        // Then
+        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+    }
+
+    @Test
+    @DisplayName("드로잉 이벤트 게임 정보 조회 시 공유 URL 작성 기회를 사용하는 경우")
+    void getDrawingGameInfo_shared_url_chance() {
+        // Given
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.SHARED);
+        List<DrawingLotteryEvent> drawingEvents = List.of(
+                DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
+                DrawingLotteryEvent.builder().id(3L).sequence(3).startPosX(1.5).startPosY(4.0).build()
+        );
+
+        User authenticatedUser = User.builder().id(1L).build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(1)
+                .shareBonusChance(1)
+                .lastVisitedAt(LocalDateTime.now())
+                .lastChargeAt(LocalDateTime.now())
+                .build();
+
+        // When
+        when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
+        when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any())).thenReturn(null);
+
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+
+        // Then
+        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
     }
 
     @Test
