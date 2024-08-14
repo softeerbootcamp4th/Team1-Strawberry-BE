@@ -56,6 +56,9 @@ public class EventUserService {
         EventUser eventUser = eventUserRepository.findBySharedUrl(sharedUrlRequest.getSharedUrl())
                 .orElseThrow(() -> new SharedUrlNotFoundException());
 
+        eventUser.scoreSharedScore();
+        eventUserRepository.save(eventUser);
+
         return new RedirectUrlDto(eventUser.getSubEvent().getEventType().getRedirectUrl());
     }
 }

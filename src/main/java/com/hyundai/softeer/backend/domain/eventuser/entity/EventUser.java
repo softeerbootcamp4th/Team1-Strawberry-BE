@@ -81,6 +81,10 @@ public class EventUser {
         this.scores.put(key, value);
     }
 
+    public void scoreSharedScore() {
+        this.sharedScore += 1;
+    }
+
     public void updateLastVisitedAtAndLastChargeAt() {
         this.lastVisitedAt = LocalDateTime.now();
 
