@@ -4,6 +4,8 @@ import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.event.exception.EventNotFoundException;
 import com.hyundai.softeer.backend.domain.event.exception.EventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
+import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizNotFoundException;
@@ -16,6 +18,7 @@ import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundExc
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.global.utils.DateUtil;
@@ -29,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +43,8 @@ public class QuizFirstComeService {
     private final SubEventRepository subEventRepository;
     private final WinnerRepository winnerRepository;
     private final EventRepository eventRepository;
+    private final EventUserRepository eventUserRepository;
+    private final UserRepository userRepository;
     private final DateUtil dateUtil;
     private final Clock clock;
 
@@ -229,6 +235,19 @@ public class QuizFirstComeService {
 
         quizFirstCome.setWinnerCount(winnerCount + 1);
 
+        if(isParticipanted(user.getId(), subEventId).isEmpty()) {
+            QuizFirstComeSubmitResponseDto.alreadyParticipant();
+        }
+
+        EventUser eventUser = EventUser
+                .builder()
+                .user(userRepository.getReferenceById(user.getId()))
+                .subEvent(subEventRepository.getReferenceById(subEventId))
+                .chance(0)
+                .build();
+
+        eventUserRepository.save(eventUser);
+
         Winner winner = new Winner();
         winner.setPrize(prize);
         winner.setSubEvent(subEvent);
@@ -236,5 +255,9 @@ public class QuizFirstComeService {
         winnerRepository.save(winner);
 
         return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeImgUrl());
+    }
+
+    private Optional<Winner> isParticipanted(long userId, long subEventId) {
+        return winnerRepository.findByUserIdAndSubEventId(userId, subEventId);
     }
 }
