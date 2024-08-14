@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Quiz First Come")
 public class QuizFirstComeController {
 
     private final QuizFirstComeService quizFirstComeService;
@@ -53,6 +56,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/api/v1/firstcome/quiz/info")
+    @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeResponseDto> getQuiz(
             @Valid QuizFirstComeRequest quizFirstComeRequest
     ) {
@@ -105,6 +109,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
     @PostMapping("/api/v1/firstcome/quiz")
+    @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeSubmitResponseDto> quizSubmit(
             @RequestBody @Validated QuizFirstComeSubmitRequest quizFirstComeSubmitRequest,
             @Parameter(hidden = true) @CurrentUser User user
