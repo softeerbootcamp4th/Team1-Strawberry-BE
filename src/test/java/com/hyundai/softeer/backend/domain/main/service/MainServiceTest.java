@@ -54,8 +54,6 @@ class MainServiceTest {
         when(dateUtil.startBetweenCurrentDiff(any(SubEvent.class))).thenReturn(1000L);
         when(subEventRepository.findByEventIdAndExecuteType(anyLong(), any(SubEventExecuteType.class))).thenReturn(SubEvent.subEventsGenerator(3L));
 
-        List<SubEvent> quizEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.FIRSTCOME);
-
         // when
         MainLandDto mainLandDto = mainService.mainLand(eventId);
 
