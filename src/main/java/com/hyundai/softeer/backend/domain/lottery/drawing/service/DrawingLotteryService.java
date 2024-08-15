@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
+import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.exception.EventUserNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.exception.NoChanceUserException;
@@ -43,6 +44,7 @@ public class DrawingLotteryService implements LotteryService {
     private final SubEventRepository subEventRepository;
     private final EventUserRepository eventUserRepository;
     private final DrawingLotteryRepository drawingLotteryRepository;
+    private final EventRepository eventRepository;
     private final ScoreCalculator scoreCalculator;
 
     @Transactional(readOnly = true)
@@ -82,7 +84,7 @@ public class DrawingLotteryService implements LotteryService {
     }
 
     @Transactional
-    public DrawingInfoDtos getDrawingGameInfo(User authenticatedUser, DrawingInfoRequest drawingInfoRequest) {
+    public DrawingInfoDtos getDrawingGameInfo(User authenticatedUser, DrawingInfoRequest drawingInfoRequest, Long eventId) {
         List<DrawingLotteryEvent> drawingEvents = drawingLotteryRepository.findBySubEventId(drawingInfoRequest.getSubEventId());
 
         if (drawingEvents.isEmpty()) {
@@ -94,6 +96,7 @@ public class DrawingLotteryService implements LotteryService {
 
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), drawingInfoRequest.getSubEventId())
                 .orElseGet(() -> EventUser.builder()
+                        .event(eventRepository.getReferenceById(eventId))
                         .user(authenticatedUser)
                         .subEvent(subEventRepository.getReferenceById(drawingInfoRequest.getSubEventId()))
                         .lastVisitedAt(now)

@@ -1,6 +1,8 @@
 package com.hyundai.softeer.backend.domain.eventuser.repository;
 
+import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.projection.EventUserProjection;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
@@ -10,11 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.hyundai.softeer.backend.domain.eventuser.service.EventUserService.EVENT_USER_PAGE_SIZE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -25,6 +31,8 @@ class EventUserRepositoryTest {
     private EventUserRepository eventUserRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
     @Test
     @DisplayName("findByUserIdAndSubEventId success")
@@ -97,6 +105,7 @@ class EventUserRepositoryTest {
     void findMaxBySubEventId() {
         // given
         eventUserRepository.save(EventUser.builder()
+                .event(eventRepository.getReferenceById(1L))
                 .id(1000L)
                 .subEvent(SubEvent.builder().id(1L).build())
                 .user(User.builder().id(1L).build())
@@ -177,5 +186,38 @@ class EventUserRepositoryTest {
 
         //then
         assertThat(result.isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("getEventUserPage 이벤트 참가 유저 정보 조회 (당첨 여부 포함)")
+    void findbyEventUserWithWinnerState() {
+        // given
+        long eventId = 1L;
+
+        Pageable pageable = PageRequest.of(
+                0,
+                EVENT_USER_PAGE_SIZE,
+                Sort.by("id").descending()
+        );
+
+        // when
+        List<EventUserProjection> users = eventUserRepository.findEventUserWithWinnerState(eventId, 0, EVENT_USER_PAGE_SIZE);
+
+        // then
+        assertThat(users.get(0).getIsWinner()).isEqualTo(1);
+        assertThat(users.get(0).getName()).isEqualTo("김민준");
+    }
+
+    @Test
+    @DisplayName("이벤트 유저 수 반환 쿼리")
+    void countEventUser() {
+        // given
+        Long eventId = 1L;
+
+        // when
+        long l = eventUserRepository.countEventUserSize(eventId);
+
+        // then
+        assertThat(l).isEqualTo(3L);
     }
 }

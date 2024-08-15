@@ -243,7 +243,9 @@ public class QuizFirstComeService {
                 .builder()
                 .user(userRepository.getReferenceById(user.getId()))
                 .subEvent(subEventRepository.getReferenceById(subEventId))
+                .event(subEvent.getEvent())
                 .chance(0)
+                .isWinner(true)
                 .build();
 
         eventUserRepository.save(eventUser);

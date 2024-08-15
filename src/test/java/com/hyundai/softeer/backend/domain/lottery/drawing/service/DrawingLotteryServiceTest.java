@@ -1,5 +1,7 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
+import com.hyundai.softeer.backend.domain.event.entity.Event;
+import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.exception.NoChanceUserException;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
@@ -52,6 +54,9 @@ class DrawingLotteryServiceTest {
     @Mock
     private EventUserRepository eventUserRepository;
 
+    @Mock
+    private EventRepository eventRepository;
+
     @Spy
     private ScoreCalculator scoreCalculator;
 
@@ -59,6 +64,8 @@ class DrawingLotteryServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
+    Long eventId = 1L;
 
     @Test
     @DisplayName("드로잉 추첨 이벤트 랜딩 페이지 조회 성공")
@@ -133,7 +140,7 @@ class DrawingLotteryServiceTest {
         when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
 
         // Then
-        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+        assertThrows(DrawingNotFoundException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId));
     }
 
     @Test
@@ -161,7 +168,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfos = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfos.getGameInfos()).hasSize(3);
@@ -194,7 +201,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
 
         // Then
-        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId));
     }
 
     @Test
@@ -213,8 +220,9 @@ class DrawingLotteryServiceTest {
         when(drawingLotteryRepository.findBySubEventId(any())).thenReturn(drawingEvents);
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.empty());
         when(eventUserRepository.save(any())).thenReturn(null);
+        when(eventRepository.getReferenceById(anyLong())).thenReturn(Event.testEventGenerator(1L));
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(1);
@@ -245,7 +253,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(0);
@@ -276,7 +284,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(0);
@@ -307,7 +315,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(1);
@@ -338,7 +346,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(1);
@@ -370,7 +378,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(1);
@@ -403,7 +411,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
 
         // Then
-        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId));
     }
 
     @Test
@@ -433,7 +441,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(1);
@@ -466,7 +474,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
 
         // Then
-        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest));
+        assertThrows(NoChanceUserException.class, () -> drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId));
     }
 
     @Test
@@ -496,7 +504,7 @@ class DrawingLotteryServiceTest {
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(null);
 
-        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
+        DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest, eventId);
 
         // Then
         assertThat(drawingGameInfo.getChance()).isEqualTo(1);

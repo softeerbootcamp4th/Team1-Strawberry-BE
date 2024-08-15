@@ -110,7 +110,7 @@ public class DrawingLotteryController {
             @Parameter(hidden = true) @CurrentUser User authenticatedUser,
             @Validated DrawingInfoRequest subEventRequest
     ) {
-        return new BaseResponse<>(drawingLotteryService.getDrawingGameInfo(authenticatedUser, subEventRequest));
+        return new BaseResponse<>(drawingLotteryService.getDrawingGameInfo(authenticatedUser, subEventRequest, eventId));
     }
 
     @PostMapping("")

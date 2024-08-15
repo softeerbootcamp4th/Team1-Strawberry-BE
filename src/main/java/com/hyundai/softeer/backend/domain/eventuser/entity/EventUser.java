@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.domain.eventuser.entity;
 
+import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -66,6 +67,9 @@ public class EventUser {
     @Builder.Default
     private Integer shareBonusChance = -1;
 
+    @Builder.Default
+    private Boolean isWinner = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -73,6 +77,10 @@ public class EventUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_event_id", nullable = false)
     private SubEvent subEvent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 
     public void updateSharedUrl(String sharedUrl) {
         this.sharedUrl = sharedUrl;
