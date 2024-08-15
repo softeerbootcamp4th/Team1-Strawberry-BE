@@ -45,7 +45,11 @@ public class JwtAuthorizationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException, IOException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        if (whiteListCheck(httpServletRequest.getRequestURI())) {
+
+        if (
+                whiteListCheck(httpServletRequest.getRequestURI()) &&
+                isPreflight(httpServletRequest)
+        ) {
             chain.doFilter(request, response);
             return;
         }
@@ -68,6 +72,10 @@ public class JwtAuthorizationFilter implements Filter {
             log.error("JwtTokenExpired");
             httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "토큰이 만료 되었습니다");
         }
+    }
+
+    private static boolean isPreflight(HttpServletRequest httpServletRequest) {
+        return httpServletRequest.getMethod().equals("OPTIONS");
     }
 
     private boolean whiteListCheck(String uri) {
