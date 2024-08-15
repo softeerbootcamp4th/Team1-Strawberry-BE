@@ -77,6 +77,7 @@ public class EventUserController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 참가자", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"해당 이벤트 참가자를 찾을 수 없습니다.\",\"status\":404}"))}),
     })
     @SecurityRequirement(name = "access-token")
+    @Tag(name = "Admin")
     public BaseResponse<SharedUrlDto> getSharedUrl(
             @Parameter(hidden = true) @CurrentUser User authenticatedUser,
             @Validated SubEventRequest subEventRequest
