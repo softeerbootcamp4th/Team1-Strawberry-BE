@@ -8,9 +8,13 @@ import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizAlreadyExistException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizNotFoundException;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizRegisterForbiddenException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
+import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
+import com.hyundai.softeer.backend.domain.subevent.dto.SubEventInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
@@ -45,6 +49,7 @@ public class QuizFirstComeService {
     private final EventRepository eventRepository;
     private final EventUserRepository eventUserRepository;
     private final UserRepository userRepository;
+    private final PrizeRepository prizeRepository;
     private final DateUtil dateUtil;
     private final Clock clock;
 
@@ -255,6 +260,79 @@ public class QuizFirstComeService {
         winnerRepository.save(winner);
 
         return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeWinningImgUrl());
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuizFirstComeInfoResponseDto> getQuizInfos(QuizFirstComeInfoRequest quizFirstComeInfoRequest) {
+       Long eventId = quizFirstComeInfoRequest.getEventId();
+
+        List<QuizFirstComeInfoResponseDto> quizInfos = subEventRepository.findByEventId(eventId)
+                .stream()
+                .filter(subEvent -> subEvent.getEventType().equals(SubEventType.QUIZ))
+                .map(subEvent -> {
+                    QuizFirstCome quiz = quizFirstComeRepository.findBySubEventId(subEvent.getId())
+                            .orElseThrow(() -> new QuizNotFoundException());
+                    return QuizFirstComeInfoResponseDto.builder()
+                            .quizInfo(QuizInfoDto.fromEntity(quiz))
+                            .subEventInfo(SubEventInfo.fromEntity(subEvent))
+                            .build();
+                }).collect(Collectors.toList());
+
+        if(quizInfos.isEmpty()) throw new EventNotFoundException();
+
+        return quizInfos;
+    }
+
+    @Transactional
+    public void registerQuiz(List<QuizFirstComeRegisterRequest> quizFirstComeRegisterRequests) {
+
+        Long eventId = quizFirstComeRegisterRequests.get(0).getEventId();
+
+        eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException());
+
+        if(!subEventRepository.findByEventId(eventId).isEmpty()) {
+            throw new QuizAlreadyExistException();
+        }
+
+        for(QuizFirstComeRegisterRequest quizFirstComeRegisterRequest: quizFirstComeRegisterRequests) {
+            SubEvent subEvent = SubEvent.builder()
+                    .startAt(quizFirstComeRegisterRequest.getStartAt())
+                    .endAt(quizFirstComeRegisterRequest.getEndAt())
+                    .eventType(quizFirstComeRegisterRequest.getEventType())
+                    .alias(quizFirstComeRegisterRequest.getAlias())
+                    .eventImgUrls(quizFirstComeRegisterRequest.getEventImgUrls())
+                    .bannerImgUrl(quizFirstComeRegisterRequest.getBannerImgUrl())
+                    .eventType(quizFirstComeRegisterRequest.getEventType())
+                    .executeType(quizFirstComeRegisterRequest.getExecuteType())
+                    .winnersMeta(quizFirstComeRegisterRequest.getWinnersMeta())
+                    .event(eventRepository.getReferenceById(quizFirstComeRegisterRequest.getEventId()))
+                    .build();
+
+            subEventRepository.save(subEvent);
+
+            QuizFirstCome quiz = QuizFirstCome.builder()
+                    .sequence(quizFirstComeRegisterRequest.getSequence())
+                    .hint(quizFirstComeRegisterRequest.getHint())
+                    .carInfo(quizFirstComeRegisterRequest.getCarInfo())
+                    .anchor(quizFirstComeRegisterRequest.getAnchor())
+                    .answer(quizFirstComeRegisterRequest.getAnswer())
+                    .initConsonant(quizFirstComeRegisterRequest.getInitConsonant())
+                    .overview(quizFirstComeRegisterRequest.getOverview())
+                    .prize(prizeRepository.getReferenceById(quizFirstComeRegisterRequest.getPrizeId()))
+                    .problem(quizFirstComeRegisterRequest.getProblem())
+                    .subEventId(subEvent.getId())
+                    .winners(quizFirstComeRegisterRequest.getWinners())
+                    .build();
+            quizFirstComeRepository.save(quiz);
+        }
+    }
+
+    @Transactional
+    public void deleteQuizByEvent(QuizFirstComeDeleteRequest quizFirstComeDeleteRequest) {
+        Long eventId = quizFirstComeDeleteRequest.getEventId();
+        subEventRepository.deleteByEventId(eventId);
+        quizFirstComeRepository.deleteQuizEventByEventId(eventId);
     }
 
     private Optional<Winner> isParticipanted(long userId, long subEventId) {
