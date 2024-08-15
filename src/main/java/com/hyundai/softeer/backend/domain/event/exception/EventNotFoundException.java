@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class EventNotFoundException extends BaseException {
     public EventNotFoundException() {
-        super(HttpStatus.NO_CONTENT, "존재하지 않는 이벤트 입니다.");
+        super(HttpStatus.NOT_FOUND, "존재하지 않는 이벤트 입니다.");
     }
 }
