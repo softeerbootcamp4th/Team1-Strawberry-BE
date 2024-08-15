@@ -1,6 +1,8 @@
 package com.hyundai.softeer.backend.domain.eventuser.controller;
 
 import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserInfoDto;
+import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserPageRequest;
+import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserPageResponseDto;
 import com.hyundai.softeer.backend.domain.eventuser.dto.SharedUrlDto;
 import com.hyundai.softeer.backend.domain.eventuser.service.EventUserService;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
@@ -82,5 +84,34 @@ public class EventUserController {
             @Validated SubEventRequest subEventRequest
     ) {
         return new BaseResponse<>(eventUserService.getSharedUrl(authenticatedUser, subEventRequest));
+    }
+
+    @GetMapping("/page")
+    @Operation(summary = "어드민 이벤트 유저 조회", description = """
+            # 어드민 이벤트 유저 조회
+            - 페이지 별 이벤트 참가 유저를 조회합니다.
+                        
+            ## 응답
+                        
+            - 조회 성공 시 `200`를 반환합니다.
+            - 파라미터가 없거나 올바른 타입이 아닌 경우 `400` 에러를 반환합니다.
+            - 존재하는 최대 페이지 수를 넘는 경우 `404` 에러를 반환합니다.
+            
+            ## 주의
+            
+            - 페이지 번호는 0-based로 받습니다.
+            - 예를 들어 페이지 1번은 pageSequence=0을 요청해야합니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "이벤트 참가 유저 정보 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "파라미터가 올바르지 않을 때", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"올바르지 않은 쿼리 파라미터입니다.\",\"status\":400}"))}),
+            @ApiResponse(responseCode = "404", description = "최대 페이지수를 초과", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"최대 페이지를 넘어섰습니다.\",\"status\":404}"))}),
+    })
+    public BaseResponse<EventUserPageResponseDto> getEventUserPage(
+            @Validated EventUserPageRequest eventUserPageRequest
+            ) {
+        EventUserPageResponseDto eventUserPage = eventUserService.getEventUserPage(eventUserPageRequest);
+
+        return new BaseResponse<>(eventUserPage);
     }
 }
