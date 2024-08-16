@@ -9,6 +9,7 @@ const EventDetail = React.lazy(() => import('./views/event/detail/EventDetail'))
 const EventParticipants = React.lazy(() => import('./views/event/detail/EventParticipants'))
 
 const User = React.lazy(() => import('./views/user/user'))
+const Purchasers = React.lazy(() => import('./views/purchaser/purchaser'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -19,7 +20,7 @@ const routes = [
   { path: '/event/:eventId/:subEventId', name: 'Event Participants', element: EventParticipants},
 
   { path: '/user', name: 'User', element: User},
-
+  { path: '/purchaser', name: 'Purchaser', element: Purchasers},
 
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
 ]
