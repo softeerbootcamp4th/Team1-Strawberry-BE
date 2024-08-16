@@ -6,10 +6,7 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFo
 import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLotteryService;
 import com.hyundai.softeer.backend.domain.lottery.exception.AlreadyDrawedException;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
-import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
-import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
+import com.hyundai.softeer.backend.domain.subevent.dto.*;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
@@ -18,6 +15,8 @@ import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,5 +130,18 @@ public class SubEventService {
 
         long left = eventUserRepository.findMaxBySubEventId(subEventId);
         return random.nextInt((int) left) + 1;
+    }
+
+    public Page<SubEventSimpleDto> getSubEvents(long eventId, int page, int size) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        return subEventRepository.findByEventId(eventId, pageable)
+                .map(subEvent -> SubEventSimpleDto.builder()
+                        .id(subEvent.getId())
+                        .alias(subEvent.getAlias())
+                        .startAt(subEvent.getStartAt())
+                        .endAt(subEvent.getEndAt())
+                        .SubEventExecuteType(subEvent.getExecuteType().getStatus())
+                        .SubEventType(subEvent.getEventType().getStatus())
+                        .build());
     }
 }
