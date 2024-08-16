@@ -15,7 +15,6 @@ const routes = [
   { path: '/event/:eventId', name: 'Event Detail', element: EventDetail},
 
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-
 ]
 
 export default routes
