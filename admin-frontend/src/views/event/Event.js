@@ -7,11 +7,13 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCell,
+    CTableCaption,
+    CTableDataCell,
+    CTableHead,
     CTableHeaderCell,
     CTableRow,
-    CTableHead,
-} from '@coreui/react';
+  } from '@coreui/react'
+  import { DocsExample } from 'src/components'
 
 const EventList = () => {
     const [events, setEvents] = useState([]); // 이벤트 리스트 상태
@@ -31,6 +33,7 @@ const EventList = () => {
             const data = await response.json();
             setEvents(data.content); // 이벤트 리스트 업데이트
             setTotalPages(data.totalPages); // 총 페이지 수 업데이트
+            console.log(data);
         } catch (error) {
             setError(error.message); // 에러 업데이트
         } finally {
@@ -75,10 +78,10 @@ const EventList = () => {
                             <CTableBody>
                                 {events.map((event) => (
                                     <CTableRow key={event.id}>
-                                        <CTableCell>{event.eventName}</CTableCell>
-                                        <CTableCell>{new Date(event.startAt).toLocaleString()}</CTableCell>
-                                        <CTableCell>{new Date(event.endAt).toLocaleString()}</CTableCell>
-                                        <CTableCell>{event.carName}</CTableCell>
+                                        <CTableDataCell>{event.eventName}</CTableDataCell>
+                                        <CTableDataCell>{new Date(event.startAt).toLocaleString()}</CTableDataCell>
+                                        <CTableDataCell>{new Date(event.endAt).toLocaleString()}</CTableDataCell>
+                                        <CTableDataCell>{event.carName}</CTableDataCell>
                                     </CTableRow>
                                 ))}
                             </CTableBody>
