@@ -24,8 +24,6 @@ const EventDetail = () => {
     const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
     
-    console.log("Participant");
-
     // API 호출
     const fetchEventDetails = async (id = subEventId, page = 0, size = 10) => {
         try {

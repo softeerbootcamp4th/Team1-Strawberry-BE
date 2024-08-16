@@ -31,9 +31,6 @@ const EventDetail = () => {
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
     const [visible, setVisible] = useState(false)
 
-    console.log("Detail");
-    console.log(eventId);
-
     // API 호출
     const fetchEventDetails = async (id = eventId, page = 0, size = 10) => {
         try {
@@ -54,7 +51,6 @@ const EventDetail = () => {
 
     // API 호출
     const fetchWinners = async (subEventId) => {
-        console.log(subEventId)
         try {
             const response = await fetch(`http://localhost:8080/api/v1/subevent/winner?subEventId=${subEventId}`);
             if (!response.ok) {
