@@ -1,6 +1,9 @@
 package com.hyundai.softeer.backend.domain.eventuser.repository;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.projection.EventUserPageProjection;
+import com.hyundai.softeer.backend.domain.eventuser.service.EventUserService;
+import com.hyundai.softeer.backend.domain.expectation.constant.ExpectationPage;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
@@ -10,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -177,5 +184,29 @@ class EventUserRepositoryTest {
 
         //then
         assertThat(result.isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("findEventUsersWithWinnerStatus success test")
+    void findEventUsersWithWinnerStatusSuccessTest() {
+        // given
+        Long subEventId = 1L;
+        Pageable pageable = PageRequest.of(
+                0,
+                EventUserService.PAGE_SIZE
+        );
+
+        // when
+        Page<EventUserPageProjection> _eventUsersWithWinnerStatus = eventUserRepository.findEventUsersWithWinnerStatus(subEventId, pageable);
+        List<EventUserPageProjection> eventUsersWithWinnerStatus = _eventUsersWithWinnerStatus.get().toList();
+
+        // then
+        assertThat(_eventUsersWithWinnerStatus.getTotalPages()).isEqualTo(1);
+        assertThat(eventUsersWithWinnerStatus.get(0).getUser().getId()).isEqualTo(1L);
+        assertThat(eventUsersWithWinnerStatus.get(1).getUser().getId()).isEqualTo(2L);
+        assertThat(eventUsersWithWinnerStatus.get(2).getUser().getId()).isEqualTo(3L);
+        assertThat(eventUsersWithWinnerStatus.get(0).getIsWinner()).isFalse();
+        assertThat(eventUsersWithWinnerStatus.get(1).getIsWinner()).isFalse();
+        assertThat(eventUsersWithWinnerStatus.get(2).getIsWinner()).isTrue();
     }
 }
