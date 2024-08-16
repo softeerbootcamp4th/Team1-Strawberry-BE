@@ -47,7 +47,7 @@ public class JwtAuthorizationFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         if (
-                whiteListCheck(httpServletRequest.getRequestURI()) &&
+                whiteListCheck(httpServletRequest.getRequestURI()) ||
                 isPreflight(httpServletRequest)
         ) {
             chain.doFilter(request, response);

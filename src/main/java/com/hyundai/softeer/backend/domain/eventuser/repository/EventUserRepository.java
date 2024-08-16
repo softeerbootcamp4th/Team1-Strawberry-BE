@@ -1,10 +1,13 @@
 package com.hyundai.softeer.backend.domain.eventuser.repository;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.projection.EventUserPageProjection;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +35,12 @@ public interface EventUserRepository extends JpaRepository<EventUser, Long> {
     long findMaxBySubEventId(Long subEventId);
 
     Optional<EventUser> findBySharedUrl(String sharedUrl);
+
+    @Query("SELECT eu.user as user, CASE WHEN w.ranking IS NOT NULL THEN true ELSE false END as isWinner " +
+            "FROM EventUser eu " +
+            "LEFT JOIN Winner w ON eu.subEvent.id = w.subEvent.id AND eu.user.id = w.user.id " +
+            "WHERE eu.subEvent.id = :subEventId " +
+            "ORDER BY eu.user.id")
+    Page<EventUserPageProjection> findEventUsersWithWinnerStatus(@Param("subEventId") Long subEventId, Pageable pageable);
 
 }
