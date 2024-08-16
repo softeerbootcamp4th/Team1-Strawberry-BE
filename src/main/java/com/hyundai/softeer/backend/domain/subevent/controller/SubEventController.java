@@ -2,11 +2,11 @@ package com.hyundai.softeer.backend.domain.subevent.controller;
 
 import com.hyundai.softeer.backend.domain.event.dto.ApiKeyRequest;
 import com.hyundai.softeer.backend.domain.event.service.EventService;
-import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventSimpleDto;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.service.SubEventService;
+import com.hyundai.softeer.backend.domain.winner.dto.WinnerInfoDto;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,10 +49,10 @@ public class SubEventController {
             """)
     @ApiResponses(value = {})
     @SecurityRequirement(name = "access-token")
-    public BaseResponse<List<RankDto>> getWinnerList(
+    public BaseResponse<List<WinnerInfoDto>> getWinnerList(
             @Validated SubEventRequest subEventRequest
     ) {
-        return null;
+        return new BaseResponse<>(subEventService.getWinners(subEventRequest));
     }
 
     @GetMapping("/draw")

@@ -6,14 +6,14 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Builder
 @Table(name = "Winners")
 @NoArgsConstructor
-@Setter
+@Getter
 @AllArgsConstructor
 public class Winner {
 

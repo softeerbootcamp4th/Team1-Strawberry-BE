@@ -11,6 +11,7 @@ import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
+import com.hyundai.softeer.backend.domain.winner.dto.WinnerInfoDto;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
@@ -130,6 +131,21 @@ public class SubEventService {
 
         long left = eventUserRepository.findMaxBySubEventId(subEventId);
         return random.nextInt((int) left) + 1;
+    }
+
+    public List<WinnerInfoDto> getWinners(SubEventRequest subEventRequest) {
+        Long subEventId = subEventRequest.getSubEventId();
+
+        List<Winner> winners = winnerRepository.findBySubEventId(subEventId)
+                .orElseThrow(() -> new DrawingNotFoundException());
+
+        return winners.stream()
+                .map(winner -> WinnerInfoDto.builder()
+                        .userId(winner.getUser().getId())
+                        .ranking(winner.getRanking())
+                        .prizeName(winner.getPrize().getProductName())
+                        .build())
+                .toList();
     }
 
     public Page<SubEventSimpleDto> getSubEvents(long eventId, int page, int size) {
