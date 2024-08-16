@@ -14,16 +14,23 @@ import {
     CTableHeaderCell,
     CTableRow,
     CButton,
+    CModal,
+    CModalHeader,
+    CModalTitle,
+    CModalBody,
+    CModalFooter,
   } from '@coreui/react'
   
 const EventDetail = () => {
     const { eventId } = useParams(); // URL에서 이벤트 ID를 가져옴
     const [events, setEvents] = useState(null); // 단일 이벤트 상태
+    const [winners, setWinners] = useState(null); // 단일 이벤트 상태
     const [loading, setLoading] = useState(true); // 로딩 상태
     const [error, setError] = useState(null); // 에러 상태
     const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
-    
+    const [visible, setVisible] = useState(false)
+
     console.log("Detail");
     console.log(eventId);
 
@@ -37,6 +44,24 @@ const EventDetail = () => {
             const data = await response.json();
             setEvents(data.content); // 이벤트 리스트 업데이트
             setTotalPages(data.totalPages); // 총 페이지 수 업데이트
+            console.log(data);
+        } catch (error) {
+            setError(error.message); // 에러 업데이트
+        } finally {
+            setLoading(false); // 로딩 완료
+        }
+    };
+
+    // API 호출
+    const fetchWinners = async (subEventId) => {
+        console.log(subEventId)
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/subevent/winner?subEventId=${subEventId}`);
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 올바르지 않습니다');
+            }
+            const data = await response.json();
+            setWinners(data.data); // 이벤트 리스트 업데이트
             console.log(data);
         } catch (error) {
             setError(error.message); // 에러 업데이트
@@ -93,11 +118,50 @@ const EventDetail = () => {
                                         <CTableDataCell>{event.subEventType}</CTableDataCell>
                                         <CTableDataCell>
                                             <CButton
-                                                color="light"
-                                                onClick={() => handleViewDetails(event.id)}
+                                                color="primary"
+                                                onClick={() => {
+                                                    setVisible(true); // Show the modal
+                                                    fetchWinners(event.id); // Pass the subEventId to fetchWinners
+                                                }}
+                                                >조회</CButton>
+                                            <CModal
+                                            visible={visible}
+                                            onClose={() => setVisible(false)}
+                                            aria-labelledby="LiveDemoExampleLabel"
                                             >
-                                                조회
-                                            </CButton>
+                                            <CModalHeader>
+                                                <CModalTitle id="LiveDemoExampleLabel">Winners List</CModalTitle>
+                                            </CModalHeader>
+                                            <CModalBody>
+                                                <CTableBody>
+                                                    {winners && winners.map((winner) => (
+                                                    <CTable>
+                                                        <CTableHead>
+                                                          <CTableRow>
+                                                            <CTableHeaderCell>Name</CTableHeaderCell>
+                                                            <CTableHeaderCell>Prize</CTableHeaderCell>
+                                                            <CTableHeaderCell>Rank</CTableHeaderCell>
+                                                          </CTableRow>
+                                                        </CTableHead>
+                                                        <CTableBody>
+                                                          {winners.map((winner, index) => (
+                                                            <CTableRow key={index}>
+                                                              <CTableDataCell>{winner.userId}</CTableDataCell>
+                                                              <CTableDataCell>{winner.prizeName}</CTableDataCell>
+                                                              <CTableDataCell>{winner.ranking}</CTableDataCell>
+                                                            </CTableRow>
+                                                          ))}
+                                                        </CTableBody>
+                                                      </CTable>
+                                                    ))}
+                                                </CTableBody>
+                                            </CModalBody>
+                                            <CModalFooter>
+                                                <CButton color="secondary" onClick={() => setVisible(false)}>
+                                                Close
+                                                </CButton>
+                                            </CModalFooter>
+                                            </CModal>
                                         </CTableDataCell>
                                         <CTableDataCell>
                                             <CButton
