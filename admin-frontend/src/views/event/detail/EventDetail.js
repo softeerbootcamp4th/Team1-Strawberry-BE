@@ -45,6 +45,10 @@ const EventDetail = () => {
         }
     };
 
+    const handleViewParticipants = (subEventId) => {
+        window.location.href = `/#/event/` + eventId + `/` + subEventId; // 페이지 이동
+    };
+
     // 컴포넌트가 마운트될 때 이벤트를 가져옴
     useEffect(() => {
         fetchEventDetails();
@@ -76,6 +80,7 @@ const EventDetail = () => {
                                     <CTableHeaderCell>추첨 종류</CTableHeaderCell>
                                     <CTableHeaderCell>당첨자 조회</CTableHeaderCell>
                                     <CTableHeaderCell>당첨자 추첨</CTableHeaderCell>
+                                    <CTableHeaderCell>참여자 조회</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
@@ -101,6 +106,14 @@ const EventDetail = () => {
                                                 disabled={event.subEventExecuteType === 'FIRSTCOME'}
                                             >
                                                 추첨
+                                            </CButton>
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            <CButton
+                                                color="light"
+                                                onClick={() => handleViewParticipants(event.id)}
+                                            >
+                                                조회
                                             </CButton>
                                         </CTableDataCell>
                                     </CTableRow>
