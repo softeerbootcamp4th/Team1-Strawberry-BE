@@ -105,3 +105,15 @@ VALUES (1, 4, '1차 드로잉', 1,
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/drawingLottery/game/03_blur_img.png',
         '디 올 뉴 싼타페는 테라스 컨셉의 테일게이트 공간을 기반으로 적재 이용성은 물론\n 대형 테일게이트의 개방감을 활용한 다양한 아웃도어 활동을 지원합니다.',
         '3초 후 디 올 뉴 싼테파를 그려주세요!', '7초 안에 선을 따라 디 올 뉴 싼타페를 그려주세요!');
+
+INSERT INTO events (id, end_at, event_name, event_status, start_at, winner_count, car_id, event_img_urls,
+                    expectation_banner_img_url)
+VALUES (2, '2024-09-01 10,00:00', '별 헤는 밤', 0, '2024-09-30 10:00:00', 10, 1, JSON_OBJECT(
+        "mainImgUrl", "www.mainimg.com2",
+        "scrolledImgUrl", "www.scroll.co2m",
+        "eventInfoImg", "www.eventinfo.co2m",
+        "quizMainImg", "www.quizmain.com2",
+        "quizPrizeImg", "www.qprize.com2",
+        "drawingMainImg", "www.drawingmainw.com",
+        "drawingPrizeImg", "www.drawingpriz2e.com"),
+        'https://softeer-static.s3.ap-northeast-4.amazonaws.com/expectationBG.svg');

@@ -13,4 +13,6 @@ public interface SubEventRepository extends JpaRepository<SubEvent, Long> {
     List<SubEvent> findByEventId(Long eventId);
 
     List<SubEvent> findByEventIdAndExecuteType(Long eventId, SubEventExecuteType subEventExecuteType);
+
+    void deleteByEventId(Long eventId);
 }

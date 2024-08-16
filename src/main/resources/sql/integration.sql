@@ -24,8 +24,16 @@ VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10
         "quizPrizeImg", "www.qprize.com",
         "drawingMainImg", "www.drawingmain.com",
         "drawingPrizeImg", "www.drawingprize.com"),
-        'https://softeer-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg');
-
+        'https://softeer-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg'),
+        (2, '2024-09-01 10,00:00', '별 헤는 밤', 0, '2024-09-30 10:00:00', 10, 1, JSON_OBJECT(
+        "mainImgUrl", "www.mainimg.com2",
+        "scrolledImgUrl", "www.scroll.co2m",
+        "eventInfoImg", "www.eventinfo.co2m",
+        "quizMainImg", "www.quizmain.com2",
+        "quizPrizeImg", "www.qprize.com2",
+        "drawingMainImg", "www.drawingmainw.com",
+        "drawingPrizeImg", "www.drawingpriz2e.com"),
+        'https://softeer-static.s3.ap-northeast-4.amazonaws.com/expectationBG.svg');
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls,
                         winners_meta)
 VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-06-25 10:30:00', '2024-06-26 10:30:00',
