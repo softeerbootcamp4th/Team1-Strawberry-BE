@@ -12,8 +12,8 @@ import {
     CTableHead,
     CTableHeaderCell,
     CTableRow,
+    CButton,
   } from '@coreui/react'
-  import { DocsExample } from 'src/components'
 
 const EventList = () => {
     const [events, setEvents] = useState([]); // 이벤트 리스트 상태
@@ -50,6 +50,10 @@ const EventList = () => {
         setCurrentPage(page);
     };
 
+    const handleViewDetails = (eventId) => {
+        window.location.href = `/#/event/${eventId}`; // 페이지 이동
+    };
+
     if (loading) {
         return <div>로딩 중...</div>;
     }
@@ -73,6 +77,7 @@ const EventList = () => {
                                     <CTableHeaderCell>시작일</CTableHeaderCell>
                                     <CTableHeaderCell>종료일</CTableHeaderCell>
                                     <CTableHeaderCell>차량명</CTableHeaderCell>
+                                    <CTableHeaderCell>조회</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
@@ -82,6 +87,14 @@ const EventList = () => {
                                         <CTableDataCell>{new Date(event.startAt).toLocaleString()}</CTableDataCell>
                                         <CTableDataCell>{new Date(event.endAt).toLocaleString()}</CTableDataCell>
                                         <CTableDataCell>{event.carName}</CTableDataCell>
+                                        <CTableDataCell>
+                                            <CButton
+                                                color="light"
+                                                onClick={() => handleViewDetails(event.id)}
+                                            >
+                                                조회
+                                            </CButton>
+                                        </CTableDataCell>
                                     </CTableRow>
                                 ))}
                             </CTableBody>
