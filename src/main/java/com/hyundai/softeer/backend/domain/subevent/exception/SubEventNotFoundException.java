@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class SubEventNotFoundException extends BaseException {
     public SubEventNotFoundException() {
-        super(HttpStatus.NO_CONTENT, "존재하지 않는 서브 이벤트 입니다.");
+        super(HttpStatus.NOT_FOUND, "존재하지 않는 서브 이벤트 입니다.");
     }
 }
