@@ -24,8 +24,7 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
     private final QuizFirstComeRepository quizFirstComeRepository;
 
     @Override
-    @Transactional
-    public QuizFirstComeSubmitResponseDto winnerDraw(
+    public synchronized QuizFirstComeSubmitResponseDto winnerDraw(
             QuizFirstCome quizFirstCome,
             SubEvent subEvent,
             User authenticatedUser) {
@@ -35,7 +34,7 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
         }
 
         int winners = quizFirstCome.getWinners();
-        int winnerCount = quizFirstCome.getWinnerCount();
+        int winnerCount = (int) winnerRepository.countWinnerBySubEventId(subEvent.getId());
 
         if (winnerCount >= winners) {
             return QuizFirstComeSubmitResponseDto.correctBut();
