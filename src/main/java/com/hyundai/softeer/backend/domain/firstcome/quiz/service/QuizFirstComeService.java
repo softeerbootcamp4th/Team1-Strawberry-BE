@@ -25,6 +25,7 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
+import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
 import com.hyundai.softeer.backend.global.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +46,9 @@ import java.util.stream.Collectors;
 public class QuizFirstComeService {
     private final QuizFirstComeRepository quizFirstComeRepository;
     private final SubEventRepository subEventRepository;
-    private final WinnerRepository winnerRepository;
+    private final QuizWinnerDraw quizWinnerDraw;
     private final EventRepository eventRepository;
     private final EventUserRepository eventUserRepository;
-    private final UserRepository userRepository;
     private final PrizeRepository prizeRepository;
     private final DateUtil dateUtil;
     private final Clock clock;
@@ -210,7 +210,7 @@ public class QuizFirstComeService {
      * @return
      */
     @Transactional
-    public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User user) {
+    public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
 
         Long subEventId = quizFirstComeSubmitRequest.getSubEventId();
         String answer = quizFirstComeSubmitRequest.getAnswer();
@@ -218,48 +218,27 @@ public class QuizFirstComeService {
         SubEvent subEvent = subEventRepository.findById(subEventId)
                 .orElseThrow(() -> new SubEventNotFoundException());
 
+        QuizFirstCome quizFirstCome = quizFirstComeRepository.findBySubEventId(subEventId)
+                .orElseThrow(() -> new SubEventNotFoundException());
+
         if (dateUtil.isNotWithinSubEventPeriod(subEvent)) {
             throw new SubEventNotWithinPeriodException();
         }
-
-        QuizFirstCome quizFirstCome = quizFirstComeRepository.findBySubEventId(subEventId)
-                .orElseThrow(() -> new SubEventNotFoundException());
 
         if (!quizFirstCome.getAnswer().equals(answer)) {
             return QuizFirstComeSubmitResponseDto.notCorrect();
         }
 
-        int winners = quizFirstCome.getWinners();
-        int winnerCount = quizFirstCome.getWinnerCount();
-
-        if (winnerCount >= winners) {
-            return QuizFirstComeSubmitResponseDto.correctBut();
-        }
-
-        Prize prize = quizFirstCome.getPrize();
-
-        quizFirstCome.setWinnerCount(winnerCount + 1);
-
-        if(isParticipanted(user.getId(), subEventId).isEmpty()) {
-            QuizFirstComeSubmitResponseDto.alreadyParticipant();
-        }
-
         EventUser eventUser = EventUser
                 .builder()
-                .user(userRepository.getReferenceById(user.getId()))
-                .subEvent(subEventRepository.getReferenceById(subEventId))
-                .chance(0)
+                .user(authenticatedUser)
+                .subEvent(subEvent)
+                .chance(-1)
                 .build();
 
         eventUserRepository.save(eventUser);
 
-        Winner winner = new Winner();
-        winner.setPrize(prize);
-        winner.setSubEvent(subEvent);
-        winner.setUser(user);
-        winnerRepository.save(winner);
-
-        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeWinningImgUrl());
+        return quizWinnerDraw.winnerDraw(quizFirstCome, subEvent, authenticatedUser);
     }
 
     @Transactional(readOnly = true)
@@ -333,9 +312,5 @@ public class QuizFirstComeService {
         Long eventId = quizFirstComeDeleteRequest.getEventId();
         subEventRepository.deleteByEventId(eventId);
         quizFirstComeRepository.deleteQuizEventByEventId(eventId);
-    }
-
-    private Optional<Winner> isParticipanted(long userId, long subEventId) {
-        return winnerRepository.findByUserIdAndSubEventId(userId, subEventId);
     }
 }
