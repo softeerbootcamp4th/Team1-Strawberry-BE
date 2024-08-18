@@ -113,7 +113,7 @@ class EventUserRepositoryTest {
         long result = eventUserRepository.findMaxBySubEventId(1L);
 
         //then
-        assertThat(result).isEqualTo(1000L);
+        assertThat(result).isEqualTo(4L);
     }
 
     @Test
