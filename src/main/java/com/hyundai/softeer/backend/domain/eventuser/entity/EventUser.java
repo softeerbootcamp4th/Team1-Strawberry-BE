@@ -24,6 +24,7 @@ import java.util.Map;
 public class EventUser {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -37,8 +38,7 @@ public class EventUser {
     private LocalDateTime lastChargeAt = LocalDateTime.now();
 
     @Column(unique = true)
-    @Builder.Default
-    private String sharedUrl = "";
+    private String sharedUrl;
 
     @Builder.Default
     private Double sharedScore = 0.0;
