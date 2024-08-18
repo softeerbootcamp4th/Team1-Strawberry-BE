@@ -24,9 +24,8 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
     private final QuizFirstComeRepository quizFirstComeRepository;
 
     @Override
-    @Synchronized
     @Transactional
-    public QuizFirstComeSubmitResponseDto winnerDraw(
+    public synchronized QuizFirstComeSubmitResponseDto winnerDraw(
             QuizFirstCome quizFirstCome,
             SubEvent subEvent,
             User authenticatedUser) {
