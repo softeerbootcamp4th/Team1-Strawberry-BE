@@ -1,8 +1,12 @@
 package com.hyundai.softeer.backend.domain.event.service;
 
+import com.hyundai.softeer.backend.domain.car.repository.CarRepository;
 import com.hyundai.softeer.backend.domain.event.dto.ApiKeyRequest;
+import com.hyundai.softeer.backend.domain.event.dto.EventCreateRequest;
 import com.hyundai.softeer.backend.domain.event.dto.EventSimpleDto;
+import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
+import com.hyundai.softeer.backend.infra.s3.service.S3Service;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +14,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
+    private final CarRepository carRepository;
+    private final S3Service s3Service;
 
     @Hidden
     @Value("${api.key}")
@@ -34,5 +44,29 @@ public class EventService {
                         .endAt(event.getEndAt())
                         .carName(event.getCar().getCarNameKor())
                         .build());
+    }
+
+    public Event createEvent(EventCreateRequest eventCreateRequest) {
+        String bannerImgUrl = s3Service.uploadFile(eventCreateRequest.getBannerImg());
+
+        Map<String, Object> images = eventCreateRequest.getImages().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> {
+                            MultipartFile file = entry.getValue();
+                            return s3Service.uploadFile(file);
+                        }
+                ));
+
+        Event event = Event.builder()
+                .car(carRepository.getReferenceById(eventCreateRequest.getCarId()))
+                .eventName(eventCreateRequest.getEventName())
+                .startAt(eventCreateRequest.getStartAt())
+                .endAt(eventCreateRequest.getEndAt())
+                .eventStatus(eventCreateRequest.getEventStatus())
+                .eventImgUrls(images)
+                .build();
+
+        return eventRepository.save(event);
     }
 }

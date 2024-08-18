@@ -9,7 +9,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.context.annotation.Profile;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +37,6 @@ public class Event extends BaseEntity {
 
     private LocalDateTime endAt;
 
-    private Integer winnerCount;
-
     private Boolean eventStatus;
 
     private String expectationBannerImgUrl;
@@ -64,9 +61,8 @@ public class Event extends BaseEntity {
                 .id(i)
                 .car(null)
                 .eventName("산타페" + i)
-                .startAt(LocalDateTime.of(2024,6,24,0,0,0).plusHours(i))
-                .endAt(LocalDateTime.of(2024,6,26,0,0,0).plusHours(i))
-                .winnerCount(1)
+                .startAt(LocalDateTime.of(2024, 6, 24, 0, 0, 0).plusHours(i))
+                .endAt(LocalDateTime.of(2024, 6, 26, 0, 0, 0).plusHours(i))
                 .eventStatus(true)
                 .expectationBannerImgUrl("www.expect" + i + "com")
                 .eventImgUrls(imgUrls)
@@ -77,7 +73,7 @@ public class Event extends BaseEntity {
     public static List<Event> testEventsGenerator(Long i) {
         List<Event> events = new ArrayList<>();
 
-        for(long cnt = 1L; cnt <= i; cnt++) {
+        for (long cnt = 1L; cnt <= i; cnt++) {
             events.add(Event.testEventGenerator(cnt));
         }
 
