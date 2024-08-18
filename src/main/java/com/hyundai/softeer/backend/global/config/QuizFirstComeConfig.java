@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.global.config;
 
+import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.service.QuizWinnerDraw;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.service.QuizWinnerDrawSync;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
@@ -14,8 +15,9 @@ public class QuizFirstComeConfig {
     @Bean
     public QuizWinnerDraw quizWinnerDraw(
             WinnerRepository winnerRepository,
-            WinnerUtil winnerUtil
+            WinnerUtil winnerUtil,
+            QuizFirstComeRepository quizFirstComeRepository
             ) {
-       return new QuizWinnerDrawSync(winnerRepository, winnerUtil);
+       return new QuizWinnerDrawSync(winnerRepository, winnerUtil, quizFirstComeRepository);
     }
 }
