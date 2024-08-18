@@ -210,7 +210,7 @@ public class QuizFirstComeService {
      * @return
      */
     @Transactional
-    public synchronized QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
+    public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
 
         Long subEventId = quizFirstComeSubmitRequest.getSubEventId();
         String answer = quizFirstComeSubmitRequest.getAnswer();
