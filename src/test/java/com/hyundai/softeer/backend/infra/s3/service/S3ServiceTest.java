@@ -16,7 +16,7 @@ class S3ServiceTest {
 
     @Test
     void listFileNamesInBucket() {
-        List<String> strings = s3Service.listFileNamesInBucket("softeer-static");
+        List<String> strings = s3Service.listFileNamesInBucket();
         log.info("strings = {}", strings);
     }
 }
