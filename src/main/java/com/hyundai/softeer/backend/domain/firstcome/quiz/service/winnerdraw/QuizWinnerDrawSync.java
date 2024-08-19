@@ -6,7 +6,6 @@ import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeSubmit
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.AlreadyWonEventUserException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
-import com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw.QuizWinnerDraw;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
@@ -14,9 +13,7 @@ import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class QuizWinnerDrawSync implements QuizWinnerDraw {
 

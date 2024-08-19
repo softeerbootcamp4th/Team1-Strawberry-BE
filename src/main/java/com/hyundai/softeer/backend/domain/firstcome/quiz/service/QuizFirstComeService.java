@@ -224,12 +224,12 @@ public class QuizFirstComeService {
             return QuizFirstComeSubmitResponseDto.notCorrect();
         }
 
-        
-        EventUser eventUser = eventUserRepository.save(EventUser
-                .builder()
+        EventUser newEventUser = EventUser.builder()
                 .user(authenticatedUser)
                 .subEvent(subEvent)
-                .build());
+                .build();
+
+        EventUser eventUser = eventUserRepository.save(newEventUser);
 
         return quizWinnerDraw.winnerDraw(eventUser, quizFirstCome, subEvent, authenticatedUser);
     }
