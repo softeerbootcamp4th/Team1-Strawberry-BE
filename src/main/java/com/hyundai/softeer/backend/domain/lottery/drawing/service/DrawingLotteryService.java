@@ -12,9 +12,7 @@ import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.lottery.service.LotteryService;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
-import com.hyundai.softeer.backend.domain.subevent.enums.EventPlayType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
-import com.hyundai.softeer.backend.domain.subevent.exception.UnknownEventPlayTypeException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
@@ -89,7 +87,6 @@ public class DrawingLotteryService implements LotteryService {
             throw new DrawingNotFoundException();
         }
 
-        EventPlayType eventPlayType = drawingInfoRequest.getEventPlayType();
         LocalDateTime now = LocalDateTime.now();
 
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), drawingInfoRequest.getSubEventId())
@@ -100,11 +97,19 @@ public class DrawingLotteryService implements LotteryService {
                         .lastChargeAt(now)
                         .build());
 
-        switch (eventPlayType) {
-            case NORMAL -> updateChanceAtNormalPlay(eventUser);
-            case EXPECTATION -> updateChanceAtExpectationPlay(eventUser);
-            case SHARED -> updateChanceAtSharedPlay(eventUser);
-            default -> throw new UnknownEventPlayTypeException();
+        // TODO Refactor
+        try {
+            updateChanceAtNormalPlay(eventUser);
+        } catch (NoChanceUserException e) {
+            try {
+                updateChanceAtSharedPlay(eventUser);
+            } catch (NoChanceUserException ex) {
+                try {
+                    updateChanceAtExpectationPlay(eventUser);
+                } catch (NoChanceUserException exc) {
+                    throw new NoChanceUserException();
+                }
+            }
         }
 
         return DrawingInfoDtos.builder()
