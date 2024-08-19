@@ -81,6 +81,12 @@ public class EventUser {
         this.scores.put(key, value);
     }
 
+    public void updateExpectationBonusChanceIfNotUsed() {
+        if (this.expectationBonusChance == -1) {
+            this.expectationBonusChance = 1;
+        }
+    }
+
     public void scoreSharedScore() {
         this.sharedScore += 1;
     }
