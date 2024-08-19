@@ -1,9 +1,7 @@
 package com.hyundai.softeer.backend.domain.lottery.service;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
-import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
-import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +48,4 @@ public interface LotteryService {
                 (lottoScore * scoreWeight.getLottoWeight()) +
                 (gameScore * scoreWeight.getGameWeight());
     }
-
-    List<RankDto> getRankList(SubEventRequest subEventRequest, int rankCount);
 }

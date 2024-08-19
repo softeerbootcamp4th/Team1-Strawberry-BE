@@ -11,6 +11,7 @@ import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizAlreadyExistException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw.QuizWinnerDraw;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventInfo;
@@ -223,12 +224,12 @@ public class QuizFirstComeService {
             return QuizFirstComeSubmitResponseDto.notCorrect();
         }
 
-        
-        EventUser eventUser = eventUserRepository.save(EventUser
-                .builder()
+        EventUser newEventUser = EventUser.builder()
                 .user(authenticatedUser)
                 .subEvent(subEvent)
-                .build());
+                .build();
+
+        EventUser eventUser = eventUserRepository.save(newEventUser);
 
         return quizWinnerDraw.winnerDraw(eventUser, quizFirstCome, subEvent, authenticatedUser);
     }
