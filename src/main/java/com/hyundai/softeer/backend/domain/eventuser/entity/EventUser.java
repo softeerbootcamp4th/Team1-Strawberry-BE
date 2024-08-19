@@ -81,6 +81,10 @@ public class EventUser {
         this.scores.put(key, value);
     }
 
+    public void updateGameScore(Double gameScore) {
+        this.gameScore = gameScore;
+    }
+
     public void updateExpectationBonusChanceIfNotUsed() {
         if (this.expectationBonusChance == -1) {
             this.expectationBonusChance = 1;
