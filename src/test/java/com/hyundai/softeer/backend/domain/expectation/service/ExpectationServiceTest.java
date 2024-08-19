@@ -3,10 +3,15 @@ package com.hyundai.softeer.backend.domain.expectation.service;
 import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.event.exception.EventNotFoundException;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
+import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.expectation.dto.*;
 import com.hyundai.softeer.backend.domain.expectation.entity.Expectation;
 import com.hyundai.softeer.backend.domain.expectation.exception.ExpectationNotFoundException;
 import com.hyundai.softeer.backend.domain.expectation.repository.ExpectationRepository;
+import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
+import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
+import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +46,12 @@ class ExpectationServiceTest {
 
     @Mock
     EventRepository eventRepository;
+
+    @Mock
+    SubEventRepository subEventRepository;
+
+    @Mock
+    EventUserRepository eventUserRepository;
 
 
     @BeforeEach
@@ -146,11 +157,18 @@ class ExpectationServiceTest {
         String comment = "Test comment";
         ExpectationRegisterRequest request = new ExpectationRegisterRequest();
         User authenticatedUser = User.builder()
+                .id(1L)
                 .name("김민준")
                 .email("minjun@naver.com")
                 .phoneNumber("010-6860-6823")
                 .birthDate(LocalDate.now())
                 .oAuthProvider(OAuthProvider.NAVER)
+                .build();
+        SubEvent subEvent = SubEvent.builder().id(1L).build();
+        EventUser eventUser = EventUser.builder()
+                .id(1L)
+                .user(authenticatedUser)
+                .subEvent(subEvent)
                 .build();
 
         Event mockEvent = Event.builder().build();
@@ -159,6 +177,10 @@ class ExpectationServiceTest {
 
         when(eventRepository.getReferenceById(eventId)).thenReturn(mockEvent);
         when(expectationRepository.save(any(Expectation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.LOTTERY)).thenReturn(List.of(subEvent));
+        when(eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEvent.getId()))
+                .thenReturn(Optional.of(eventUser));
+        when(eventUserRepository.save(any(EventUser.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         Expectation result = expectationService.expectationRegisterApi(request, eventId, authenticatedUser);
