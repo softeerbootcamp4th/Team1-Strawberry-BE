@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.firstcome.quiz.controller;
 
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizRegisterForbiddenException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.service.QuizFirstComeService;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
@@ -21,15 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Quiz First Come")
+@RequestMapping("/api/v1/firstcome/quiz")
 public class QuizFirstComeController {
 
     private final QuizFirstComeService quizFirstComeService;
@@ -55,7 +56,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "401", description = "로그인x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"로그인이 되지 않았습니다.\",\"status\":401}"))}),
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/firstcome/quiz/info")
+    @GetMapping("/info")
     @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeResponseDto> getQuiz(
             @Valid QuizFirstComeRequest quizFirstComeRequest
@@ -83,7 +84,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "400", description = "GET 요청의 query parameter가 숫자가 아니거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
-    @GetMapping("/api/v1/firstcome/quiz/land")
+    @GetMapping("/land")
     public BaseResponse<QuizFirstComeLandResponseDto> getQuizLandingPage() {
         QuizFirstComeLandResponseDto getQuizResponseDto = quizFirstComeService.getQuizLand(eventId);
         return new BaseResponse<>(getQuizResponseDto);
@@ -108,7 +109,7 @@ public class QuizFirstComeController {
                     useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
     })
-    @PostMapping("/api/v1/firstcome/quiz")
+    @PostMapping("")
     @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeSubmitResponseDto> quizSubmit(
             @RequestBody @Validated QuizFirstComeSubmitRequest quizFirstComeSubmitRequest,
@@ -123,4 +124,96 @@ public class QuizFirstComeController {
                 .build();
 
     }
+
+    @GetMapping("/list")
+    @Operation(summary = "admin / 퀴즈 정보를 반환하는 api", description = """
+            # 퀴즈 정보를 반환한다. 
+            
+            - 퀴즈 정보를 3개 반환합니다.
+                
+            ## 응답
+            1. 응답에 성공 했을 때 `200` 응답
+            2. 이벤트가 존재하지 않는 경우 `404` 응답
+            3. 쿼리 파라미터가 없거나 유효하지 않을 때 `400` 응답
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "퀴즈 정보를 정상적으로 반환했을 때",
+                    useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "쿼리 파라미터가 없거나 유효하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "이벤트가 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+    })
+    @Tag(name = "Admin")
+    public BaseResponse<List<QuizFirstComeInfoResponseDto>> getQuizInfos(
+           @Validated QuizFirstComeInfoRequest quizFirstComeInfoRequest
+    ) {
+       return new BaseResponse<>(quizFirstComeService.getQuizInfos(quizFirstComeInfoRequest));
+    }
+
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "admin / 퀴즈를 등록하는 api", description = """
+            # 퀴즈를 등록하는 api
+            
+            - 퀴즈 3개를 동시에 등록합니다.
+                
+            ## 응답
+            1. 응답에 성공 했을 때 `200` 응답
+            2. 쿼리 파라미터가 없거나 유효하지 않을 때 `400` 응답
+            3. 등록하려는 퀴즈 정보가 3개가 아니라면 `400` 응답
+            4. 이벤트가 존재하지 않는 경우 `404` 응답
+            
+            ## 주의
+            - 퀴즈는 반드시 3개가 들어와야 합니다.
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "퀴즈 정보를 정상적으로 반환했을 때",
+                    useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "쿼리 파라미터가 없거나 유효하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "이벤트가 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+    })
+    @Tag(name = "Admin")
+    public BaseResponse<Void> registerQuiz(
+            @Validated @RequestBody List<QuizFirstComeRegisterRequest> quizFirstComeRegisterRequests
+    ) {
+        if(quizFirstComeRegisterRequests.size() != 3) {
+            throw new QuizRegisterForbiddenException();
+        }
+
+        quizFirstComeService.registerQuiz(quizFirstComeRegisterRequests);
+
+        return new BaseResponse<>(201, "퀴즈가 등록되었습니다.", null);
+    }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "admin / 퀴즈를 삭제하는 api", description = """
+            # 퀴즈를 삭제하는 api
+            
+            - 한 이벤트의 퀴즈 이벤트를 삭제합니다.
+            - 퀴즈 이벤트 3개를 모두 삭제하는 api 입니다.
+                
+            ## 응답
+            1. 퀴즈 이벤트 삭제에 성공했을 때 `204` 응답
+            2. 쿼리 파라미터가 없거나 유효하지 않을 때 `400` 응답
+            
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "퀴즈 이벤트가 정상적으로 삭제되었을 때",
+                    useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "쿼리 파라미터가 없거나 유효하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+    })
+    @Tag(name = "Admin")
+    public BaseResponse<Void> deleteQuizEvent(
+            @Validated @RequestBody QuizFirstComeDeleteRequest quizFirstComeDeleteRequest
+    ) {
+       quizFirstComeService.deleteQuizByEvent(quizFirstComeDeleteRequest);
+
+       return new BaseResponse<>(200, "퀴즈 이벤트 삭제가 성공적으로 실행되었습니다.", null);
+    }
+
 }

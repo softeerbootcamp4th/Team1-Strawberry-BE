@@ -15,4 +15,10 @@ public class DrawingTotalScoreDto {
 
     @Schema(example = "2")
     private int chance;
+
+    @Schema(example = "1")
+    private int expectationBonusChance;
+
+    @Schema(example = "-1")
+    private int shareBonusChance;
 }

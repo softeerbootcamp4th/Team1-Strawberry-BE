@@ -41,5 +41,6 @@ public class QuizFirstCome extends FirstComeEvent {
     @ManyToOne(fetch = FetchType.LAZY)
     private Prize prize;
 
-    private Integer winnerCount;
+    @Builder.Default
+    private Integer winnerCount = 0;
 }

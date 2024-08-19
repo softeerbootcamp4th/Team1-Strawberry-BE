@@ -3,10 +3,7 @@ package com.hyundai.softeer.backend.domain.eventuser.entity;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -18,12 +15,14 @@ import java.util.Map;
 @Entity
 @Table(name = "event_users")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventUser {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -37,8 +36,7 @@ public class EventUser {
     private LocalDateTime lastChargeAt = LocalDateTime.now();
 
     @Column(unique = true)
-    @Builder.Default
-    private String sharedUrl = "";
+    private String sharedUrl;
 
     @Builder.Default
     private Double sharedScore = 0.0;
@@ -81,6 +79,16 @@ public class EventUser {
 
     public void updateScores(String key, Object value) {
         this.scores.put(key, value);
+    }
+
+    public void updateGameScore(Double gameScore) {
+        this.gameScore = gameScore;
+    }
+
+    public void updateExpectationBonusChanceIfNotUsed() {
+        if (this.expectationBonusChance == -1) {
+            this.expectationBonusChance = 1;
+        }
     }
 
     public void scoreSharedScore() {

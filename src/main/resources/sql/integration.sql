@@ -1,4 +1,4 @@
-INSERT INTO Prizes (id, product_name, price, prize_img_url, prize_winning_img_url)
+INSERT INTO prizes (id, product_name, price, prize_img_url, prize_winning_img_url)
 VALUES (1, '스타벅스 상품권', 4000, 'https://softeer-static.s3.ap-northeast-2.amazonaws.com/winner1.svg',
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/winner1.svg'),
        (2, '자전거', 120000, 'https://softeer-static.s3.ap-northeast-2.amazonaws.com/winner2.svg',
@@ -6,7 +6,7 @@ VALUES (1, '스타벅스 상품권', 4000, 'https://softeer-static.s3.ap-northea
        (3, '아이폰', 1000000, 'https://softeer-static.s3.ap-northeast-2.amazonaws.com/winner3.svg',
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/winner3.svg');
 
-INSERT INTO Users (id, email, name, phone_number, birth_date, o_auth_provider)
+INSERT INTO users (id, email, name, phone_number, birth_date, o_auth_provider)
 VALUES (1, 'alswnssl0528@naver.com', '김민준', '010-6833-4234', '1998-05-28', 0),
        (2, 'seong123@naver.com', '김승준', '010-1234-4234', '2000-03-28', 0),
        (3, 'sarang@naver.com', '한사랑', '010-5432-4234', '1999-11-28', 0);
@@ -24,8 +24,16 @@ VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10
         "quizPrizeImg", "www.qprize.com",
         "drawingMainImg", "www.drawingmain.com",
         "drawingPrizeImg", "www.drawingprize.com"),
-        'https://softeer-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg');
-
+        'https://softeer-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg'),
+        (2, '2024-09-01 10,00:00', '별 헤는 밤', 0, '2024-09-30 10:00:00', 10, 1, JSON_OBJECT(
+        "mainImgUrl", "www.mainimg.com2",
+        "scrolledImgUrl", "www.scroll.co2m",
+        "eventInfoImg", "www.eventinfo.co2m",
+        "quizMainImg", "www.quizmain.com2",
+        "quizPrizeImg", "www.qprize.com2",
+        "drawingMainImg", "www.drawingmainw.com",
+        "drawingPrizeImg", "www.drawingpriz2e.com"),
+        'https://softeer-static.s3.ap-northeast-4.amazonaws.com/expectationBG.svg');
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls,
                         winners_meta)
 VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-06-25 10:30:00', '2024-06-26 10:30:00',
@@ -56,7 +64,7 @@ VALUES (1, 1, 1, '#sub1', '10.4', '10 근처', '산타페의 연비는?', 2, 1, 
        (2, 2, 2, '#sub2', '11.5', '11 근처', '산타페의 연비는?', 3, 3, 'ㅅㅇㅈㅇ', '산타페의 엔진은..'),
        (3, 3, 3, '#sub3', '12.5', '12 근처', '산타페의 연비는?', 12, 9, 'ㅅㅇㅈㅇ', '산타페의 가격은..');
 
-INSERT INTO Winners (id, prize_id, sub_event_id, user_id, ranking)
+INSERT INTO winners (id, prize_id, sub_event_id, user_id, ranking)
 VALUES (1, 1, 3, 1, 1),
        (2, 2, 2, 2, 2),
        (3, 3, 1, 3, 3);

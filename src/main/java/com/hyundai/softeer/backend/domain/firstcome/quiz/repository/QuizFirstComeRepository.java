@@ -21,4 +21,11 @@ public interface QuizFirstComeRepository extends JpaRepository<QuizFirstCome, Lo
     @Query("UPDATE QuizFirstCome q SET q.winners = q.winners + 1 WHERE q.subEventId = :subEventId")
     @Modifying
     void incrementOneWinners(@Param("subEventId") Long subEventId);
+
+    @Modifying
+    @Query(value = "DELETE qe FROM quiz_firstcome_events qe " +
+            "INNER JOIN sub_events se ON se.id = qe.sub_event_id " +
+            "WHERE se.event_id = :eventId"
+            , nativeQuery = true)
+    void deleteQuizEventByEventId(@Param("eventId") Long eventId);
 }

@@ -1,6 +1,8 @@
 package com.hyundai.softeer.backend.domain.eventuser.controller;
 
 import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserInfoDto;
+import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserPageRequest;
+import com.hyundai.softeer.backend.domain.eventuser.dto.EventUserPageResponseDto;
 import com.hyundai.softeer.backend.domain.eventuser.dto.SharedUrlDto;
 import com.hyundai.softeer.backend.domain.eventuser.service.EventUserService;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
@@ -23,6 +25,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,10 +81,36 @@ public class EventUserController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 이벤트 참가자", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"해당 이벤트 참가자를 찾을 수 없습니다.\",\"status\":404}"))}),
     })
     @SecurityRequirement(name = "access-token")
+    @Tag(name = "Admin")
     public BaseResponse<SharedUrlDto> getSharedUrl(
             @Parameter(hidden = true) @CurrentUser User authenticatedUser,
             @Validated SubEventRequest subEventRequest
     ) {
         return new BaseResponse<>(eventUserService.getSharedUrl(authenticatedUser, subEventRequest));
+    }
+
+    @GetMapping("/page")
+    @Tag(name = "Admin")
+    @Operation(summary = "이벤트 참가 유저 조회", description = """
+            # 이벤트 참가 유저 조회 api
+            - 이벤트 참가 유저의 정보를 반환합니다.
+                        
+            ## 응답
+                        
+            - 조회 성공 시 `200` 코드와 이벤트 참가 유저, 총 페이지 수가 반환됩니다. 
+            - 쿼리 파라미터가 존재하지 않거나 타입이 올바르지 않을 때 `400` 에러를 반환합니다.
+            - 서브 이벤트가 존재하지 않거나 최대 페이지 수를 넘었을 때 `404` 에러를 반환합니다.
+                        
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "이벤트 참가 유저 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 파라미터 요청", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"유효하지 않은 파라미터 입니다.\",\"status\":400}"))}),
+            @ApiResponse(responseCode = "404", description = "서브 이벤트가 존재하지 않음", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"서브 이벤트가 존재하지 않습니다.\",\"status\":404}"))}),
+            @ApiResponse(responseCode = "404", description = "최대 페이지 수를 넘었을 때", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = BaseResponse.class), examples = @ExampleObject("{\"message\":\"최대 페이지 수를 넘었을 때.\",\"status\":404}"))}),
+    })
+    public BaseResponse<EventUserPageResponseDto> getUserPage(
+            @Validated EventUserPageRequest eventUserPageRequest
+    ) {
+       return new BaseResponse<>(eventUserService.getUserPage(eventUserPageRequest));
     }
 }

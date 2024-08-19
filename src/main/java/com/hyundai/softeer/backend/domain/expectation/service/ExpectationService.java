@@ -3,11 +3,16 @@ package com.hyundai.softeer.backend.domain.expectation.service;
 import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.event.exception.EventNotFoundException;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
+import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
+import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.expectation.constant.ExpectationPage;
 import com.hyundai.softeer.backend.domain.expectation.dto.*;
 import com.hyundai.softeer.backend.domain.expectation.entity.Expectation;
 import com.hyundai.softeer.backend.domain.expectation.exception.ExpectationNotFoundException;
 import com.hyundai.softeer.backend.domain.expectation.repository.ExpectationRepository;
+import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
+import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
+import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +32,8 @@ public class ExpectationService {
 
     private final ExpectationRepository expectationRepository;
     private final EventRepository eventRepository;
+    private final SubEventRepository subEventRepository;
+    private final EventUserRepository eventUserRepository;
 
     @Transactional(readOnly = true)
     public ExpectationPageResponseDto getExpectationPage(long eventId) {
@@ -51,11 +58,11 @@ public class ExpectationService {
                 pageable
         );
 
-        if(expectationPage == null) {
-           throw new EventNotFoundException();
+        if (expectationPage == null) {
+            throw new EventNotFoundException();
         }
 
-        List<ExpectationContentDto>  expectationContentDtos = expectationPage.get()
+        List<ExpectationContentDto> expectationContentDtos = expectationPage.get()
                 .map((expectation -> {
                     String expectationComment = expectation.getExpectationComment();
                     String name = expectation.getUser().getName();
@@ -63,7 +70,7 @@ public class ExpectationService {
                 }))
                 .toList();
 
-        if(expectationContentDtos.isEmpty()) {
+        if (expectationContentDtos.isEmpty()) {
             throw new ExpectationNotFoundException();
         }
 
@@ -72,6 +79,7 @@ public class ExpectationService {
                 expectationContentDtos
         );
     }
+
     @Transactional
     public Expectation expectationRegisterApi(
             ExpectationRegisterRequest expectationRegisterRequest,
@@ -83,6 +91,16 @@ public class ExpectationService {
         expectation.setEvent(eventRepository.getReferenceById(eventId));
         expectation.setUser(authenticatedUser);
         expectation.setExpectationComment(expectationRegisterRequest.getComment());
+
+        List<SubEvent> subEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.LOTTERY);
+
+        for (SubEvent subEvent : subEvents) {
+            EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEvent.getId())
+                    .orElseThrow(() -> new EventNotFoundException());
+            eventUser.updateExpectationBonusChanceIfNotUsed();
+
+            eventUserRepository.save(eventUser);
+        }
 
         return expectationRepository.save(expectation);
     }
