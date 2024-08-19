@@ -34,6 +34,9 @@ public class EventUserInfoDto {
     @Schema(description = "공유 보너스 참여 기회", example = "-1")
     private Integer shareBonusChance;
 
+    @Schema(description = "당첨 여부", example = "true")
+    private boolean isWinner;
+
     public static EventUserInfoDto fromEntity(EventUser eventUser) {
         return EventUserInfoDto.builder()
                 .lastVisitedAt(eventUser.getLastVisitedAt())
@@ -44,6 +47,7 @@ public class EventUserInfoDto {
                 .chance(eventUser.getChance())
                 .expectationBonusChance(eventUser.getExpectationBonusChance())
                 .shareBonusChance(eventUser.getShareBonusChance())
+                .isWinner(eventUser.getIsWinner())
                 .build();
     }
 }

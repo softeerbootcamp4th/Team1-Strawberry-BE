@@ -30,6 +30,9 @@ public class EventUser {
     private Boolean isWriteExpectation = false;
 
     @Builder.Default
+    private Boolean isWinner = false;
+
+    @Builder.Default
     private LocalDateTime lastVisitedAt = LocalDateTime.now();
 
     @Builder.Default
@@ -123,5 +126,9 @@ public class EventUser {
 
     public void useShareBonusChance() {
         this.shareBonusChance -= 1;
+    }
+
+    public void updateWinner() {
+        this.isWinner = true;
     }
 }
