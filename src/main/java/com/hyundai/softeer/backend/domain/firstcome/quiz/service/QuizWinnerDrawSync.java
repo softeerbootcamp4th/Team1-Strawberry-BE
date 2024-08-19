@@ -4,6 +4,7 @@ import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeSubmitResponseDto;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.AlreadyWonEventUserException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
@@ -31,7 +32,7 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
             User authenticatedUser) {
 
         if (!winnerUtil.isParticipanted(authenticatedUser.getId(), subEvent.getId()).isEmpty()) {
-            return QuizFirstComeSubmitResponseDto.alreadyParticipant();
+            throw new AlreadyWonEventUserException();
         }
 
         int winners = quizFirstCome.getWinners();
