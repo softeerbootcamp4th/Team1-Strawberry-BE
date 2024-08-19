@@ -194,6 +194,8 @@ public class DrawingLotteryService implements LotteryService {
                 .totalScore(totalScore)
                 .maxScore(maxScore)
                 .chance(eventUser.getChance())
+                .expectationBonusChance(eventUser.getExpectationBonusChance())
+                .shareBonusChance(eventUser.getShareBonusChance())
                 .build();
     }
 }
