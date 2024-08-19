@@ -150,6 +150,7 @@ public class DrawingLotteryService implements LotteryService {
         eventUserRepository.save(eventUser);
     }
 
+    @Transactional
     public DrawingScoreDto getDrawingScore(User authenticatedUser, DrawingScoreRequest drawingScoreRequest) {
         DrawingLotteryEvent drawingEvent = drawingLotteryRepository.findBySubEventIdAndSequence(drawingScoreRequest.getSubEventId(), drawingScoreRequest.getSequence())
                 .orElseThrow(DrawingNotFoundException::new);
@@ -176,6 +177,7 @@ public class DrawingLotteryService implements LotteryService {
                 .build();
     }
 
+    @Transactional
     public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventRequest.getSubEventId())
                 .orElseThrow(() -> new EventUserNotFoundException());
