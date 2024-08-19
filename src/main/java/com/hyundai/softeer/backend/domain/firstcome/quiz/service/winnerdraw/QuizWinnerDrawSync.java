@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.firstcome.quiz.service;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
@@ -6,6 +6,7 @@ import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeSubmit
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.AlreadyWonEventUserException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw.QuizWinnerDraw;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;

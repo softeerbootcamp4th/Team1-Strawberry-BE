@@ -1,4 +1,4 @@
-package com.hyundai.softeer.backend.domain.firstcome.quiz.service;
+package com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeSubmitResponseDto;

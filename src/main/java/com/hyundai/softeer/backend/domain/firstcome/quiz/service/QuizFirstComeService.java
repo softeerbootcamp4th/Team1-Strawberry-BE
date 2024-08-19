@@ -11,6 +11,7 @@ import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizAlreadyExistException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw.QuizWinnerDraw;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventInfo;
