@@ -185,8 +185,9 @@ public class DrawingLotteryService implements LotteryService {
         double maxScore = (double) scores.getOrDefault(GAME_SCORE, 0.0);
 
         if (totalScore > maxScore) {
-            eventUser.updateScores(GAME_SCORE, totalScore);
             maxScore = totalScore;
+            eventUser.updateScores(GAME_SCORE, totalScore);
+            eventUser.updateGameScore(totalScore);
             eventUserRepository.save(eventUser);
         }
 
@@ -194,6 +195,8 @@ public class DrawingLotteryService implements LotteryService {
                 .totalScore(totalScore)
                 .maxScore(maxScore)
                 .chance(eventUser.getChance())
+                .expectationBonusChance(eventUser.getExpectationBonusChance())
+                .shareBonusChance(eventUser.getShareBonusChance())
                 .build();
     }
 }
