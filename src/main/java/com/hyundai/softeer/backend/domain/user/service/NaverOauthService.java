@@ -8,6 +8,7 @@ import com.hyundai.softeer.backend.domain.user.dto.LoginResponseDto;
 import com.hyundai.softeer.backend.domain.user.dto.NaverUserInfo;
 import com.hyundai.softeer.backend.domain.user.dto.UserInfoDto;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.domain.user.exception.AlreadyExistOtherOAuthProviderException;
 import com.hyundai.softeer.backend.domain.user.exception.DuplicateUserException;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.global.jwt.OAuthProvider;
@@ -75,6 +76,10 @@ public class NaverOauthService {
             if (user.size() > 1) {
                 throw new DuplicateUserException();
             }
+            if (user.get(0).getOAuthProvider() != OAuthProvider.NAVER) {
+                throw new AlreadyExistOtherOAuthProviderException();
+            }
+
             return LoginResponseDto.builder()
                     .user(UserInfoDto.fromEntity(user.get(0)))
                     .token(tokenProvider.createJwt(Map.of("email", userInfo.getEmail())))

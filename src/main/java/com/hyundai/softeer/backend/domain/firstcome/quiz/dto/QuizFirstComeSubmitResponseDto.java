@@ -26,6 +26,6 @@ public class QuizFirstComeSubmitResponseDto {
     }
 
     public static QuizFirstComeSubmitResponseDto alreadyParticipant() {
-        return new QuizFirstComeSubmitResponseDto(false, false, true, null);
+        return new QuizFirstComeSubmitResponseDto(true, true, true, null);
     }
 }

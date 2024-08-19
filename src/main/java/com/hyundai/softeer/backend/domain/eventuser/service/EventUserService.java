@@ -8,7 +8,6 @@ import com.hyundai.softeer.backend.domain.eventuser.exception.NonPlayedUserExcep
 import com.hyundai.softeer.backend.domain.eventuser.exception.SharedUrlNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.projection.EventUserPageProjection;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
-import com.hyundai.softeer.backend.domain.expectation.constant.ExpectationPage;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +34,7 @@ public class EventUserService {
     public EventUserInfoDto getEventUserInfo(User user, Long subEventId) {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(user.getId(), subEventId)
                 .orElseThrow(() -> new EventUserNotFoundException());
-
+        
         return EventUserInfoDto.fromEntity(eventUser);
     }
 
@@ -72,13 +70,13 @@ public class EventUserService {
                 PAGE_SIZE
         );
 
-        if(!subEventRepository.existsById(subEventId)) {
+        if (!subEventRepository.existsById(subEventId)) {
             throw new SubEventNotFoundException();
         }
 
         Page<EventUserPageProjection> eventUsersWithWinnerStatus = eventUserRepository.findEventUsersWithWinnerStatus(subEventId, pageable);
 
-        if(eventUsersWithWinnerStatus.isEmpty()) {
+        if (eventUsersWithWinnerStatus.isEmpty()) {
             throw new EventUserPageNotFoundException();
         }
 

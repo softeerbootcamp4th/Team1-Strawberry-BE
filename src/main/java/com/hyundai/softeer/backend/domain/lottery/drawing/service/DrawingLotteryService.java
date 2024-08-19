@@ -8,42 +8,49 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.dto.*;
 import com.hyundai.softeer.backend.domain.lottery.drawing.entity.DrawingLotteryEvent;
 import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFoundException;
 import com.hyundai.softeer.backend.domain.lottery.drawing.repository.DrawingLotteryRepository;
+import com.hyundai.softeer.backend.domain.lottery.drawing.service.rank.DrawingRank;
 import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.lottery.service.LotteryService;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
-import com.hyundai.softeer.backend.domain.subevent.enums.EventPlayType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
-import com.hyundai.softeer.backend.domain.subevent.exception.UnknownEventPlayTypeException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DrawingLotteryService implements LotteryService {
-    public static final String FIRST_GAME_SCORE = "1_game_score";
-    public static final String SECOND_GAME_SCORE = "2_game_score";
-    public static final String THIRD_GAME_SCORE = "3_game_score";
-    public static final String GAME_SCORE = "game_score";
-    public static final List<Double> SCORE_WEIGHTS = List.of(0.25, 0.35, 0.4);
 
     private final SubEventRepository subEventRepository;
     private final EventUserRepository eventUserRepository;
     private final DrawingLotteryRepository drawingLotteryRepository;
     private final ScoreCalculator scoreCalculator;
+    private final DrawingRank drawingRank;
+
+    @Value("${properties.event-id}")
+    private Long eventId;
+
+    @PostConstruct
+    public void init() {
+        SubEvent rankingSubEvent = subEventRepository.findByEventId(eventId)
+                .stream()
+                .filter(subEvent -> subEvent.getEventType().equals(SubEventType.DRAWING))
+                .findFirst().get();
+
+        drawingRank.updateRankingData(rankingSubEvent.getId(), 20);
+    }
 
     @Transactional(readOnly = true)
     public DrawingLotteryLandDto getDrawingLotteryLand(long eventId) {
@@ -57,6 +64,10 @@ public class DrawingLotteryService implements LotteryService {
         return DrawingLotteryLandDto.fromEntity(drawing);
     }
 
+    public List<RankDto> getRankList(SubEventRequest subEventRequest, int rankCount) {
+        return drawingRank.getRankList(subEventRequest, rankCount);
+    }
+
     private SubEvent findDrawingEvent(List<SubEvent> subEvents) {
         for (SubEvent subEvent : subEvents) {
             if (subEvent.getEventType().equals(SubEventType.DRAWING)) {
@@ -64,21 +75,6 @@ public class DrawingLotteryService implements LotteryService {
             }
         }
         return null;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<RankDto> getRankList(SubEventRequest subEventRequest, int rankCount) {
-        Pageable pageable = PageRequest.of(0, rankCount);
-        List<RankDto> topNBySubEventId = eventUserRepository.findTopNBySubEventId(subEventRequest.getSubEventId(), pageable);
-
-        for (int i = 0; i < topNBySubEventId.size(); i++) {
-            topNBySubEventId.get(i).setRank(i + 1);
-        }
-
-        log.info("topNBySubEventId: {}", topNBySubEventId);
-
-        return topNBySubEventId;
     }
 
     @Transactional
@@ -89,7 +85,6 @@ public class DrawingLotteryService implements LotteryService {
             throw new DrawingNotFoundException();
         }
 
-        EventPlayType eventPlayType = drawingInfoRequest.getEventPlayType();
         LocalDateTime now = LocalDateTime.now();
 
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), drawingInfoRequest.getSubEventId())
@@ -100,11 +95,19 @@ public class DrawingLotteryService implements LotteryService {
                         .lastChargeAt(now)
                         .build());
 
-        switch (eventPlayType) {
-            case NORMAL -> updateChanceAtNormalPlay(eventUser);
-            case EXPECTATION -> updateChanceAtExpectationPlay(eventUser);
-            case SHARED -> updateChanceAtSharedPlay(eventUser);
-            default -> throw new UnknownEventPlayTypeException();
+        // TODO Refactor
+        try {
+            updateChanceAtNormalPlay(eventUser);
+        } catch (NoChanceUserException e) {
+            try {
+                updateChanceAtSharedPlay(eventUser);
+            } catch (NoChanceUserException ex) {
+                try {
+                    updateChanceAtExpectationPlay(eventUser);
+                } catch (NoChanceUserException exc) {
+                    throw new NoChanceUserException();
+                }
+            }
         }
 
         return DrawingInfoDtos.builder()
@@ -145,6 +148,7 @@ public class DrawingLotteryService implements LotteryService {
         eventUserRepository.save(eventUser);
     }
 
+    @Transactional
     public DrawingScoreDto getDrawingScore(User authenticatedUser, DrawingScoreRequest drawingScoreRequest) {
         DrawingLotteryEvent drawingEvent = drawingLotteryRepository.findBySubEventIdAndSequence(drawingScoreRequest.getSubEventId(), drawingScoreRequest.getSequence())
                 .orElseThrow(DrawingNotFoundException::new);
@@ -171,32 +175,8 @@ public class DrawingLotteryService implements LotteryService {
                 .build();
     }
 
+    @Transactional
     public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
-        EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventRequest.getSubEventId())
-                .orElseThrow(() -> new EventUserNotFoundException());
-
-        Map<String, Object> scores = eventUser.getScores();
-
-        double firstScore = (double) scores.getOrDefault(FIRST_GAME_SCORE, 0.0);
-        double secondScore = (double) scores.getOrDefault(SECOND_GAME_SCORE, 0.0);
-        double thirdScore = (double) scores.getOrDefault(THIRD_GAME_SCORE, 0.0);
-
-        double totalScore = firstScore * SCORE_WEIGHTS.get(0) + secondScore * SCORE_WEIGHTS.get(1) + thirdScore * SCORE_WEIGHTS.get(2);
-        double maxScore = (double) scores.getOrDefault(GAME_SCORE, 0.0);
-
-        if (totalScore > maxScore) {
-            maxScore = totalScore;
-            eventUser.updateScores(GAME_SCORE, totalScore);
-            eventUser.updateGameScore(totalScore);
-            eventUserRepository.save(eventUser);
-        }
-
-        return DrawingTotalScoreDto.builder()
-                .totalScore(totalScore)
-                .maxScore(maxScore)
-                .chance(eventUser.getChance())
-                .expectationBonusChance(eventUser.getExpectationBonusChance())
-                .shareBonusChance(eventUser.getShareBonusChance())
-                .build();
+        return drawingRank.getDrawingTotalScore(authenticatedUser, subEventRequest);
     }
 }

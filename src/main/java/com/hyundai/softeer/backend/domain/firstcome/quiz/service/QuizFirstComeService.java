@@ -10,8 +10,8 @@ import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizAlreadyExistException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizNotFoundException;
-import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizRegisterForbiddenException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
+import com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw.QuizWinnerDraw;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventInfo;
@@ -22,10 +22,6 @@ import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundExc
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
-import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
-import com.hyundai.softeer.backend.domain.winner.entity.Winner;
-import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
-import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
 import com.hyundai.softeer.backend.global.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +33,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -229,21 +224,19 @@ public class QuizFirstComeService {
             return QuizFirstComeSubmitResponseDto.notCorrect();
         }
 
-        EventUser eventUser = EventUser
-                .builder()
+        EventUser newEventUser = EventUser.builder()
                 .user(authenticatedUser)
                 .subEvent(subEvent)
-                .chance(-1)
                 .build();
 
-        eventUserRepository.save(eventUser);
+        EventUser eventUser = eventUserRepository.save(newEventUser);
 
-        return quizWinnerDraw.winnerDraw(quizFirstCome, subEvent, authenticatedUser);
+        return quizWinnerDraw.winnerDraw(eventUser, quizFirstCome, subEvent, authenticatedUser);
     }
 
     @Transactional(readOnly = true)
     public List<QuizFirstComeInfoResponseDto> getQuizInfos(QuizFirstComeInfoRequest quizFirstComeInfoRequest) {
-       Long eventId = quizFirstComeInfoRequest.getEventId();
+        Long eventId = quizFirstComeInfoRequest.getEventId();
 
         List<QuizFirstComeInfoResponseDto> quizInfos = subEventRepository.findByEventId(eventId)
                 .stream()
@@ -257,7 +250,7 @@ public class QuizFirstComeService {
                             .build();
                 }).collect(Collectors.toList());
 
-        if(quizInfos.isEmpty()) throw new EventNotFoundException();
+        if (quizInfos.isEmpty()) throw new EventNotFoundException();
 
         return quizInfos;
     }
@@ -270,11 +263,11 @@ public class QuizFirstComeService {
         eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException());
 
-        if(!subEventRepository.findByEventId(eventId).isEmpty()) {
+        if (!subEventRepository.findByEventId(eventId).isEmpty()) {
             throw new QuizAlreadyExistException();
         }
 
-        for(QuizFirstComeRegisterRequest quizFirstComeRegisterRequest: quizFirstComeRegisterRequests) {
+        for (QuizFirstComeRegisterRequest quizFirstComeRegisterRequest : quizFirstComeRegisterRequests) {
             SubEvent subEvent = SubEvent.builder()
                     .startAt(quizFirstComeRegisterRequest.getStartAt())
                     .endAt(quizFirstComeRegisterRequest.getEndAt())
