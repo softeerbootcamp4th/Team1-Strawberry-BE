@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus;
 public class BaseException extends RuntimeException {
 
     private final HttpStatus httpStatus;
+    private final Boolean isCustom;
 
     public BaseException(HttpStatus httpStatus, String message) {
         super(message);
         this.httpStatus = httpStatus;
+        this.isCustom = true;
     }
 
 }

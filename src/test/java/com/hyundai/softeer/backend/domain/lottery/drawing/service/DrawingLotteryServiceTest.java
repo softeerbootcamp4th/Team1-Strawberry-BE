@@ -11,7 +11,6 @@ import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
 import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
-import com.hyundai.softeer.backend.domain.subevent.enums.EventPlayType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
@@ -125,7 +124,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 드로잉 이벤트가 없는 경우")
     void getDrawingGameInfo_DrawingNotFound() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of();
         User authenticatedUser = User.builder().id(1L).build();
 
@@ -140,7 +139,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 성공")
     void getDrawingGameInfo_success() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -173,7 +172,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 0번인 경우")
     void getDrawingGameInfo_no_chance() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -201,7 +200,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 첫 참여 유저")
     void getDrawingGameInfo_first_playing() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -224,7 +223,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 4시간 미만일 경우")
     void getDrawingGameInfo_1_chance_less_than_4hours_last_played() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -255,7 +254,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 0번, 충전 시간 4시간 이상일 경우")
     void getDrawingGameInfo_no_chance_but_4hours_last_played() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -286,7 +285,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 4시간 이상일 경우")
     void getDrawingGameInfo_1_chance_and_4hours_last_played() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -317,7 +316,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 0번, 충전 시간 8시간 이상일 경우")
     void getDrawingGameInfo_0_chance_and_8hours_last_played() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -349,7 +348,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 유저 기회 1번, 충전 시간 8시간 이상일 경우")
     void getDrawingGameInfo_1_chance_and_8hours_last_played() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.NORMAL);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -381,7 +380,7 @@ class DrawingLotteryServiceTest {
     @ValueSource(ints = {0, -1})
     void getDrawingGameInfo_no_chance_expectation(int expectationBonusChance) {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.EXPECTATION);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -410,7 +409,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 기대평 작성 기회를 사용하는 경우")
     void getDrawingGameInfo_expectation_chance() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.EXPECTATION);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -422,7 +421,7 @@ class DrawingLotteryServiceTest {
         EventUser eventUser = EventUser.builder()
                 .user(authenticatedUser)
                 .subEvent(subEvent)
-                .chance(1)
+                .chance(0)
                 .expectationBonusChance(1)
                 .lastVisitedAt(LocalDateTime.now())
                 .lastChargeAt(LocalDateTime.now())
@@ -436,7 +435,7 @@ class DrawingLotteryServiceTest {
         DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
 
         // Then
-        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+        assertThat(drawingGameInfo.getChance()).isEqualTo(0);
     }
 
     @ParameterizedTest
@@ -444,7 +443,7 @@ class DrawingLotteryServiceTest {
     @ValueSource(ints = {0, -1})
     void getDrawingGameInfo_no_chance_shared(int sharedBonusChance) {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.EXPECTATION);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -473,7 +472,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 이벤트 게임 정보 조회 시 공유 URL 작성 기회를 사용하는 경우")
     void getDrawingGameInfo_shared_url_chance() {
         // Given
-        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L, EventPlayType.SHARED);
+        DrawingInfoRequest drawingInfoRequest = new DrawingInfoRequest(1L);
         List<DrawingLotteryEvent> drawingEvents = List.of(
                 DrawingLotteryEvent.builder().id(1L).sequence(1).startPosX(1.0).startPosY(1.5).build(),
                 DrawingLotteryEvent.builder().id(2L).sequence(2).startPosX(2.0).startPosY(1.5).build(),
@@ -485,7 +484,7 @@ class DrawingLotteryServiceTest {
         EventUser eventUser = EventUser.builder()
                 .user(authenticatedUser)
                 .subEvent(subEvent)
-                .chance(1)
+                .chance(0)
                 .shareBonusChance(1)
                 .lastVisitedAt(LocalDateTime.now())
                 .lastChargeAt(LocalDateTime.now())
@@ -499,7 +498,7 @@ class DrawingLotteryServiceTest {
         DrawingInfoDtos drawingGameInfo = drawingLotteryService.getDrawingGameInfo(authenticatedUser, drawingInfoRequest);
 
         // Then
-        assertThat(drawingGameInfo.getChance()).isEqualTo(1);
+        assertThat(drawingGameInfo.getChance()).isEqualTo(0);
     }
 
     @Test
