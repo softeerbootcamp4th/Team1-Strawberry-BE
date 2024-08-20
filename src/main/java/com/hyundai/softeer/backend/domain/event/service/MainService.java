@@ -38,7 +38,7 @@ public class MainService {
         List<SubEvent> quizEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.FIRSTCOME);
 
         if(quizEvents.isEmpty()) {
-            throw new EventNotFoundException();
+            throw new SubEventNotFoundException();
         }
 
         List<QuizStartInfo> startAts = quizEvents.stream()
