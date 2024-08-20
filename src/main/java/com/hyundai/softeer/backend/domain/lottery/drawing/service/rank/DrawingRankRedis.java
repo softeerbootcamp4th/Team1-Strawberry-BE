@@ -54,7 +54,7 @@ public class DrawingRankRedis implements DrawingRank {
 
     @Transactional
     @Override
-    public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
+    public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest, int rankCount) {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventRequest.getSubEventId())
                 .orElseThrow(() -> new EventUserNotFoundException());
 
@@ -73,6 +73,25 @@ public class DrawingRankRedis implements DrawingRank {
             eventUser.updateGameScore(totalScore);
             eventUserRepository.save(eventUser);
             redisTemplate.opsForZSet().add(RANKING_KEY, authenticatedUser.getName(), totalScore);
+            Long rankSize = redisTemplate.opsForZSet().zCard(RANKING_KEY);
+
+            if (rankSize != null && rankSize < rankCount) {
+                redisTemplate.opsForZSet().add(RANKING_KEY, authenticatedUser.getName(), totalScore);
+            } else if (rankSize != null) {
+                // ZSet의 크기가 20이라면, 20번째 순위의 값을 가져옴
+                Set<ZSetOperations.TypedTuple<String>> range = redisTemplate.opsForZSet().rangeWithScores(RANKING_KEY, -1, -1);
+                if (range != null && !range.isEmpty()) {
+                    ZSetOperations.TypedTuple<String> lastRank = range.iterator().next();
+                    double lastRankScore = lastRank.getScore();
+
+                    // 새로운 값이 20위의 값보다 크다면 추가
+                    if (totalScore > lastRankScore) {
+                        redisTemplate.opsForZSet().add(RANKING_KEY, authenticatedUser.getName(), totalScore);
+                        // 최하위 랭크 제거 (21번째 항목 제거)
+                        redisTemplate.opsForZSet().removeRange(RANKING_KEY, 0, 0);
+                    }
+                }
+            }
         }
 
         return DrawingTotalScoreDto.builder()

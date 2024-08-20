@@ -13,9 +13,6 @@ public class EventUserInfoDto {
     @Schema(description = "마지막 방문 시간", example = "2021-08-01T00:00:00")
     private LocalDateTime lastVisitedAt;
 
-    @Schema(description = "마지막 충전 시간", example = "2021-08-01T00:00:00")
-    private LocalDateTime lastChargeAt;
-
     @Schema(description = "공유 점수", example = "3.0")
     private Double sharedScore;
 
@@ -43,7 +40,6 @@ public class EventUserInfoDto {
     public static EventUserInfoDto fromEntity(EventUser eventUser) {
         return EventUserInfoDto.builder()
                 .lastVisitedAt(eventUser.getLastVisitedAt())
-                .lastChargeAt(eventUser.getLastChargeAt())
                 .sharedScore(eventUser.getSharedScore())
                 .priorityScore(eventUser.getPriorityScore())
                 .lottoScore(eventUser.getLottoScore())

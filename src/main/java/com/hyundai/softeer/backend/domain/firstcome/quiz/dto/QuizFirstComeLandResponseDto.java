@@ -12,6 +12,9 @@ import java.util.Map;
 @Getter
 public class QuizFirstComeLandResponseDto {
 
+    @Schema(description = "퀴즈 번호", example = "1")
+    private Integer quizSequence;
+
     @Schema(description = "이벤트 유효 여부", example = "true")
     private boolean valid;
 

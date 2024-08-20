@@ -42,8 +42,6 @@ public class QuizWinnerDrawRedis implements QuizWinnerDraw {
         winner.setUser(authenticatedUser);
         winnerRepository.save(winner);
 
-        counterService.incrementCounter(CounterService.COUNTER_KEY);
-
-        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeWinningImgUrl());
+        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeResultImgUrl());
     }
 }
