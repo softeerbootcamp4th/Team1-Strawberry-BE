@@ -36,6 +36,8 @@ public class QuizWinnerDrawRedis implements QuizWinnerDraw {
 
         Prize prize = quizFirstCome.getPrize();
 
+        counterService.incrementCounter(CounterService.COUNTER_KEY);
+
         Winner winner = new Winner();
         winner.setPrize(prize);
         winner.setSubEvent(subEvent);

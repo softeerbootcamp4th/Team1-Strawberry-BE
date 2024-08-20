@@ -187,6 +187,7 @@ public class QuizFirstComeService {
                 .orElseThrow(() -> new QuizNotFoundException());
 
         return QuizFirstComeLandResponseDto.builder()
+                .quizSequence(subEvents.size() + 1)
                 .bannerImg(subEvent.getBannerImgUrl())
                 .eventImg(subEvent.getEventImgUrls())
                 .prizeInfos(prizeInfos)
