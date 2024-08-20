@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SubEventType {
-    DRAWING(0, "DRAWING", "api/v1/lottery/drawing/land"),
+    DRAWING(0, "DRAWING", "https://front.softeer1.site/drawing"),
     QUIZ(1, "QUIZ", "api/v1/firstcome/quiz/land"),
     ;
 
