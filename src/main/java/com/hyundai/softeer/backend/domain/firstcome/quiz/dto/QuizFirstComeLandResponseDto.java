@@ -54,6 +54,8 @@ public class QuizFirstComeLandResponseDto {
     @Schema(description = "당첨자 수", example = "100")
     private int winners;
 
+    @Schema(description = "현재 문제 번호", examples = "1")
+    private int quizSequence;
 
     public static QuizFirstComeLandResponseDto eventNotValid() {
         return QuizFirstComeLandResponseDto.builder()
