@@ -43,7 +43,6 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
         quizFirstCome.setWinnerCount(winnerCount + 1);
         quizFirstComeRepository.flush();
 
-
         Prize prize = quizFirstCome.getPrize();
 
         Winner winner = new Winner();

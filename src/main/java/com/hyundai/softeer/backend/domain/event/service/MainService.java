@@ -35,10 +35,6 @@ public class MainService {
 
         SubEvent closestSubEvent = dateUtil.findClosestSubEvent(subEvents);
 
-        if(closestSubEvent == null) {
-           throw new SubEventNotFoundException();
-        }
-
         List<SubEvent> quizEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.FIRSTCOME);
 
         if(quizEvents.isEmpty()) {
@@ -53,7 +49,7 @@ public class MainService {
                 })
                 .toList();
 
-        int remainSecond = (int) dateUtil.startBetweenCurrentDiff(closestSubEvent);
+        int remainSecond = closestSubEvent == null ? 0 : (int) dateUtil.startBetweenCurrentDiff(closestSubEvent);
 
         return MainLandDto.builder()
                 .imgs(eventImgUrls)
