@@ -40,7 +40,7 @@ public class DrawingRankSync implements DrawingRank {
 
     @Transactional
     @Override
-    public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
+    public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest, int rankCount) {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventRequest.getSubEventId())
                 .orElseThrow(() -> new EventUserNotFoundException());
 
