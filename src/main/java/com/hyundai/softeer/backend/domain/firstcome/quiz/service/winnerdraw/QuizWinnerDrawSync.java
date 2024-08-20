@@ -55,6 +55,6 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
         eventUser.updateWinner();
         eventUserRepository.save(eventUser);
 
-        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeWinningImgUrl());
+        return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeResultImgUrl());
     }
 }

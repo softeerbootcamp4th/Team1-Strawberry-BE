@@ -25,4 +25,6 @@ public class Prize {
     private String prizeImgUrl;
 
     private String prizeWinningImgUrl;
+
+    private String prizeResultImgUrl;
 }
