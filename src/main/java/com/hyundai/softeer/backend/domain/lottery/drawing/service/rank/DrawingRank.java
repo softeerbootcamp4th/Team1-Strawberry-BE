@@ -10,7 +10,7 @@ import java.util.List;
 public interface DrawingRank {
     List<RankDto> getRankList(SubEventRequest subEventRequest, int rankCount);
 
-    DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest);
+    DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest, int rankCount);
 
     void updateRankingData(long subEventId, int rankCount);
 }

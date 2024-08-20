@@ -30,8 +30,6 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/v1/lottery/drawing")
 public class DrawingLotteryController {
-    public static final int RANK_COUNT = 20;
-
     private final DrawingLotteryService drawingLotteryService;
 
     @Value("${properties.event-id}")
@@ -78,7 +76,7 @@ public class DrawingLotteryController {
     public BaseResponse<List<RankDto>> getRankList(
             @Validated SubEventRequest subEventRequest
     ) {
-        return new BaseResponse<>(drawingLotteryService.getRankList(subEventRequest, RANK_COUNT));
+        return new BaseResponse<>(drawingLotteryService.getRankList(subEventRequest));
     }
 
     @GetMapping("")
