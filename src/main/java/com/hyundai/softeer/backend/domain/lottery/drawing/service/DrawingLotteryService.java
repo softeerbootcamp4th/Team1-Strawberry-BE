@@ -39,17 +39,17 @@ public class DrawingLotteryService implements LotteryService {
     private final ScoreCalculator scoreCalculator;
     private final DrawingRank drawingRank;
 
+    public static final int RANK_COUNT = 20;
+
     @Value("${properties.event-id}")
     private Long eventId;
 
     @PostConstruct
     public void init() {
-        SubEvent rankingSubEvent = subEventRepository.findByEventId(eventId)
+        subEventRepository.findByEventId(eventId)
                 .stream()
                 .filter(subEvent -> subEvent.getEventType().equals(SubEventType.DRAWING))
-                .findFirst().get();
-
-        drawingRank.updateRankingData(rankingSubEvent.getId(), 20);
+                .findFirst().ifPresent(subEvent -> drawingRank.updateRankingData(subEvent.getId(), RANK_COUNT));
     }
 
     @Transactional(readOnly = true)
@@ -64,8 +64,8 @@ public class DrawingLotteryService implements LotteryService {
         return DrawingLotteryLandDto.fromEntity(drawing);
     }
 
-    public List<RankDto> getRankList(SubEventRequest subEventRequest, int rankCount) {
-        return drawingRank.getRankList(subEventRequest, rankCount);
+    public List<RankDto> getRankList(SubEventRequest subEventRequest) {
+        return drawingRank.getRankList(subEventRequest, RANK_COUNT);
     }
 
     private SubEvent findDrawingEvent(List<SubEvent> subEvents) {
@@ -177,6 +177,6 @@ public class DrawingLotteryService implements LotteryService {
 
     @Transactional
     public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
-        return drawingRank.getDrawingTotalScore(authenticatedUser, subEventRequest);
+        return drawingRank.getDrawingTotalScore(authenticatedUser, subEventRequest, RANK_COUNT);
     }
 }

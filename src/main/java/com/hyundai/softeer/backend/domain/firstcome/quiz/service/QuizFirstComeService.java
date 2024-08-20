@@ -132,6 +132,7 @@ public class QuizFirstComeService {
                 .startAt(subEvent.getStartAt())
                 .endAt(subEvent.getEndAt())
                 .lastQuizNumber(subEvents.size())
+                .quizSequence(quizFirstCome.getSequence())
                 .build();
     }
 

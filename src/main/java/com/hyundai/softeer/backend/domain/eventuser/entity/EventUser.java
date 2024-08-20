@@ -105,7 +105,7 @@ public class EventUser {
 
         if (diff >= 4 && diff < 8) {
             // 4시간 이상 8시간 미만 시 충전 시간을 4시간 뒤로 설정
-            this.lastChargeAt = this.lastVisitedAt.plusHours(4);
+            this.lastChargeAt = this.lastChargeAt.plusHours(4);
             // 기회 1회 추가
             this.chance = Math.min(2, this.chance + 1);
         } else if (diff >= 8) {

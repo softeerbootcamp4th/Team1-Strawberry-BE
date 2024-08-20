@@ -34,7 +34,7 @@ public class EventUserService {
     public EventUserInfoDto getEventUserInfo(User user, Long subEventId) {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(user.getId(), subEventId)
                 .orElseThrow(() -> new EventUserNotFoundException());
-        
+
         return EventUserInfoDto.fromEntity(eventUser);
     }
 
@@ -101,8 +101,8 @@ public class EventUserService {
                 .build();
     }
 
-    public RedirectUrlDto getRedirectUrl(SharedUrlRequest sharedUrlRequest) {
-        EventUser eventUser = eventUserRepository.findBySharedUrl(sharedUrlRequest.getSharedUrl())
+    public RedirectUrlDto getRedirectUrl(String sharedUrl) {
+        EventUser eventUser = eventUserRepository.findBySharedUrl(sharedUrl)
                 .orElseThrow(() -> new SharedUrlNotFoundException());
 
         eventUser.scoreSharedScore();
