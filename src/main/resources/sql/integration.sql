@@ -16,7 +16,7 @@ VALUES (1, 0, 'santafe', '산타페', 0, 30000000, '2024-07-01 10:00:00');
 
 INSERT INTO events (id, end_at, event_name, event_status, start_at, winner_count, car_id, event_img_urls,
                     expectation_banner_img_url)
-VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10, 1, JSON_OBJECT(
+VALUES (1, '2024-09-01 10,00:00', '별 헤는 밤', 0, '2024-07-25 10:00:00', 10, 1, JSON_OBJECT(
         "mainImgUrl", "www.mainimg.com",
         "scrolledImgUrl", "www.scroll.com",
         "eventInfoImg", "www.eventinfo.com",
@@ -36,15 +36,15 @@ VALUES (1, '2024-07-01 10,00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10
         'https://softeer-static.s3.ap-northeast-4.amazonaws.com/expectationBG.svg');
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls,
                         winners_meta)
-VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-06-25 10:30:00', '2024-06-26 10:30:00',
+VALUES (1, 1, '퀴즈 테스트', 1, 1, '2024-08-20 10:30:00', '2024-08-22 10:30:00',
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/event_banner.svg',
         JSON_OBJECT('main', 'https://softeer-static.s3.ap-northeast-2.amazonaws.com/event_info.svg'),
         JSON_OBJECT('1', JSON_OBJECT('prizeId', 1, 'winnerCount', 1))),
-       (2, 1, 'ㅣ히히', 1, 1, '2024-06-27 10:30:00', '2024-07-28 10:30:00',
+       (2, 1, 'ㅣ히히', 1, 1, '2024-08-23 10:30:00', '2024-08-24 10:30:00',
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/event_banner.svg',
         JSON_OBJECT('main', 'https://softeer-static.s3.ap-northeast-2.amazonaws.com/event_info.svg'),
         JSON_OBJECT('1', JSON_OBJECT('prizeId', 1, 'winnerCount', 1))),
-       (3, 1, '퀴즈 시러', 1, 1, '2024-07-29 10:30:00', '2024-08-30 10:30:00',
+       (3, 1, '퀴즈 시러', 1, 1, '2024-08-25 10:30:00', '2024-08-30 10:30:00',
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/event_banner.svg',
         JSON_OBJECT('main', 'https://softeer-static.s3.ap-northeast-2.amazonaws.com/event_info.svg'),
         JSON_OBJECT('1', JSON_OBJECT('prizeId', 1, 'winnerCount', 1))),
