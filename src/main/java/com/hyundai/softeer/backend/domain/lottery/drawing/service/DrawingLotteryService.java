@@ -49,9 +49,7 @@ public class DrawingLotteryService implements LotteryService {
         subEventRepository.findByEventId(eventId)
                 .stream()
                 .filter(subEvent -> subEvent.getEventType().equals(SubEventType.DRAWING))
-                .findFirst().get();
-
-        drawingRank.updateRankingData(rankingSubEvent.getId(), RANK_COUNT);
+                .findFirst().ifPresent(subEvent -> drawingRank.updateRankingData(subEvent.getId(), RANK_COUNT));
     }
 
     @Transactional(readOnly = true)
