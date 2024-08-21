@@ -1,5 +1,8 @@
 package com.hyundai.softeer.backend.domain.firstcome.quiz.controller;
 
+import com.hyundai.softeer.backend.domain.firstcome.dto.EnqueueDto;
+import com.hyundai.softeer.backend.domain.firstcome.dto.QueueRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueStatusDto;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizRegisterForbiddenException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.service.QuizFirstComeService;
@@ -32,8 +35,8 @@ import java.util.List;
 @Tag(name = "Quiz First Come")
 @RequestMapping("/api/v1/firstcome/quiz")
 public class QuizFirstComeController {
-
     private final QuizFirstComeService quizFirstComeService;
+
 
     @Value("${properties.event-id}")
     private Long eventId;
@@ -129,7 +132,7 @@ public class QuizFirstComeController {
     @GetMapping("/list")
     @Operation(summary = "admin / 퀴즈 정보를 반환하는 api", description = """
             # 퀴즈 정보를 반환한다. 
-            
+                        
             - 퀴즈 정보를 3개 반환합니다.
                 
             ## 응답
@@ -147,16 +150,16 @@ public class QuizFirstComeController {
     })
     @Tag(name = "Admin")
     public BaseResponse<List<QuizFirstComeInfoResponseDto>> getQuizInfos(
-           @Validated QuizFirstComeInfoRequest quizFirstComeInfoRequest
+            @Validated QuizFirstComeInfoRequest quizFirstComeInfoRequest
     ) {
-       return new BaseResponse<>(quizFirstComeService.getQuizInfos(quizFirstComeInfoRequest));
+        return new BaseResponse<>(quizFirstComeService.getQuizInfos(quizFirstComeInfoRequest));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "admin / 퀴즈를 등록하는 api", description = """
             # 퀴즈를 등록하는 api
-            
+                        
             - 퀴즈 3개를 동시에 등록합니다.
                 
             ## 응답
@@ -164,7 +167,7 @@ public class QuizFirstComeController {
             2. 쿼리 파라미터가 없거나 유효하지 않을 때 `400` 응답
             3. 등록하려는 퀴즈 정보가 3개가 아니라면 `400` 응답
             4. 이벤트가 존재하지 않는 경우 `404` 응답
-            
+                        
             ## 주의
             - 퀴즈는 반드시 3개가 들어와야 합니다.
             """)
@@ -180,7 +183,7 @@ public class QuizFirstComeController {
     public BaseResponse<Void> registerQuiz(
             @Validated @RequestBody List<QuizFirstComeRegisterRequest> quizFirstComeRegisterRequests
     ) {
-        if(quizFirstComeRegisterRequests.size() != 3) {
+        if (quizFirstComeRegisterRequests.size() != 3) {
             throw new QuizRegisterForbiddenException();
         }
 
@@ -192,14 +195,14 @@ public class QuizFirstComeController {
     @DeleteMapping("/delete")
     @Operation(summary = "admin / 퀴즈를 삭제하는 api", description = """
             # 퀴즈를 삭제하는 api
-            
+                        
             - 한 이벤트의 퀴즈 이벤트를 삭제합니다.
             - 퀴즈 이벤트 3개를 모두 삭제하는 api 입니다.
                 
             ## 응답
             1. 퀴즈 이벤트 삭제에 성공했을 때 `204` 응답
             2. 쿼리 파라미터가 없거나 유효하지 않을 때 `400` 응답
-            
+                        
             """)
     @ApiResponses(value = {
             @ApiResponse(
@@ -212,9 +215,25 @@ public class QuizFirstComeController {
     public BaseResponse<Void> deleteQuizEvent(
             @Validated @RequestBody QuizFirstComeDeleteRequest quizFirstComeDeleteRequest
     ) {
-       quizFirstComeService.deleteQuizByEvent(quizFirstComeDeleteRequest);
+        quizFirstComeService.deleteQuizByEvent(quizFirstComeDeleteRequest);
 
-       return new BaseResponse<>(200, "퀴즈 이벤트 삭제가 성공적으로 실행되었습니다.", null);
+        return new BaseResponse<>(200, "퀴즈 이벤트 삭제가 성공적으로 실행되었습니다.", null);
     }
 
+    @PostMapping("/enqueue")
+    @SecurityRequirement(name = "access-token")
+    public EnqueueDto enqueueQuiz(
+            @RequestBody QueueRequest queueRequest,
+            @Parameter(hidden = true) @CurrentUser User authenticatedUser
+    ) {
+        return quizFirstComeService.enqueueQuiz(authenticatedUser, queueRequest);
+    }
+
+    @GetMapping("/status")
+    @SecurityRequirement(name = "access-token")
+    public WaitingQueueStatusDto getQueueStatus(
+            QueueRequest queueRequest
+    ) {
+        return quizFirstComeService.getQueueStatus(queueRequest);
+    }
 }
