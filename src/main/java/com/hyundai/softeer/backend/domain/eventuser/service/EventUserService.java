@@ -44,18 +44,19 @@ public class EventUserService {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(user.getId(), subEventRequest.getSubEventId())
                 .orElseThrow(() -> new EventUserNotFoundException());
 
-        String sharedUrl = eventUser.getSharedUrl();
-        if (sharedUrl.isBlank()) {
-            sharedUrl = RandomStringUtils.random(SHARED_URL_LENGTH, true, true);
-            eventUser.updateSharedUrl(sharedUrl);
-            eventUserRepository.save(eventUser);
-        }
-
         double gameScore = eventUser.getGameScore();
 
         if (gameScore <= 0.0) {
             throw new NonPlayedUserException();
         }
+
+        String sharedUrl = eventUser.getSharedUrl();
+        if (sharedUrl == null || sharedUrl.isEmpty()) {
+            sharedUrl = RandomStringUtils.random(SHARED_URL_LENGTH, true, true);
+            eventUser.updateSharedUrl(sharedUrl);
+            eventUserRepository.save(eventUser);
+        }
+
 
         return new SharedUrlDto(sharedUrl, gameScore);
     }
