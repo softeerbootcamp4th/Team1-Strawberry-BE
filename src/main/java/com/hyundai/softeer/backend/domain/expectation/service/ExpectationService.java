@@ -66,6 +66,7 @@ public class ExpectationService {
                 .map((expectation -> {
                     String expectationComment = expectation.getExpectationComment();
                     String name = expectation.getUser().getName();
+                    name = maskName(name);
                     return new ExpectationContentDto(name, expectationComment);
                 }))
                 .toList();
@@ -103,5 +104,25 @@ public class ExpectationService {
         }
 
         return expectationRepository.save(expectation);
+    }
+
+    public static String maskName(String name) {
+        if (name == null || name.length() <= 2) {
+            return name; // 이름이 너무 짧으면 마스킹하지 않습니다.
+        }
+
+        char firstChar = name.charAt(0);
+        char lastChar = name.charAt(name.length() - 1);
+
+        StringBuilder masked = new StringBuilder();
+        masked.append(firstChar);
+
+        for (int i = 1; i < name.length() - 1; i++) {
+            masked.append('*');
+        }
+
+        masked.append(lastChar);
+
+        return masked.toString();
     }
 }
