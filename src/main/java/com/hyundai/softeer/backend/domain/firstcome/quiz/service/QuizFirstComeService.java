@@ -6,12 +6,17 @@ import com.hyundai.softeer.backend.domain.event.exception.EventNotWithinPeriodEx
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
+import com.hyundai.softeer.backend.domain.firstcome.dto.EnqueueDto;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingEnqueueBodyRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueStatusDto;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizAlreadyExistException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizNotFoundException;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.repository.QuizFirstComeRepository;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw.QuizWinnerDraw;
+import com.hyundai.softeer.backend.domain.firstcome.service.QueueService;
 import com.hyundai.softeer.backend.domain.prize.entity.Prize;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventInfo;
@@ -45,6 +50,7 @@ public class QuizFirstComeService {
     private final EventRepository eventRepository;
     private final EventUserRepository eventUserRepository;
     private final PrizeRepository prizeRepository;
+    private final QueueService queueService;
     private final DateUtil dateUtil;
     private final Clock clock;
 
@@ -59,7 +65,9 @@ public class QuizFirstComeService {
      * @return QuizResponseDto
      */
     @Transactional(readOnly = true)
-    public QuizFirstComeResponseDto getQuiz(QuizFirstComeRequest quizFirstComeRequest) {
+    public QuizFirstComeResponseDto getQuiz(QuizFirstComeRequest quizFirstComeRequest, User authenticatedUser) {
+        queueService.validateToken(quizFirstComeRequest.getToken(), authenticatedUser.getId(), quizFirstComeRequest.getSubEventId());
+
         Long subEventId = quizFirstComeRequest.getSubEventId();
 
         QuizFirstCome quizFirstCome = quizFirstComeRepository.findBySubEventId(subEventId)
@@ -208,6 +216,7 @@ public class QuizFirstComeService {
      */
     @Transactional
     public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
+        queueService.validateToken(quizFirstComeSubmitRequest.getToken(), authenticatedUser.getId(), quizFirstComeSubmitRequest.getSubEventId());
 
         Long subEventId = quizFirstComeSubmitRequest.getSubEventId();
         String answer = quizFirstComeSubmitRequest.getAnswer();
@@ -307,5 +316,31 @@ public class QuizFirstComeService {
         Long eventId = quizFirstComeDeleteRequest.getEventId();
         subEventRepository.deleteByEventId(eventId);
         quizFirstComeRepository.deleteQuizEventByEventId(eventId);
+    }
+
+    public EnqueueDto enqueueQuiz(User authenticatedUser, WaitingEnqueueBodyRequest waitingEnqueueBodyRequest) {
+        String token = queueService.createToken(authenticatedUser, waitingEnqueueBodyRequest);
+        Long subEventId = waitingEnqueueBodyRequest.getSubEventId();
+
+        queueService.addWaitingQueue(subEventId, token);
+
+        long currentUserCount = queueService.getCurrentUserInWaitingQueue(subEventId);
+
+        log.info("현재 대기열에 {}명이 있습니다.", currentUserCount);
+
+        return EnqueueDto.builder()
+                .token(token)
+                .currentWaitingUsers(currentUserCount)
+                .build();
+    }
+
+    public WaitingQueueStatusDto getQueueStatus(WaitingQueueRequest waitingQueueRequest) {
+        long lowerUserCountInWaitingQueue = queueService.getUserCountWithLowerTimestamp(waitingQueueRequest.getSubEventId(), waitingQueueRequest.getToken());
+
+        log.info("대기열에서 {}번째 입니다.", lowerUserCountInWaitingQueue);
+
+        return WaitingQueueStatusDto.builder()
+                .waitingUsers(lowerUserCountInWaitingQueue)
+                .build();
     }
 }
