@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.firstcome.service;
 
-import com.hyundai.softeer.backend.domain.firstcome.dto.QueueRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingEnqueueBodyRequest;
+import com.hyundai.softeer.backend.domain.firstcome.exception.WaitingInvalidTokenException;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,9 @@ public class QueueService {
     private final String WORK_QUEUE_KEY = "working:";
 
 
-    public String createToken(User authenticatedUser, QueueRequest queueRequest) {
+    public String createToken(User authenticatedUser, WaitingEnqueueBodyRequest waitingEnqueueBodyRequest) {
         String combinedData = authenticatedUser.getId() + ":"
-                + queueRequest.getSubEventId() + ":"
+                + waitingEnqueueBodyRequest.getSubEventId() + ":"
                 + UUID.randomUUID().toString();
         return Base64.getEncoder().encodeToString(combinedData.getBytes()).replaceAll("=+$", "");
     }
@@ -61,4 +62,16 @@ public class QueueService {
         });
     }
 
+    public void validateToken(String token, Long id, Long subEventId) {
+        String[] decodedToken = new String(Base64.getDecoder().decode(token)).split(":");
+        if (decodedToken.length != 3 ||
+                !decodedToken[0].equals(id.toString()) ||
+                !decodedToken[1].equals(subEventId.toString())) {
+            throw new WaitingInvalidTokenException();
+        }
+
+        if (redisTemplate.opsForValue().get(token) == null) {
+            throw new WaitingInvalidTokenException();
+        }
+    }
 }

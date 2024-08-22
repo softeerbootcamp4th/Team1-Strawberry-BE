@@ -7,7 +7,8 @@ import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.firstcome.dto.EnqueueDto;
-import com.hyundai.softeer.backend.domain.firstcome.dto.QueueRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingEnqueueBodyRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueRequest;
 import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueStatusDto;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.entity.QuizFirstCome;
@@ -64,7 +65,9 @@ public class QuizFirstComeService {
      * @return QuizResponseDto
      */
     @Transactional(readOnly = true)
-    public QuizFirstComeResponseDto getQuiz(QuizFirstComeRequest quizFirstComeRequest) {
+    public QuizFirstComeResponseDto getQuiz(QuizFirstComeRequest quizFirstComeRequest, User authenticatedUser) {
+        queueService.validateToken(quizFirstComeRequest.getToken(), authenticatedUser.getId(), quizFirstComeRequest.getSubEventId());
+
         Long subEventId = quizFirstComeRequest.getSubEventId();
 
         QuizFirstCome quizFirstCome = quizFirstComeRepository.findBySubEventId(subEventId)
@@ -213,6 +216,7 @@ public class QuizFirstComeService {
      */
     @Transactional
     public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
+        queueService.validateToken(quizFirstComeSubmitRequest.getToken(), authenticatedUser.getId(), quizFirstComeSubmitRequest.getSubEventId());
 
         Long subEventId = quizFirstComeSubmitRequest.getSubEventId();
         String answer = quizFirstComeSubmitRequest.getAnswer();
@@ -314,8 +318,8 @@ public class QuizFirstComeService {
         quizFirstComeRepository.deleteQuizEventByEventId(eventId);
     }
 
-    public EnqueueDto enqueueQuiz(User authenticatedUser, QueueRequest queueRequest) {
-        String token = queueService.createToken(authenticatedUser, queueRequest);
+    public EnqueueDto enqueueQuiz(User authenticatedUser, WaitingEnqueueBodyRequest waitingEnqueueBodyRequest) {
+        String token = queueService.createToken(authenticatedUser, waitingEnqueueBodyRequest);
 
         queueService.addWaitingQueue(token);
 
@@ -329,8 +333,8 @@ public class QuizFirstComeService {
                 .build();
     }
 
-    public WaitingQueueStatusDto getQueueStatus(QueueRequest queueRequest) {
-        long lowerUserCountInWaitingQueue = queueService.getUserCountWithLowerTimestamp(queueRequest.getToken());
+    public WaitingQueueStatusDto getQueueStatus(WaitingQueueRequest waitingQueueRequest) {
+        long lowerUserCountInWaitingQueue = queueService.getUserCountWithLowerTimestamp(waitingQueueRequest.getToken());
 
         log.info("대기열에서 {}번째 입니다.", lowerUserCountInWaitingQueue);
 
