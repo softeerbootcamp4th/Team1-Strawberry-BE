@@ -56,7 +56,9 @@ public class QueueService {
     }
 
     public void addTokensToWorkingQueue(Set<String> tokens) {
-        tokens.forEach(token -> redisTemplate.opsForZSet().add(WORK_QUEUE_KEY, token, System.currentTimeMillis()));
+        tokens.forEach(token -> {
+            redisTemplate.opsForValue().set(token, "working", 30, TimeUnit.MINUTES);
+        });
     }
 
 }
