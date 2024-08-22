@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class WaitingInvalidTokenException extends BaseException {
     public WaitingInvalidTokenException() {
-        super(HttpStatus.BAD_REQUEST, "대기열을 거치지 않은 접근입니다.");
+        super(HttpStatus.FORBIDDEN, "대기열을 거치지 않은 접근입니다.");
     }
 }
