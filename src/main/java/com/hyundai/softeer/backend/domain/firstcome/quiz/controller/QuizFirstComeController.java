@@ -58,6 +58,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "200", description = "정상 반환 시", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "파라미터가 유효x, 이벤트 기간x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
             @ApiResponse(responseCode = "401", description = "로그인x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"로그인이 되지 않았습니다.\",\"status\":401}"))}),
+            @ApiResponse(responseCode = "403", description = "대기열을 통한 접근이 아닌 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"대기열을 거치지 않은 접근입니다.\",\"status\":403}"))}),
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/info")
@@ -114,6 +115,7 @@ public class QuizFirstComeController {
                     description = "퀴즈 채점이 정상적으로 처리되었을 때",
                     useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "대기열을 통한 접근이 아닌 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"대기열을 거치지 않은 접근입니다.\",\"status\":403}"))}),
     })
     @PostMapping("")
     @SecurityRequirement(name = "access-token")
@@ -223,15 +225,41 @@ public class QuizFirstComeController {
     }
 
     @PostMapping("/waiting")
+    @Operation(summary = "퀴즈 이벤트 대기열 진입 API", description = """
+            # 퀴즈 이벤트 대기열 진입 API
+                        
+            - 퀴즈 이벤트 대기열에 진입합니다.
+                
+            ## 응답
+                        
+            - 대기열에 진입한 유저의 토큰을 반환합니다.
+                        
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "퀴즈 이벤트 대기열 진입 성공", useReturnTypeSchema = true),
+    })
     @SecurityRequirement(name = "access-token")
-    public EnqueueDto enqueueQuiz(
+    public BaseResponse<EnqueueDto> enqueueQuiz(
             @RequestBody WaitingEnqueueBodyRequest waitingEnqueueBodyRequest,
             @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
-        return quizFirstComeService.enqueueQuiz(authenticatedUser, waitingEnqueueBodyRequest);
+        return new BaseResponse<>(quizFirstComeService.enqueueQuiz(authenticatedUser, waitingEnqueueBodyRequest));
     }
 
     @GetMapping("/waiting")
+    @Operation(summary = "퀴즈 이벤트 대기열 조회 API", description = """
+            # 퀴즈 이벤트 대기열 조회 API
+                        
+            - 퀴즈 이벤트 대기열을 조회합니다.
+                
+            ## 응답
+                        
+            - 대기열에 있는 유저의 수를 반환합니다.
+                   
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "퀴즈 이벤트 대기열 진입 성공", useReturnTypeSchema = true),
+    })
     @SecurityRequirement(name = "access-token")
     public WaitingQueueStatusDto getQueueStatus(
             WaitingQueueRequest waitingQueueRequest
