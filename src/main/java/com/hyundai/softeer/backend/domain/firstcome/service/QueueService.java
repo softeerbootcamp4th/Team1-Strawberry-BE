@@ -25,7 +25,7 @@ public class QueueService {
         String combinedData = authenticatedUser.getId() + ":"
                 + queueRequest.getSubEventId() + ":"
                 + UUID.randomUUID().toString();
-        return Base64.getEncoder().encodeToString(combinedData.getBytes());
+        return Base64.getEncoder().encodeToString(combinedData.getBytes()).replaceAll("=+$", "");
     }
 
     public String addWaitingQueue(String token) {
