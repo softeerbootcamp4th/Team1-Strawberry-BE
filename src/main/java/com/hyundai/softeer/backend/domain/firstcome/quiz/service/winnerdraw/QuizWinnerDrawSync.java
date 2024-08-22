@@ -12,6 +12,7 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
+import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
     private final EventUserRepository eventUserRepository;
 
     @Override
+    @LogExecutionTime
     public synchronized QuizFirstComeSubmitResponseDto winnerDraw(
             EventUser eventUser,
             QuizFirstCome quizFirstCome,

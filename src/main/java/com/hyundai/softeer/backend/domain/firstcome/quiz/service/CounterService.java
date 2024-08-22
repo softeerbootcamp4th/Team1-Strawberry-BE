@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.domain.firstcome.quiz.service;
 
+import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,17 @@ public class CounterService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    @LogExecutionTime
     public Long incrementCounter(String key) {
         return redisTemplate.opsForValue().increment(key);
     }
 
+    @LogExecutionTime
     public Long decrementCounter(String key) {
         return redisTemplate.opsForValue().decrement(key);
     }
 
+    @LogExecutionTime
     public Long getCounterValue(String key) {
         String value = redisTemplate.opsForValue().get(key);
         return (value != null) ? Long.parseLong(value) : 0L;

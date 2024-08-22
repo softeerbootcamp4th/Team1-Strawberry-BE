@@ -27,6 +27,7 @@ import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundExc
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import com.hyundai.softeer.backend.global.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -215,6 +216,7 @@ public class QuizFirstComeService {
      * @return
      */
     @Transactional
+    @LogExecutionTime
     public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
         queueService.validateToken(quizFirstComeSubmitRequest.getToken(), authenticatedUser.getId(), quizFirstComeSubmitRequest.getSubEventId());
 
@@ -326,8 +328,6 @@ public class QuizFirstComeService {
 
         long currentUserCount = queueService.getCurrentUserInWaitingQueue(subEventId);
 
-        log.info("현재 대기열에 {}명이 있습니다.", currentUserCount);
-
         return EnqueueDto.builder()
                 .token(token)
                 .currentWaitingUsers(currentUserCount)
@@ -336,8 +336,6 @@ public class QuizFirstComeService {
 
     public WaitingQueueStatusDto getQueueStatus(WaitingQueueRequest waitingQueueRequest) {
         long lowerUserCountInWaitingQueue = queueService.getUserCountWithLowerTimestamp(waitingQueueRequest.getSubEventId(), waitingQueueRequest.getToken());
-
-        log.info("대기열에서 {}번째 입니다.", lowerUserCountInWaitingQueue);
 
         return WaitingQueueStatusDto.builder()
                 .waitingUsers(lowerUserCountInWaitingQueue)
