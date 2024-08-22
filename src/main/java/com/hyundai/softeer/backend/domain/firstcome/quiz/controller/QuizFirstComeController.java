@@ -240,7 +240,7 @@ public class QuizFirstComeController {
     })
     @SecurityRequirement(name = "access-token")
     public BaseResponse<EnqueueDto> enqueueQuiz(
-            @RequestBody WaitingEnqueueBodyRequest waitingEnqueueBodyRequest,
+            @RequestBody @Validated WaitingEnqueueBodyRequest waitingEnqueueBodyRequest,
             @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
         return new BaseResponse<>(quizFirstComeService.enqueueQuiz(authenticatedUser, waitingEnqueueBodyRequest));
@@ -261,9 +261,9 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "200", description = "퀴즈 이벤트 대기열 진입 성공", useReturnTypeSchema = true),
     })
     @SecurityRequirement(name = "access-token")
-    public WaitingQueueStatusDto getQueueStatus(
-            WaitingQueueRequest waitingQueueRequest
+    public BaseResponse<WaitingQueueStatusDto> getQueueStatus(
+            @Validated WaitingQueueRequest waitingQueueRequest
     ) {
-        return quizFirstComeService.getQueueStatus(waitingQueueRequest);
+        return new BaseResponse<>(quizFirstComeService.getQueueStatus(waitingQueueRequest));
     }
 }
