@@ -1,5 +1,6 @@
 package com.hyundai.softeer.backend.domain.firstcome.quiz.service.winnerdraw;
 
+import com.hyundai.softeer.backend.domain.event.dto.MainLandDto;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.repository.EventUserRepository;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.QuizFirstComeSubmitResponseDto;
@@ -12,6 +13,7 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
+import com.hyundai.softeer.backend.global.time.TimeMeasurement;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -33,26 +35,34 @@ public class QuizWinnerDrawSync implements QuizWinnerDraw {
             throw new AlreadyWonEventUserException();
         }
 
+        TimeMeasurement.start("countWinners");
         int winners = quizFirstCome.getWinners();
         int winnerCount = (int) winnerRepository.countWinnerBySubEventId(subEvent.getId());
+        TimeMeasurement.end("countWinners");
+        TimeMeasurement.getDurationMillis("countWinners");
 
         if (winnerCount >= winners) {
             return QuizFirstComeSubmitResponseDto.correctBut();
         }
 
         quizFirstCome.setWinnerCount(winnerCount + 1);
-        quizFirstComeRepository.flush();
 
         Prize prize = quizFirstCome.getPrize();
 
+        TimeMeasurement.start("insertWinners");
         Winner winner = new Winner();
         winner.setPrize(prize);
         winner.setSubEvent(subEvent);
         winner.setUser(authenticatedUser);
         winnerRepository.save(winner);
+        TimeMeasurement.start("insertWinners");
+        TimeMeasurement.getDurationMillis("insertWinners");
 
+        TimeMeasurement.start("saveEventUser");
         eventUser.updateWinner();
         eventUserRepository.save(eventUser);
+        TimeMeasurement.end("saveEventUser");
+        TimeMeasurement.getDurationMillis("saveEventUser");
 
         return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeResultImgUrl());
     }
