@@ -13,7 +13,6 @@ import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class QuizWinnerDrawRedis implements QuizWinnerDraw {
 
