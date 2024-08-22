@@ -3,11 +3,8 @@ package com.hyundai.softeer.backend.global.utils;
 import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
-import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
-import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -21,6 +18,7 @@ import java.util.List;
 public class DateUtil {
 
     private final Clock clock;
+
     public boolean isWithinSubEventPeriod(SubEvent subEvent) {
         LocalDateTime current = LocalDateTime.now(clock);
         LocalDateTime startAt = subEvent.getStartAt();
@@ -37,7 +35,7 @@ public class DateUtil {
         LocalDateTime current = LocalDateTime.now(clock);
         LocalDateTime startAt = subEvent.getStartAt();
         Duration duration = Duration.between(current, startAt);
-        return Math.max(0, duration.getSeconds());
+        return Math.max(0, duration.getSeconds() + 1);
     }
 
     public boolean eventNotWithinPeriod(Event event) {
@@ -48,14 +46,14 @@ public class DateUtil {
     public SubEvent findClosestSubEvent(List<SubEvent> subEvents) {
         LocalDateTime current = LocalDateTime.now(clock);
         SubEvent closetSubEvent = null;
-        for(SubEvent subEvent: subEvents) {
-            if(subEvent.getEventType().equals(SubEventType.DRAWING)) continue;
+        for (SubEvent subEvent : subEvents) {
+            if (subEvent.getEventType().equals(SubEventType.DRAWING)) continue;
 
-            if(isWithinSubEventPeriod(subEvent)) {
+            if (isWithinSubEventPeriod(subEvent)) {
                 return subEvent;
             }
 
-            if(current.isBefore(subEvent.getEndAt())) {
+            if (current.isBefore(subEvent.getEndAt())) {
                 return subEvent;
             }
         }
