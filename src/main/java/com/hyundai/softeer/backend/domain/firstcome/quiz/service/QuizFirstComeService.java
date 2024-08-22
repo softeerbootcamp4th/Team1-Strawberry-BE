@@ -320,10 +320,11 @@ public class QuizFirstComeService {
 
     public EnqueueDto enqueueQuiz(User authenticatedUser, WaitingEnqueueBodyRequest waitingEnqueueBodyRequest) {
         String token = queueService.createToken(authenticatedUser, waitingEnqueueBodyRequest);
+        Long subEventId = waitingEnqueueBodyRequest.getSubEventId();
 
-        queueService.addWaitingQueue(token);
+        queueService.addWaitingQueue(subEventId, token);
 
-        long currentUserCount = queueService.getCurrentUserInWaitingQueue();
+        long currentUserCount = queueService.getCurrentUserInWaitingQueue(subEventId);
 
         log.info("현재 대기열에 {}명이 있습니다.", currentUserCount);
 
@@ -334,7 +335,7 @@ public class QuizFirstComeService {
     }
 
     public WaitingQueueStatusDto getQueueStatus(WaitingQueueRequest waitingQueueRequest) {
-        long lowerUserCountInWaitingQueue = queueService.getUserCountWithLowerTimestamp(waitingQueueRequest.getToken());
+        long lowerUserCountInWaitingQueue = queueService.getUserCountWithLowerTimestamp(waitingQueueRequest.getSubEventId(), waitingQueueRequest.getToken());
 
         log.info("대기열에서 {}번째 입니다.", lowerUserCountInWaitingQueue);
 
