@@ -220,7 +220,7 @@ public class QuizFirstComeController {
         return new BaseResponse<>(200, "퀴즈 이벤트 삭제가 성공적으로 실행되었습니다.", null);
     }
 
-    @PostMapping("/enqueue")
+    @PostMapping("/waiting")
     @SecurityRequirement(name = "access-token")
     public EnqueueDto enqueueQuiz(
             @RequestBody QueueRequest queueRequest,
@@ -229,7 +229,7 @@ public class QuizFirstComeController {
         return quizFirstComeService.enqueueQuiz(authenticatedUser, queueRequest);
     }
 
-    @GetMapping("/status")
+    @GetMapping("/waiting")
     @SecurityRequirement(name = "access-token")
     public WaitingQueueStatusDto getQueueStatus(
             QueueRequest queueRequest
