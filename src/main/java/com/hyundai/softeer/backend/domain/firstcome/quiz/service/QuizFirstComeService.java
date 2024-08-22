@@ -27,6 +27,7 @@ import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundExc
 import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotWithinPeriodException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import com.hyundai.softeer.backend.global.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -215,6 +216,7 @@ public class QuizFirstComeService {
      * @return
      */
     @Transactional
+    @LogExecutionTime
     public QuizFirstComeSubmitResponseDto quizSubmit(QuizFirstComeSubmitRequest quizFirstComeSubmitRequest, User authenticatedUser) {
         queueService.validateToken(quizFirstComeSubmitRequest.getToken(), authenticatedUser.getId(), quizFirstComeSubmitRequest.getSubEventId());
 
