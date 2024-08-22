@@ -16,4 +16,6 @@ public class QuizFirstComeRequest {
     @Parameter
     @NotNull
     private Long subEventId;
+
+    private String token;
 }
