@@ -1,7 +1,8 @@
 package com.hyundai.softeer.backend.domain.firstcome.quiz.controller;
 
 import com.hyundai.softeer.backend.domain.firstcome.dto.EnqueueDto;
-import com.hyundai.softeer.backend.domain.firstcome.dto.QueueRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingEnqueueBodyRequest;
+import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueRequest;
 import com.hyundai.softeer.backend.domain.firstcome.dto.WaitingQueueStatusDto;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.dto.*;
 import com.hyundai.softeer.backend.domain.firstcome.quiz.exception.QuizRegisterForbiddenException;
@@ -62,9 +63,10 @@ public class QuizFirstComeController {
     @GetMapping("/info")
     @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeResponseDto> getQuiz(
-            @Valid QuizFirstComeRequest quizFirstComeRequest
+            @Valid QuizFirstComeRequest quizFirstComeRequest,
+            @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
-        QuizFirstComeResponseDto quizResponse = quizFirstComeService.getQuiz(quizFirstComeRequest);
+        QuizFirstComeResponseDto quizResponse = quizFirstComeService.getQuiz(quizFirstComeRequest, authenticatedUser);
 
         return new BaseResponse<>(quizResponse);
     }
@@ -223,17 +225,17 @@ public class QuizFirstComeController {
     @PostMapping("/waiting")
     @SecurityRequirement(name = "access-token")
     public EnqueueDto enqueueQuiz(
-            @RequestBody QueueRequest queueRequest,
+            @RequestBody WaitingEnqueueBodyRequest waitingEnqueueBodyRequest,
             @Parameter(hidden = true) @CurrentUser User authenticatedUser
     ) {
-        return quizFirstComeService.enqueueQuiz(authenticatedUser, queueRequest);
+        return quizFirstComeService.enqueueQuiz(authenticatedUser, waitingEnqueueBodyRequest);
     }
 
     @GetMapping("/waiting")
     @SecurityRequirement(name = "access-token")
     public WaitingQueueStatusDto getQueueStatus(
-            QueueRequest queueRequest
+            WaitingQueueRequest waitingQueueRequest
     ) {
-        return quizFirstComeService.getQueueStatus(queueRequest);
+        return quizFirstComeService.getQueueStatus(waitingQueueRequest);
     }
 }

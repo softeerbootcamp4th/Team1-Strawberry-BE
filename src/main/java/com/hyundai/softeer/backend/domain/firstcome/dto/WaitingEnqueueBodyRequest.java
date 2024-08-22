@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 @NotNull
-public class QueueRequest {
+public class WaitingEnqueueBodyRequest {
     Long subEventId;
-    String token;
 }
