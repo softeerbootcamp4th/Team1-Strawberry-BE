@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 public class QueueService {
     private final RedisTemplate<String, String> redisTemplate;
     private final String WAIT_QUEUE_KEY = "waiting:";
-    private final String WORK_QUEUE_KEY = "working:";
 
 
     public String createToken(User authenticatedUser, WaitingEnqueueBodyRequest waitingEnqueueBodyRequest) {
@@ -29,28 +28,28 @@ public class QueueService {
         return Base64.getEncoder().encodeToString(combinedData.getBytes()).replaceAll("=+$", "");
     }
 
-    public String addWaitingQueue(String token) {
-        redisTemplate.opsForZSet().add(WAIT_QUEUE_KEY, token, System.currentTimeMillis());
+    public String addWaitingQueue(long subEventId, String token) {
+        redisTemplate.opsForZSet().add(WAIT_QUEUE_KEY + subEventId, token, System.currentTimeMillis());
         redisTemplate.expire(WAIT_QUEUE_KEY, 60 * 60, TimeUnit.SECONDS);
         return token;
     }
 
-    public long getCurrentUserInWaitingQueue() {
-        Long count = redisTemplate.opsForZSet().zCard(WAIT_QUEUE_KEY);
+    public long getCurrentUserInWaitingQueue(long subEventId) {
+        Long count = redisTemplate.opsForZSet().zCard(WAIT_QUEUE_KEY + subEventId);
         return count != null ? count : 0;
     }
 
-    public long getUserCountWithLowerTimestamp(String token) {
-        Long rank = redisTemplate.opsForZSet().rank(WAIT_QUEUE_KEY, token);
+    public long getUserCountWithLowerTimestamp(long subEventId, String token) {
+        Long rank = redisTemplate.opsForZSet().rank(WAIT_QUEUE_KEY + subEventId, token);
 
         return rank != null ? rank : 0;
     }
 
-    public Set<String> popTokensFromWaitingQueue(long count) {
-        Set<String> tokens = redisTemplate.opsForZSet().range(WAIT_QUEUE_KEY, 0, count - 1);
+    public Set<String> popTokensFromWaitingQueue(long subEventId, long count) {
+        Set<String> tokens = redisTemplate.opsForZSet().range(WAIT_QUEUE_KEY + subEventId, 0, count - 1);
 
         if (tokens != null && !tokens.isEmpty()) {
-            redisTemplate.opsForZSet().remove(WAIT_QUEUE_KEY, tokens.toArray());
+            redisTemplate.opsForZSet().remove(WAIT_QUEUE_KEY + subEventId, tokens.toArray());
         }
 
         return tokens;
