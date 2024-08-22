@@ -10,6 +10,7 @@ import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
+import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,9 @@ public class QuizWinnerDrawRedis implements QuizWinnerDraw {
     private final WinnerRepository winnerRepository;
     private final CounterService counterService;
 
+
     @Override
+    @LogExecutionTime
     public synchronized QuizFirstComeSubmitResponseDto winnerDraw(EventUser eventUser, QuizFirstCome quizFirstCome, SubEvent subEvent, User authenticatedUser) {
         if (!winnerUtil.isParticipanted(authenticatedUser.getId(), subEvent.getId()).isEmpty()) {
             return QuizFirstComeSubmitResponseDto.alreadyParticipant();

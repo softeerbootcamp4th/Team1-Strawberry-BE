@@ -42,7 +42,7 @@ public class QueueService {
     public long getUserCountWithLowerTimestamp(long subEventId, String token) {
         Long rank = redisTemplate.opsForZSet().rank(WAIT_QUEUE_KEY + subEventId, token);
 
-        return rank != null ? rank : 0;
+        return rank != null ? rank + 1 : 0;
     }
 
     public Set<String> popTokensFromWaitingQueue(long subEventId, long count) {
