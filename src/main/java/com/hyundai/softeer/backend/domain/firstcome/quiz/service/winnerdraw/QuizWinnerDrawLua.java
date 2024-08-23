@@ -14,6 +14,7 @@ import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
+import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import com.hyundai.softeer.backend.global.exception.error.JsonParseException;
 import com.hyundai.softeer.backend.global.exception.error.SQLRuntimeException;
 import com.hyundai.softeer.backend.global.service.RedisKvService;
@@ -50,6 +51,7 @@ public class QuizWinnerDrawLua implements QuizWinnerDraw {
 
     @Scheduled(fixedRate = 60000)
     @Transactional
+    @LogExecutionTime
     protected void saveWinners() {
         Collection<String> allMembers = redisSetService.getAllMembers(WINNER_SET);
 
@@ -106,6 +108,7 @@ public class QuizWinnerDrawLua implements QuizWinnerDraw {
         }
     }
 
+    @LogExecutionTime
     private Long drawWinnerSync(long maxWinners, long userId, long subEventId, long prizeId) {
         String script =
                 "local current_count = redis.call('GET', KEYS[1]) " +
@@ -150,6 +153,7 @@ public class QuizWinnerDrawLua implements QuizWinnerDraw {
     }
 
     @Override
+    @LogExecutionTime
     public QuizFirstComeSubmitResponseDto winnerDraw(EventUser eventUser, QuizFirstCome quizFirstCome, SubEvent subEvent, User authenticatedUser) {
 
         String prizeResultImgUrl = quizFirstCome.getPrize().getPrizeResultImgUrl();
