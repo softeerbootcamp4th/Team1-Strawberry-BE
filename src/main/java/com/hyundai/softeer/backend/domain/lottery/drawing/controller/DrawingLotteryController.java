@@ -161,6 +161,20 @@ public class DrawingLotteryController {
         return new BaseResponse<>(drawingLotteryService.getDrawingTotalScore(authenticatedUser, subEventRequest));
     }
 
+    @Tag(name = "Drawing Lottery")
+    @Operation(summary = "드로잉 결과 이미지 저장", description = """
+            # 드로잉 결과 이미지 저장 api
+            
+            - 드로잉 결과 이미지를 aws s3에 저장합니다.
+             
+            ## 응답
+                        
+            - 이미지 저장 성공 시 `201`를 반환합니다..
+             
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "이미지 저장 성공 시", useReturnTypeSchema = true),
+    })
     @PostMapping("/image")
     @ResponseStatus(HttpStatus.CREATED)
     public BaseResponse<Void> saveDrawImage(
