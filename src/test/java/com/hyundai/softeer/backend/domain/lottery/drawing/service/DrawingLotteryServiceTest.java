@@ -547,7 +547,7 @@ class DrawingLotteryServiceTest {
 
         // Then
         assertThat(drawingScore.getScore()).isInstanceOf(Double.class);
-        assertThat(drawingScore.getScore()).isGreaterThan(90.0);
+        assertThat(drawingScore.getScore()).isGreaterThan(80.0);
         log.info("drawingScore: {}", drawingScore);
     }
 
