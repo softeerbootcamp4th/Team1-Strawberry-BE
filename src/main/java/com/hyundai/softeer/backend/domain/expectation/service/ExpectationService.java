@@ -66,6 +66,7 @@ public class ExpectationService {
                 .map((expectation -> {
                     String expectationComment = expectation.getExpectationComment();
                     String name = expectation.getUser().getName();
+                    name = maskName(name);
                     return new ExpectationContentDto(name, expectationComment);
                 }))
                 .toList();
@@ -103,5 +104,13 @@ public class ExpectationService {
         }
 
         return expectationRepository.save(expectation);
+    }
+
+    public static String maskName(String name) {
+        if(name == null || name.length() < 2) {
+            return name;
+        }
+
+        return name.substring(0, 1) + "*" + name.substring(2);
     }
 }

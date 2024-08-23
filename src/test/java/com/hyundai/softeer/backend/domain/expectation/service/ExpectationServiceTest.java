@@ -158,7 +158,7 @@ class ExpectationServiceTest {
         ExpectationRegisterRequest request = new ExpectationRegisterRequest();
         User authenticatedUser = User.builder()
                 .id(1L)
-                .name("김민준")
+                .name("김*준")
                 .email("minjun@naver.com")
                 .phoneNumber("010-6860-6823")
                 .birthDate(LocalDate.now())
@@ -193,7 +193,7 @@ class ExpectationServiceTest {
         assertThat(resultEvent.getEventName()).isEqualTo("산타페 이벤트");
         assertThat(resultEvent.getId()).isEqualTo(1L);
 
-        assertThat(resultUser.getName()).isEqualTo("김민준");
+        assertThat(resultUser.getName()).isEqualTo("김*준");
         assertThat(resultUser.getEmail()).isEqualTo("minjun@naver.com");
         assertThat(resultUser.getOAuthProvider()).isEqualTo(OAuthProvider.NAVER);
 
@@ -205,8 +205,9 @@ class ExpectationServiceTest {
         List<ExpectationContentDto> result = new ArrayList<>();
 
         for (int i = 1; i <= 11; i++) {
-            result.add(new ExpectationContentDto("김민준" + i, "안녕하세요" + i));
+            result.add(new ExpectationContentDto("김*준" + i, "안녕하세요" + i));
         }
+
         return result;
     }
 
