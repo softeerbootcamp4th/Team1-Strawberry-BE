@@ -20,24 +20,29 @@ import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DrawingLotteryService implements LotteryService {
+    @Autowired
+    private final MessageSource messageSource;
 
     private final SubEventRepository subEventRepository;
     private final EventUserRepository eventUserRepository;
     private final DrawingLotteryRepository drawingLotteryRepository;
     private final ScoreCalculator scoreCalculator;
     private final DrawingRank drawingRank;
+
+    private final Random random = new Random();
 
     public static final int RANK_COUNT = 20;
 
@@ -165,14 +170,42 @@ public class DrawingLotteryService implements LotteryService {
                 });
         optionalEventUser.orElseThrow(() -> new EventUserNotFoundException());
 
+        String resultMsg = getRandomMessageForScore((int) accuracy);
 
         return DrawingScoreDto.builder()
                 .score(accuracy)
                 .blurImgUrl(drawingEvent.getBlurImgUrl())
-                // TODO 점수에 따른 랜덤 메세지 삽입
-                .resultMsg("좀 만 더하면 고득점!")
+                .resultMsg(resultMsg)
                 .resultDetail(drawingEvent.getResultDetail())
                 .build();
+    }
+
+    private String getRandomMessageForScore(int score) {
+        String messageKey = getMessageKeyForScore(score);
+        String messagesString = messageSource.getMessage(messageKey, null, Locale.getDefault());
+        List<String> messages = Arrays.asList(messagesString.split(","));
+        return getRandomMessage(messages);
+    }
+
+    private String getMessageKeyForScore(int score) {
+        if (score >= 90) {
+            return "drawing.score.message.range.90_100";
+        } else if (score >= 70) {
+            return "drawing.score.message.range.70_90";
+        } else if (score >= 50) {
+            return "drawing.score.message.range.50_70";
+        } else if (score >= 30) {
+            return "drawing.score.message.range.30_50";
+        } else if (score >= 10) {
+            return "drawing.score.message.range.10_30";
+        } else {
+            return "drawing.score.message.range.0_10";
+        }
+    }
+
+    private String getRandomMessage(List<String> messages) {
+        int index = random.nextInt(messages.size());
+        return messages.get(index);
     }
 
     @Transactional
