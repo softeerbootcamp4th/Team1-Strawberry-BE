@@ -237,6 +237,10 @@ public class QuizFirstComeService {
             return QuizFirstComeSubmitResponseDto.notCorrect();
         }
 
+        if(eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEventId).isPresent()) {
+            return QuizFirstComeSubmitResponseDto.alreadyParticipant();
+        }
+
         EventUser newEventUser = EventUser.builder()
                 .user(authenticatedUser)
                 .subEvent(subEvent)
