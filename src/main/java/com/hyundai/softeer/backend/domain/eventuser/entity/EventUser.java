@@ -67,6 +67,8 @@ public class EventUser {
     @Builder.Default
     private Integer shareBonusChance = -1;
 
+    private String resultImgUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

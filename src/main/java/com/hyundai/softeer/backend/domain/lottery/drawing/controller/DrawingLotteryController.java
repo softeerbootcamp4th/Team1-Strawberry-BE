@@ -19,9 +19,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -157,5 +159,15 @@ public class DrawingLotteryController {
             @Validated SubEventRequest subEventRequest
     ) {
         return new BaseResponse<>(drawingLotteryService.getDrawingTotalScore(authenticatedUser, subEventRequest));
+    }
+
+    @PostMapping("/image")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<Void> saveDrawImage(
+            @RequestParam("image") MultipartFile file,
+            @Parameter(hidden = true) @CurrentUser User authenticatedUser
+    ) {
+        drawingLotteryService.saveDrawImage(file, eventId, authenticatedUser);
+        return new BaseResponse<>(201, "정상적으로 저장되었습니다.", null);
     }
 }
