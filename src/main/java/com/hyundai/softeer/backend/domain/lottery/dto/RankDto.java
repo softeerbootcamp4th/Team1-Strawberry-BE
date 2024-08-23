@@ -26,4 +26,8 @@ public class RankDto {
     public void setRank(Integer rank) {
         this.rank = rank;
     }
+
+    public void maskingName() {
+        this.name = this.name.substring(0, 1) + "*" + this.name.substring(2);
+    }
 }

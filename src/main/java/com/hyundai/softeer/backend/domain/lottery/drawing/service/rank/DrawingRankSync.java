@@ -35,6 +35,7 @@ public class DrawingRankSync implements DrawingRank {
 
         for (int i = 0; i < topNBySubEventId.size(); i++) {
             topNBySubEventId.get(i).setRank(i + 1);
+            topNBySubEventId.get(i).maskingName();
         }
 
         return topNBySubEventId;
