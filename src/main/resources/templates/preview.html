@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹페이지 제목</title>
+
+    <!-- Open Graph 메타 태그 -->
+    <meta property="og:title" content="드로잉 이벤트~!!">
+    <meta property="og:description" th:content="${name} + '님은 ' + ${score} + '를 얻으셨어요~~ 한번 도전 해보실래요?'">
+    <meta property="og:image" th:content="${resultImgUrl}">
+    <meta property="og:url">
+    <meta property="og:type" content="website">
+
+    <!-- 추가적인 Open Graph 태그 -->
+    <meta property="og:locale" content="ko_KR">
+</head>
+<body>
+<h1>웹페이지 내용</h1>
+<p>이곳에 실제 웹페이지 내용을 작성합니다.</p>
+</body>
+</html>
