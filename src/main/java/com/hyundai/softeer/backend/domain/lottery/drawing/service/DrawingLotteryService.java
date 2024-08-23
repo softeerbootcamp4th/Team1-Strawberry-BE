@@ -41,8 +41,7 @@ public class DrawingLotteryService implements LotteryService {
     private final DrawingLotteryRepository drawingLotteryRepository;
     private final ScoreCalculator scoreCalculator;
     private final DrawingRank drawingRank;
-
-    private final Random random = new Random();
+    private final Random random;
 
     public static final int RANK_COUNT = 20;
 

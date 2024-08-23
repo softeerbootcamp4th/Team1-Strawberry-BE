@@ -34,6 +34,7 @@ public class SubEventService {
     private final SubEventRepository subEventRepository;
     private final PrizeRepository prizeRepository;
     private final DrawingLotteryService drawingLotteryService;
+    private final Random random;
 
     @Transactional
     public List<WinnerCandidate> drawWinner(SubEventRequest subEventRequest) {
@@ -126,9 +127,6 @@ public class SubEventService {
     }
 
     private int getRandomValue(long subEventId) {
-        long randomSeed = System.currentTimeMillis();
-        Random random = new Random(randomSeed);
-
         long left = eventUserRepository.findMaxBySubEventId(subEventId);
         return random.nextInt((int) left) + 1;
     }
