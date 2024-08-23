@@ -204,11 +204,10 @@ class ExpectationServiceTest {
     private List<ExpectationContentDto> makeMockExpectationContent() {
         List<ExpectationContentDto> result = new ArrayList<>();
 
-        for (int i = 1; i <= 9; i++) {
-            result.add(new ExpectationContentDto("김**" + i, "안녕하세요" + i));
+        for (int i = 1; i <= 11; i++) {
+            result.add(new ExpectationContentDto("김*준" + i, "안녕하세요" + i));
         }
-        result.add(new ExpectationContentDto("김***0", "안녕하세요10"));
-        result.add(new ExpectationContentDto("김***1", "안녕하세요11"));
+
         return result;
     }
 
