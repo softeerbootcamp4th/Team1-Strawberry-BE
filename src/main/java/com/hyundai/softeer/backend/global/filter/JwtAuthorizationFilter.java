@@ -48,7 +48,7 @@ public class JwtAuthorizationFilter implements Filter {
 
         if (
                 whiteListCheck(httpServletRequest.getRequestURI()) ||
-                isPreflight(httpServletRequest)
+                        isPreflight(httpServletRequest)
         ) {
             chain.doFilter(request, response);
             return;
@@ -60,7 +60,6 @@ public class JwtAuthorizationFilter implements Filter {
         try {
             String token = getToken(httpServletRequest);
             AuthenticateUser authenticateUser = getAuthenticateUser(token);
-            log.info("값 : {}", authenticateUser.getEmail());
             chain.doFilter(request, response);
         } catch (JsonParseException e) {
             log.error("JsonParseException");

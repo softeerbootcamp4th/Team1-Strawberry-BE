@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.context.MessageSource;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -53,6 +54,9 @@ class DrawingLotteryServiceTest {
 
     @Spy
     private ScoreCalculator scoreCalculator;
+
+    @Spy
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
@@ -542,12 +546,13 @@ class DrawingLotteryServiceTest {
         when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.of(drawingEvent));
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(eventUser);
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("message");
 
         DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(user, drawingScoreRequest);
 
         // Then
         assertThat(drawingScore.getScore()).isInstanceOf(Double.class);
-        assertThat(drawingScore.getScore()).isGreaterThan(90.0);
+        assertThat(drawingScore.getScore()).isGreaterThan(80.0);
         log.info("drawingScore: {}", drawingScore);
     }
 
@@ -738,6 +743,7 @@ class DrawingLotteryServiceTest {
         when(drawingLotteryRepository.findBySubEventIdAndSequence(any(), any())).thenReturn(Optional.of(drawingEvent));
         when(eventUserRepository.findByUserIdAndSubEventId(anyLong(), anyLong())).thenReturn(Optional.of(eventUser));
         when(eventUserRepository.save(any())).thenReturn(eventUser);
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("message");
 
         DrawingScoreDto drawingScore = drawingLotteryService.getDrawingScore(user, drawingScoreRequest);
 
@@ -745,6 +751,7 @@ class DrawingLotteryServiceTest {
         assertThat(drawingScore.getScore()).isInstanceOf(Double.class);
         assertThat(drawingScore.getScore()).isLessThan(50.0);
         log.info("drawingScore: {}", drawingScore);
+        log.info("drawing result message: {}", drawingScore.getResultMsg());
     }
 }
 

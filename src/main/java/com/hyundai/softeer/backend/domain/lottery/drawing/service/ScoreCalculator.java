@@ -10,7 +10,9 @@ public class ScoreCalculator {
     public double calculateAverageEuclideanDistance(List<PositionDto> userPoints, List<PositionDto> answerPoints) {
         double totalScore = 0.0;
         int count = 0;
-        double maxDistance = 100 * Math.sqrt(2); // 최대 거리 계산
+
+        // 최대 거리를 줄여 점수를 감소시킵니다.
+        double maxDistance = 20 * Math.sqrt(2); // 예: 최대 거리 조정
 
         for (PositionDto answerPoint : answerPoints) {
             double minDistance = Double.MAX_VALUE;
@@ -21,14 +23,14 @@ public class ScoreCalculator {
                 minDistance = Math.min(minDistance, distance);
             }
 
-            // 점수 계산
+            // 점수 계산 (감쇠 비율 조정)
             double score;
             if (minDistance >= maxDistance) {
                 score = 0; // 최대 거리 이상일 경우 0점
             } else if (minDistance == 0) {
                 score = 100; // 완벽히 일치할 경우 100점
             } else {
-                score = 100 * (1 - (minDistance / maxDistance)); // 점수 계산
+                score = 100 * Math.pow(1 - (minDistance / maxDistance), 0.3); // 감쇠 비율 조정
             }
 
             totalScore += score; // 전체 점수에 추가
@@ -37,6 +39,7 @@ public class ScoreCalculator {
 
         return count == 0 ? 0 : totalScore / count; // count가 0일 경우 0 반환
     }
+
 
     private double getDistance(PositionDto answerPoint, PositionDto userPoint) {
         double distance = Math.sqrt(Math.pow(answerPoint.getX() - userPoint.getX(), 2) + Math.pow(answerPoint.getY() - userPoint.getY(), 2));

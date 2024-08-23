@@ -37,7 +37,6 @@ public class QueueScheduler {
         for (Long subEventId : subEventIds) {
             Set<String> tokens = queueService.popTokensFromWaitingQueue(subEventId, POP_CNT);
             queueService.addTokensToWorkingQueue(tokens);
-            log.info("waiting queue pop tokens size from subEventId: {} is {}", subEventId, tokens.size());
         }
     }
 }
