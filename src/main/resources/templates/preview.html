@@ -21,7 +21,6 @@
     window.addEventListener('load', function() {
         const baseUrl = /*[[${apiUrl}]]*/ '';
         const url = `${baseUrl}/url/${previewRequest.sharedUrl}`;
-
         // fetch를 사용하여 GET 요청 보내기
         fetch(url)
             .then(response => {
