@@ -34,6 +34,7 @@ public class JwtAuthorizationFilter implements Filter {
             "/api/v1/firstcome/quiz/land",
             "/api/v1/lottery/drawing/land",
             "/api/v1/lottery/drawing/rank",
+            "/api/v1/lottery/drawing/preview",
             "/api/v1/land"
     };
 
