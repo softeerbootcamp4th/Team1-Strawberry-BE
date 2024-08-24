@@ -1,5 +1,8 @@
 package com.hyundai.softeer.backend.domain.lottery.drawing.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.exception.EventUserNotFoundException;
 import com.hyundai.softeer.backend.domain.eventuser.exception.NoChanceUserException;
@@ -13,9 +16,12 @@ import com.hyundai.softeer.backend.domain.lottery.dto.RankDto;
 import com.hyundai.softeer.backend.domain.lottery.service.LotteryService;
 import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
+import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
+import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.entity.User;
+import com.hyundai.softeer.backend.global.config.S3Config;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +31,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -41,6 +49,10 @@ public class DrawingLotteryService implements LotteryService {
     private final DrawingLotteryRepository drawingLotteryRepository;
     private final ScoreCalculator scoreCalculator;
     private final DrawingRank drawingRank;
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     private final Random random = new Random();
 
@@ -211,5 +223,37 @@ public class DrawingLotteryService implements LotteryService {
     @Transactional
     public DrawingTotalScoreDto getDrawingTotalScore(User authenticatedUser, SubEventRequest subEventRequest) {
         return drawingRank.getDrawingTotalScore(authenticatedUser, subEventRequest, RANK_COUNT);
+    }
+
+    @Transactional
+    public void saveDrawImage(MultipartFile file, Long eventId, User authenticatedUser) {
+        List<SubEvent> subEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.LOTTERY);
+
+        SubEvent subEvent = subEvents
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new SubEventNotFoundException());
+
+        EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEvent.getId())
+                .orElseThrow(() -> new EventUserNotFoundException());
+
+        String fileName = createFileName(file.getOriginalFilename());
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        metadata.setContentType(file.getContentType());
+
+        try {
+            amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String fileUrl = amazonS3Client.getUrl(bucket, fileName).toString();
+
+        eventUser.setResultImgUrl(fileUrl);
+    }
+
+    private String createFileName(String originalFileName) {
+        return UUID.randomUUID().toString() + "-" + originalFileName;
     }
 }
