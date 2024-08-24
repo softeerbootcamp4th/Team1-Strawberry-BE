@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PreviewController {
 
     private final PreviewService previewService;
+
+    @Value("${domain.url}")
+    private String baseUrl;
 
     @Tag(name = "Drawing Lottery")
     @Operation(summary = "미리 보기용 html 반환", description = """
@@ -46,6 +50,8 @@ public class PreviewController {
         model.addAttribute("resultImgUrl", eventUser.getResultImgUrl());
         model.addAttribute("name", eventUser.getUser().getName());
         model.addAttribute("score", eventUser.getGameScore());
+        model.addAttribute("apiUrl", baseUrl);
+        model.addAttribute("ogUrl", baseUrl + "/api/v1/preview/" + previewRequest.getSharedUrl());
 
         return "preview";
     }
