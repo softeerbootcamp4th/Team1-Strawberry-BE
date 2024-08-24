@@ -7,13 +7,17 @@ import {
     CRow,
     CTable,
     CTableBody,
-    CTableCaption,
     CTableDataCell,
     CTableHead,
     CTableHeaderCell,
     CTableRow,
     CButton,
-  } from '@coreui/react'
+    CModal,
+    CModalHeader,
+    CModalTitle,
+    CModalBody,
+    CModalFooter
+} from '@coreui/react';
 
 const EventList = () => {
     const [events, setEvents] = useState([]); // 이벤트 리스트 상태
@@ -21,6 +25,31 @@ const EventList = () => {
     const [error, setError] = useState(null); // 에러 상태
     const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
+    const [visible, setVisible] = useState(false); // 모달 상태
+    const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 상태
+
+    // 이벤트 수정 후 저장
+    const handleSaveChanges = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/event/${selectedEvent.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(selectedEvent),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update event');
+            }
+
+            // Update the events list after successful update
+            fetchEvents(currentPage);
+            setVisible(false); // Close the modal
+        } catch (error) {
+            setError(error.message); // Display the error message
+        }
+    };
 
     // API 호출
     const fetchEvents = async (page = 0) => {
@@ -54,6 +83,11 @@ const EventList = () => {
         window.location.href = `/#/event/${eventId}`; // 페이지 이동
     };
 
+    const handleModify = (event) => {
+        setSelectedEvent(event);  // Set the selected event details
+        setVisible(true);         // Show the modal
+    }
+
     if (loading) {
         return <div>로딩 중...</div>;
     }
@@ -77,6 +111,7 @@ const EventList = () => {
                                     <CTableHeaderCell>시작일</CTableHeaderCell>
                                     <CTableHeaderCell>종료일</CTableHeaderCell>
                                     <CTableHeaderCell>차량명</CTableHeaderCell>
+                                    <CTableHeaderCell>수정</CTableHeaderCell>
                                     <CTableHeaderCell>조회</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
@@ -90,6 +125,14 @@ const EventList = () => {
                                         <CTableDataCell>
                                             <CButton
                                                 color="light"
+                                                onClick={() => handleModify(event)}
+                                            >
+                                                수정
+                                            </CButton>
+                                        </CTableDataCell>
+                                        <CTableDataCell>
+                                            <CButton
+                                                color="light"
                                                 onClick={() => handleViewDetails(event.id)}
                                             >
                                                 조회
@@ -99,6 +142,48 @@ const EventList = () => {
                                 ))}
                             </CTableBody>
                         </CTable>
+
+                        {/* Modal for modifying event */}
+                        <CModal visible={visible} onClose={() => setVisible(false)} aria-labelledby="LiveDemoExampleLabel">
+                            <CModalHeader>
+                                <CModalTitle id="LiveDemoExampleLabel">이벤트 수정</CModalTitle>
+                            </CModalHeader>
+                            <CModalBody>
+                                {selectedEvent && (
+                                    <CTable>
+                                        <CTableHead>
+                                            <CTableRow>
+                                                <CTableHeaderCell>시작 날짜</CTableHeaderCell>
+                                                <CTableHeaderCell>종료 날짜</CTableHeaderCell>
+                                            </CTableRow>
+                                        </CTableHead>
+                                        <CTableBody>
+                                            <CTableRow>
+                                                <CTableDataCell>
+                                                    <input
+                                                        type="datetime-local"
+                                                        value={new Date(selectedEvent.startAt).toISOString().slice(0, 16)}
+                                                        onChange={(e) => setSelectedEvent({ ...selectedEvent, startAt: new Date(e.target.value).toISOString() })}
+                                                    />
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    <input
+                                                        type="datetime-local"
+                                                        value={new Date(selectedEvent.endAt).toISOString().slice(0, 16)}
+                                                        onChange={(e) => setSelectedEvent({ ...selectedEvent, endAt: new Date(e.target.value).toISOString() })}
+                                                    />
+                                                </CTableDataCell>
+                                            </CTableRow>
+                                        </CTableBody>
+                                    </CTable>
+                                )}
+                            </CModalBody>
+                            <CModalFooter>
+                                <CButton color="primary" onClick={handleSaveChanges}>Save Changes</CButton>
+                                <CButton color="secondary" onClick={() => setVisible(false)}>Close</CButton>
+                            </CModalFooter>
+                        </CModal>
+
                         <div className="mt-3">
                             {Array.from({ length: totalPages }, (_, index) => (
                                 <button
