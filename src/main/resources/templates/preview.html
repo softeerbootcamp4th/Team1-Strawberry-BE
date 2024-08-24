@@ -19,10 +19,8 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     window.addEventListener('load', function() {
-        const pathParts = window.location.pathname.split('/');
-        const sharedCode = pathParts[pathParts.length - 1];
         const baseUrl = /*[[${apiUrl}]]*/ '';
-        const url = `${baseUrl}/url/${sharedCode}`;
+        const url = `${baseUrl}/url/${previewRequest.sharedUrl}`;
 
         // fetch를 사용하여 GET 요청 보내기
         fetch(url)
