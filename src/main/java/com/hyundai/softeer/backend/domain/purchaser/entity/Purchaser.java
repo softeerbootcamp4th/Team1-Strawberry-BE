@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.purchaser.entity;
 
 import com.hyundai.softeer.backend.domain.car.entity.Car;
+import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.global.dto.BaseEntity;
 import jakarta.persistence.*;
@@ -21,4 +22,9 @@ public class Purchaser extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_id")
     private Car car;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
+
 }
