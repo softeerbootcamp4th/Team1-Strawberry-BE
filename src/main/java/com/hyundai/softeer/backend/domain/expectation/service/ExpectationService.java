@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -94,10 +95,16 @@ public class ExpectationService {
         expectation.setExpectationComment(expectationRegisterRequest.getComment());
 
         List<SubEvent> subEvents = subEventRepository.findByEventIdAndExecuteType(eventId, SubEventExecuteType.LOTTERY);
+        LocalDateTime now = LocalDateTime.now();
 
         for (SubEvent subEvent : subEvents) {
             EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEvent.getId())
-                    .orElseThrow(() -> new EventNotFoundException());
+                    .orElseGet(() -> EventUser.builder()
+                            .user(authenticatedUser)
+                            .subEvent(subEventRepository.getReferenceById(subEvent.getId()))
+                            .lastVisitedAt(now)
+                            .lastChargeAt(now)
+                            .build());
             eventUser.updateExpectationBonusChanceIfNotUsed();
 
             eventUserRepository.save(eventUser);
@@ -107,7 +114,7 @@ public class ExpectationService {
     }
 
     public static String maskName(String name) {
-        if(name == null || name.length() < 2) {
+        if (name == null || name.length() < 2) {
             return name;
         }
 
