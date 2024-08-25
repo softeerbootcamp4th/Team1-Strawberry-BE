@@ -5,6 +5,19 @@
 | [<img src="https://avatars.githubusercontent.com/u/108040422?v=4" height=150 width=150>](https://github.com/violet-mj) | [<img src="https://avatars.githubusercontent.com/u/56664567?v=4" height=150 width=150>](https://github.com/min9805) <br /> 
 | [violet-mj](https://github.com/violet-mj)                                                                                                          | [min9805](https://github.com/min9805)
 
+# 배포 URL
+[Service URL](https://front.softeer1.site/)
+
+# 기능 소개
+[기능 및 시연 영상](https://www.youtube.com/watch?v=TuaAZ3bZ9uA)
+
+# 개발환경
+- `Java 17`
+- `Spring Boot 3.3.2`
+- `MySQL 8.0`, `JPA`, `Redis`
+- `Github Actions` , `AWS CodeDeploy`, `AWS S3`, `AWS EC2`
+- `Swagger 3.0.0`
+
 # 그라운드 룰
 
 1. 퇴근 전 회고
@@ -38,7 +51,7 @@
 ![image](https://github.com/user-attachments/assets/98218bc1-c169-46ee-b655-9b046e70941a)
 
 # ERD 설계
-![image](https://github.com/user-attachments/assets/83065df4-4738-47db-ba99-5d10ef3bc6a2)
+![image](https://github.com/user-attachments/assets/0a883cc1-9834-4390-85df-997a3f31ba12)
 
 # 이슈 정리
 
