@@ -6,17 +6,43 @@
     <title>웹페이지 제목</title>
 
     <!-- Open Graph 메타 태그 -->
-    <meta property="og:title" content="드로잉 이벤트~!!">
-    <meta property="og:description" th:content="${name} + '님은 ' + ${score} + '를 얻으셨어요~~ 한번 도전 해보실래요?'">
+    <meta property="og:title" content="일상과 낭만 사이, 디 올 뉴 싼타페와 함께">
+    <meta property="og:description" th:content="'[' + ${name} + ']' + '님의 점수는 ' + ${score} + '점입니다.'">
     <meta property="og:image" th:content="${resultImgUrl}">
-    <meta property="og:url">
+    <meta property="og:url" th:content="${ogUrl}">
     <meta property="og:type" content="website">
 
     <!-- 추가적인 Open Graph 태그 -->
     <meta property="og:locale" content="ko_KR">
 </head>
 <body>
-<h1>웹페이지 내용</h1>
-<p>이곳에 실제 웹페이지 내용을 작성합니다.</p>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    window.addEventListener('load', function() {
+        const baseUrl = /*[[${apiUrl}]]*/ '';
+        const sharedUrl = /*[[${sharedUrl}]]*/ '';
+        const url = `${baseUrl}/url/${sharedUrl}`;
+        // fetch를 사용하여 GET 요청 보내기
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                if (data.data && data.data.redirectUrl) {
+                    window.location.href = data.data.redirectUrl;
+                } else {
+                    console.error('Redirect URL not found in response');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>
