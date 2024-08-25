@@ -10,8 +10,6 @@ import com.hyundai.softeer.backend.domain.event.exception.EventNotFoundException
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +21,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EventService {
-    private static final Logger log = LoggerFactory.getLogger(EventService.class);
     private final EventRepository eventRepository;
     private final CarRepository carRepository;
 
