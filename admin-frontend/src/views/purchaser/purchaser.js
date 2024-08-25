@@ -29,6 +29,7 @@ const Purchasers = () => {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+                    // ADMIN 에 대한 로그인을 따로 구현하지 않았기에 임시적으로 토큰을 넣어두었습니다.
                     'Content-Type': 'application/json',
                 },
             });

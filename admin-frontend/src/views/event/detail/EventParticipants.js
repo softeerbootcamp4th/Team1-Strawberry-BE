@@ -31,6 +31,7 @@ const EventDetail = () => {
                 method: 'GET', // HTTP 메서드를 명시적으로 지정합니다.
                 headers: {
                     'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+                    // ADMIN 에 대한 로그인을 따로 구현하지 않았기에 임시적으로 토큰을 넣어두었습니다.
                     'Content-Type': 'application/json' // 필요에 따라 Content-Type도 추가할 수 있습니다.
                 }
             });
