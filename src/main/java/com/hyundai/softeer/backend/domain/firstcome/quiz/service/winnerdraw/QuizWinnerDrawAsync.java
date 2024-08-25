@@ -12,15 +12,15 @@ import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
 import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
-public class QuizWinnerDrawRedis implements QuizWinnerDraw {
-
+public class QuizWinnerDrawAsync implements QuizWinnerDraw {
     private final WinnerUtil winnerUtil;
     private final WinnerRepository winnerRepository;
     private final CounterService counterService;
-
-
     @Override
     @LogExecutionTime
     public synchronized QuizFirstComeSubmitResponseDto winnerDraw(EventUser eventUser, QuizFirstCome quizFirstCome, SubEvent subEvent, User authenticatedUser) {
@@ -29,8 +29,8 @@ public class QuizWinnerDrawRedis implements QuizWinnerDraw {
         }
 
         long winners = quizFirstCome.getWinners();
-        long winnerCount = counterService.getCounterValue(CounterService.COUNTER_KEY);
 
+        long winnerCount = counterService.getCounterValue(CounterService.COUNTER_KEY);
         if (winnerCount >= winners) {
             return QuizFirstComeSubmitResponseDto.correctBut();
         }
@@ -39,11 +39,13 @@ public class QuizWinnerDrawRedis implements QuizWinnerDraw {
 
         counterService.incrementCounter(CounterService.COUNTER_KEY);
 
-        Winner winner = new Winner();
-        winner.setPrize(prize);
-        winner.setSubEvent(subEvent);
-        winner.setUser(authenticatedUser);
-        winnerRepository.save(winner);
+        CompletableFuture.runAsync(() -> {
+            Winner winner = new Winner();
+            winner.setPrize(prize);
+            winner.setSubEvent(subEvent);
+            winner.setUser(authenticatedUser);
+            winnerRepository.save(winner);
+        });
 
         return QuizFirstComeSubmitResponseDto.winner(prize.getPrizeResultImgUrl());
     }
