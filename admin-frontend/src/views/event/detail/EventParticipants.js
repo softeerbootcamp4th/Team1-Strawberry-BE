@@ -23,7 +23,7 @@ const EventDetail = () => {
     const [error, setError] = useState(null); // 에러 상태
     const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
-    
+    const [pagesToShow, setPagesToShow] = useState([]); // 표시할 페이지들
     // API 호출
     const fetchEventDetails = async (id = subEventId, page = 0, size = 10) => {
         try {
@@ -41,6 +41,7 @@ const EventDetail = () => {
             const data = await response.json();
             setEvents(data.content); // 이벤트 리스트 업데이트
             setTotalPages(data.totalPages); // 총 페이지 수 업데이트
+            updatePagesToShow(0, data.totalPages); // 초기 페이지 업데이트
             console.log(data);
         } catch (error) {
             setError(error.message); // 에러 업데이트
@@ -48,6 +49,17 @@ const EventDetail = () => {
             setLoading(false); // 로딩 완료
         }
     };
+
+    // 표시할 페이지 번호를 계산
+    const updatePagesToShow = (currentPage, totalPages) => {
+        const pages = [];
+        const startPage = Math.floor(currentPage / 10) * 10;
+        for (let i = startPage; i < Math.min(startPage + 10, totalPages); i++) {
+            pages.push(i);
+        }
+        setPagesToShow(pages);
+    };
+
 
     const handleViewParticipants = (subEventId) => {
         window.location.href = `/#/event/` + eventId + `/` + subEventId; // 페이지 이동
@@ -97,16 +109,32 @@ const EventDetail = () => {
                             </CTableBody>
                         </CTable>
                         <div className="mt-3">
-                            {Array.from({ length: totalPages }, (_, index) => (
+                            {currentPage > 0 && (
                                 <button
-                                    key={index}
-                                    onClick={() => handlePageChange(index)}
-                                    disabled={currentPage === index} // 현재 페이지는 비활성화
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    className="btn btn-secondary mx-1"
+                                >
+                                    이전
+                                </button>
+                            )}
+                            {pagesToShow.map((page) => (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    disabled={currentPage === page}
                                     className="btn btn-primary mx-1"
                                 >
-                                    {index + 1}
+                                    {page + 1}
                                 </button>
                             ))}
+                            {currentPage < totalPages - 1 && (
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    className="btn btn-secondary mx-1"
+                                >
+                                    다음
+                                </button>
+                            )}
                         </div>
                     </CCardBody>
                 </CCard>
