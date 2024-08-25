@@ -28,7 +28,7 @@ const EventList = () => {
     const [visible, setVisible] = useState(false); // 모달 상태
     const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 이벤트 상태
 
-    // 이벤트 수정 후 저장
+    // 이벤트 수정 api
     const handleSaveChanges = async () => {
         try {
             const response = await fetch(`http://localhost:8080/api/v1/event/${selectedEvent.id}`, {
@@ -111,8 +111,8 @@ const EventList = () => {
                                     <CTableHeaderCell>시작일</CTableHeaderCell>
                                     <CTableHeaderCell>종료일</CTableHeaderCell>
                                     <CTableHeaderCell>차량명</CTableHeaderCell>
-                                    <CTableHeaderCell>수정</CTableHeaderCell>
-                                    <CTableHeaderCell>조회</CTableHeaderCell>
+                                        <CTableHeaderCell>수정</CTableHeaderCell>
+                                        <CTableHeaderCell>조회</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
@@ -153,8 +153,8 @@ const EventList = () => {
                                     <CTable>
                                         <CTableHead>
                                             <CTableRow>
-                                                <CTableHeaderCell>시작 날짜</CTableHeaderCell>
-                                                <CTableHeaderCell>종료 날짜</CTableHeaderCell>
+                                                <CTableHeaderCell>시작일</CTableHeaderCell>
+                                                <CTableHeaderCell>종료일</CTableHeaderCell>
                                             </CTableRow>
                                         </CTableHead>
                                         <CTableBody>
