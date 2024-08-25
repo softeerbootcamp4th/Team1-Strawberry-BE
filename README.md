@@ -31,10 +31,17 @@
 # 협업 방식
 
 1. 슬랙을 이용하여 협업
-![slack]()
+<img width="912" alt="image" src="https://github.com/user-attachments/assets/dd2d5808-21bb-42a6-9abf-c5efddd9e353">
 2. [git flow를 이용하여 협업](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%5B%EC%BB%A8%EB%B2%A4%EC%85%98%5D)
+<img width="1128" alt="image" src="https://github.com/user-attachments/assets/03963aec-8a2f-4b3a-b4a0-21930e964073">
 3. swagger를 이용하여 프론트 협업
-![swagger]()
+<img width="1431" alt="image" src="https://github.com/user-attachments/assets/77dc734b-3eb4-413f-ae75-1a465fde1390">
+<img width="1427" alt="image" src="https://github.com/user-attachments/assets/1bf04d00-0d8a-4019-8e6f-62bea1754b4d">
+
+## 코드 리뷰 
+
+<img width="868" alt="image" src="https://github.com/user-attachments/assets/76c84c34-f86a-45d4-92fc-32f85d74bee2">
+
 
 # 아키텍쳐
 
