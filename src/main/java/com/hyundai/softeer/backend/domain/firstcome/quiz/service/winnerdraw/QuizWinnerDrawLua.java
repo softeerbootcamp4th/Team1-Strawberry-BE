@@ -48,7 +48,7 @@ public class QuizWinnerDrawLua implements QuizWinnerDraw {
     private final String USER_COUNTER = "COUNTER";
     private final String WINNER_SET = "WINNER_SET";
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     @LogExecutionTime
     protected void saveWinners() {
