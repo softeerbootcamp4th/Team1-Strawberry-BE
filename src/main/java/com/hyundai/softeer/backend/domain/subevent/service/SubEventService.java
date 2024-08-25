@@ -6,18 +6,20 @@ import com.hyundai.softeer.backend.domain.lottery.drawing.exception.DrawingNotFo
 import com.hyundai.softeer.backend.domain.lottery.drawing.service.DrawingLotteryService;
 import com.hyundai.softeer.backend.domain.lottery.exception.AlreadyDrawedException;
 import com.hyundai.softeer.backend.domain.prize.repository.PrizeRepository;
-import com.hyundai.softeer.backend.domain.subevent.dto.LotteryScoreWeight;
-import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerInfo;
+import com.hyundai.softeer.backend.domain.subevent.dto.*;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
+import com.hyundai.softeer.backend.domain.subevent.exception.SubEventNotFoundException;
 import com.hyundai.softeer.backend.domain.subevent.repository.SubEventRepository;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
+import com.hyundai.softeer.backend.domain.winner.dto.WinnerInfoDto;
 import com.hyundai.softeer.backend.domain.winner.entity.Winner;
 import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.global.utils.ParseUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SubEventService {
     public static final int MULTIPLE_WINNER_COUNT = 3;
 
@@ -43,7 +46,6 @@ public class SubEventService {
         // 당첨자 정보 파싱
         Map<Integer, WinnerInfo> winnersMeta = ParseUtil.parseWinnersMeta(subEvent.getWinnersMeta());
 
-        // TODO: Score 자체 변동사항으로 인한 임시 코드
         LotteryScoreWeight scoreWeight = new LotteryScoreWeight(1.0, 1.0, 1.0, 1.0);
 
         int totalWinners = winnersMeta.values().stream()
@@ -57,7 +59,7 @@ public class SubEventService {
         int randomValue = getRandomValue(subEventId);
 
         // 랜덤 사용자 추출
-        List<EventUser> randomEventUsers = eventUserRepository.findNByRand(subEventId, randomValue, lotteryWinnerCount);
+        Set<EventUser> randomEventUsers = new HashSet<>(eventUserRepository.findNByRand(subEventId, randomValue, lotteryWinnerCount));
 
         // 랜덤 사용자가 부족할 경우 나머지 사용자를 추가로 추출
         if (randomEventUsers.size() < lotteryWinnerCount) {
@@ -131,5 +133,52 @@ public class SubEventService {
 
         long left = eventUserRepository.findMaxBySubEventId(subEventId);
         return random.nextInt((int) left) + 1;
+    }
+
+    public List<WinnerInfoDto> getWinners(SubEventRequest subEventRequest) {
+        Long subEventId = subEventRequest.getSubEventId();
+
+        List<Winner> winners = winnerRepository.findBySubEventId(subEventId)
+                .orElseThrow(() -> new DrawingNotFoundException());
+
+        return winners.stream()
+                .map(winner -> WinnerInfoDto.builder()
+                        .userId(winner.getUser().getId())
+                        .ranking(winner.getRanking())
+                        .prizeName(winner.getPrize().getProductName())
+                        .build())
+                .toList();
+    }
+
+    public Page<SubEventSimpleDto> getSubEvents(long eventId, int page, int size) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        return subEventRepository.findByEventId(eventId, pageable)
+                .map(subEvent -> SubEventSimpleDto.builder()
+                        .id(subEvent.getId())
+                        .alias(subEvent.getAlias())
+                        .startAt(subEvent.getStartAt())
+                        .endAt(subEvent.getEndAt())
+                        .SubEventExecuteType(subEvent.getExecuteType().getStatus())
+                        .SubEventType(subEvent.getEventType().getStatus())
+                        .winnersMeta(subEvent.getWinnersMeta())
+                        .build());
+    }
+
+    public void updateSubEvent(Long subEventId, UpdateSubEventPeriodRequest updateSubEventPeriodRequest) {
+        SubEvent subEvent = subEventRepository.findById(subEventId)
+                .orElseThrow(() -> new SubEventNotFoundException());
+
+
+        log.info("subEventId: {}, startAt: {}, endAt: {}", subEventId, updateSubEventPeriodRequest.getStartAt(), updateSubEventPeriodRequest.getEndAt());
+        subEvent.updatePeriod(updateSubEventPeriodRequest.getStartAt(), updateSubEventPeriodRequest.getEndAt());
+        subEventRepository.save(subEvent);
+    }
+
+    public void updateSubEventWinnerMeta(Long subEventId, List<UpdateWinnerMetaRequest> updateWinnerMetaRequest) {
+        SubEvent subEvent = subEventRepository.findById(subEventId)
+                .orElseThrow(() -> new SubEventNotFoundException());
+
+        subEvent.updateWinnersMetaFromAdmin(updateWinnerMetaRequest);
+        subEventRepository.save(subEvent);
     }
 }

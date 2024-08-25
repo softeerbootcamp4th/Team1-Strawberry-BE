@@ -43,3 +43,5 @@ src/test/resources/*.yml
 src/main/resources/sql/integration.sql
 
 /log/
+admin-frontend/.vite
+.DS_Store

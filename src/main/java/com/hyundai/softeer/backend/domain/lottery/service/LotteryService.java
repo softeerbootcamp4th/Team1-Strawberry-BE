@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface LotteryService {
@@ -18,7 +19,7 @@ public interface LotteryService {
      * @param scoreWeight 각 스코어에 대한 가중치
      * @return 당첨자 리스트
      */
-    default List<WinnerCandidate> getWinners(List<EventUser> eventUsers, LotteryScoreWeight scoreWeight, int totalWinners) {
+    default List<WinnerCandidate> getWinners(Set<EventUser> eventUsers, LotteryScoreWeight scoreWeight, int totalWinners) {
         List<WinnerCandidate> candidates = new java.util.ArrayList<>(eventUsers.stream()
                 .map(eventUser -> {
                     double eventRandomScore = Math.random();

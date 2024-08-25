@@ -19,9 +19,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -157,5 +159,29 @@ public class DrawingLotteryController {
             @Validated SubEventRequest subEventRequest
     ) {
         return new BaseResponse<>(drawingLotteryService.getDrawingTotalScore(authenticatedUser, subEventRequest));
+    }
+
+    @Tag(name = "Drawing Lottery")
+    @Operation(summary = "드로잉 결과 이미지 저장", description = """
+            # 드로잉 결과 이미지 저장 api
+            
+            - 드로잉 결과 이미지를 aws s3에 저장합니다.
+             
+            ## 응답
+                        
+            - 이미지 저장 성공 시 `201`를 반환합니다..
+             
+            """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "이미지 저장 성공 시", useReturnTypeSchema = true),
+    })
+    @PostMapping("/image")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BaseResponse<Void> saveDrawImage(
+            @RequestParam("image") MultipartFile file,
+            @Parameter(hidden = true) @CurrentUser User authenticatedUser
+    ) {
+        drawingLotteryService.saveDrawImage(file, eventId, authenticatedUser);
+        return new BaseResponse<>(201, "정상적으로 저장되었습니다.", null);
     }
 }

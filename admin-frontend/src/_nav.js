@@ -38,12 +38,6 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: '이벤트 참여자 관리',
-    to: '/eventuser',
-    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
     name: '사용자 관리',
     to: '/user',
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
