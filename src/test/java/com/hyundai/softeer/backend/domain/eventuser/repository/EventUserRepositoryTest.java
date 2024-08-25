@@ -2,8 +2,6 @@ package com.hyundai.softeer.backend.domain.eventuser.repository;
 
 import com.hyundai.softeer.backend.domain.eventuser.entity.EventUser;
 import com.hyundai.softeer.backend.domain.eventuser.projection.EventUserPageProjection;
-import com.hyundai.softeer.backend.domain.eventuser.service.EventUserService;
-import com.hyundai.softeer.backend.domain.expectation.constant.ExpectationPage;
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.user.entity.User;
 import com.hyundai.softeer.backend.domain.user.repository.UserRepository;
@@ -20,7 +18,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -193,7 +190,7 @@ class EventUserRepositoryTest {
         Long subEventId = 1L;
         Pageable pageable = PageRequest.of(
                 0,
-                EventUserService.PAGE_SIZE
+                10
         );
 
         // when

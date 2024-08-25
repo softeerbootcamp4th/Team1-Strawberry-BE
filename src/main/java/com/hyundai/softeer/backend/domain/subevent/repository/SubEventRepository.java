@@ -2,6 +2,8 @@ package com.hyundai.softeer.backend.domain.subevent.repository;
 
 import com.hyundai.softeer.backend.domain.subevent.entity.SubEvent;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +16,6 @@ public interface SubEventRepository extends JpaRepository<SubEvent, Long> {
 
     List<SubEvent> findByEventIdAndExecuteType(Long eventId, SubEventExecuteType subEventExecuteType);
 
+    Page<SubEvent> findByEventId(Long eventId, Pageable pageable);
     void deleteByEventId(Long eventId);
 }

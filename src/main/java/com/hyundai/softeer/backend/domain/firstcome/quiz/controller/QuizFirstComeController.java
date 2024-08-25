@@ -33,7 +33,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Quiz First Come")
 @RequestMapping("/api/v1/firstcome/quiz")
 public class QuizFirstComeController {
     private final QuizFirstComeService quizFirstComeService;
@@ -62,6 +61,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "404", description = "퀴즈x", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
     @GetMapping("/info")
+    @Tag(name = "Quiz First Come")
     @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeResponseDto> getQuiz(
             @Valid QuizFirstComeRequest quizFirstComeRequest,
@@ -90,6 +90,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "400", description = "GET 요청의 query parameter가 숫자가 아니거나 존재하지 않을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"존재하지 않는 이벤트 정보입니다.\",\"status\":400}"))}),
             @ApiResponse(responseCode = "404", description = "해당하는 이벤트나 현재 진행 중인 퀴즈 이벤트가 존재하지 않을 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"퀴즈 이벤트가 존재하지 않습니다.\",\"status\":404}"))})
     })
+    @Tag(name = "Quiz First Come")
     @GetMapping("/land")
     public BaseResponse<QuizFirstComeLandResponseDto> getQuizLandingPage() {
         QuizFirstComeLandResponseDto getQuizResponseDto = quizFirstComeService.getQuizLand(eventId);
@@ -117,6 +118,7 @@ public class QuizFirstComeController {
             @ApiResponse(responseCode = "400", description = "쿼리 파라미터를 잘못 보냈을 때", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class))}),
             @ApiResponse(responseCode = "403", description = "대기열을 통한 접근이 아닌 경우", content = {@Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject("{\"message\":\"대기열을 거치지 않은 접근입니다.\",\"status\":403}"))}),
     })
+    @Tag(name = "Quiz First Come")
     @PostMapping("")
     @SecurityRequirement(name = "access-token")
     public BaseResponse<QuizFirstComeSubmitResponseDto> quizSubmit(

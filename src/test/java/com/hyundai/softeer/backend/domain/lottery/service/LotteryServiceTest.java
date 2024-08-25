@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +29,7 @@ class LotteryServiceTest {
     @DisplayName("당첨자 선정")
     void getWinners() {
         // given
-        List<EventUser> users = List.of(
+        Set<EventUser> users = Set.of(
                 EventUser.builder().id(1L).user(User.builder().id(1L).build()).build(),
                 EventUser.builder().id(2L).user(User.builder().id(1L).build()).build(),
                 EventUser.builder().id(3L).user(User.builder().id(1L).build()).build(),
