@@ -14,9 +14,9 @@ VALUES (1, 'alswnssl0528@naver.com', '김민준', '010-6833-4234', '1998-05-28',
 INSERT INTO cars (id, brand_name, car_name_eng, car_name_kor, model_line, price, release_date)
 VALUES (1, 0, 'santafe', '산타페', 0, 30000000, '2024-07-01 10:00:00');
 
-INSERT INTO events (id, end_at, event_name, event_status, start_at, winner_count, car_id, event_img_urls,
+INSERT INTO events (id, end_at, event_name, event_status, start_at, car_id, event_img_urls,
                     expectation_banner_img_url)
-VALUES (1, '2024-07-01 10:00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10, 1,
+VALUES (1, '2024-07-01 10:00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 1,
         JSON '{"mainImgUrl": "www.mainimg.com",
                "scrolledImgUrl": "www.scroll.com",
                "eventInfoImg": "www.eventinfo.com",
@@ -25,15 +25,15 @@ VALUES (1, '2024-07-01 10:00:00', '별 헤는 밤', 0, '2024-06-25 10:00:00', 10
                "drawingMainImg": "www.drawingmain.com",
                "drawingPrizeImg": "www.drawingprize.com"}',
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg'),
-        (2, '2024-09-01 10:00:00', '하루하루', 0, '2024-10-25 10:00:00', 10, 1,
-                JSON '{"mainImgUrl": "www.mainimg2.com",
+       (2, '2024-09-01 10:00:00', '하루하루', 0, '2024-10-25 10:00:00', 1,
+        JSON '{"mainImgUrl": "www.mainimg2.com",
                        "scrolledImgUrl": "www.scrollw.com",
                        "eventInfoImg": "www.eventinf2o.com",
                        "quizMainImg": "www.quizmain2.com",
                        "quizPrizeImg": "www.qpriz3e.com",
                        "drawingMainImg": "www.drawejingmain.com",
                        "drawingPrizeImg": "www.drawdaingprize.com"}',
-                'https://softeere-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg');
+        'https://softeere-static.s3.ap-northeast-2.amazonaws.com/expectationBG.svg');
 
 
 INSERT INTO sub_events (id, event_id, alias, execute_type, event_type, start_at, end_at, banner_img_url, event_img_urls,
@@ -113,4 +113,3 @@ VALUES (1, 4, '1차 드로잉', 1,
         'https://softeer-static.s3.ap-northeast-2.amazonaws.com/drawingLottery/game/03_blur_img.png',
         '디 올 뉴 싼타페는 테라스 컨셉의 테일게이트 공간을 기반으로 적재 이용성은 물론\n 대형 테일게이트의 개방감을 활용한 다양한 아웃도어 활동을 지원합니다.',
         '3초 후 디 올 뉴 싼테파를 그려주세요!', '7초 안에 선을 따라 디 올 뉴 싼타페를 그려주세요!');
-
