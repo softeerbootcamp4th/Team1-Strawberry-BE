@@ -2,6 +2,7 @@ package com.hyundai.softeer.backend.domain.event.controller;
 
 import com.hyundai.softeer.backend.domain.event.dto.EventCreateRequest;
 import com.hyundai.softeer.backend.domain.event.dto.EventSimpleDto;
+import com.hyundai.softeer.backend.domain.event.dto.UpdateEventPeriodRequest;
 import com.hyundai.softeer.backend.domain.event.service.EventService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,12 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createEvent(@RequestBody EventCreateRequest eventCreateRequest) {
         eventService.createEvent(eventCreateRequest);
+    }
+
+    @PutMapping("/{eventId}")
+    public void updateEventPeriod(
+            @PathVariable Long eventId,
+            @RequestBody UpdateEventPeriodRequest updateEventPeriodRequest) {
+        eventService.updateEvent(eventId, updateEventPeriodRequest);
     }
 }

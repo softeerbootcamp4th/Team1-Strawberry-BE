@@ -79,4 +79,9 @@ public class Event extends BaseEntity {
 
         return events;
     }
+
+    public void updateEventPeriod(LocalDateTime startAt, LocalDateTime endAt) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
 }
