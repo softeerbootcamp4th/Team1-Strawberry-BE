@@ -1,10 +1,7 @@
 package com.hyundai.softeer.backend.domain.event.service;
 
 import com.hyundai.softeer.backend.domain.car.repository.CarRepository;
-import com.hyundai.softeer.backend.domain.event.dto.ApiKeyRequest;
-import com.hyundai.softeer.backend.domain.event.dto.EventCreateRequest;
-import com.hyundai.softeer.backend.domain.event.dto.EventSimpleDto;
-import com.hyundai.softeer.backend.domain.event.dto.UpdateEventPeriodRequest;
+import com.hyundai.softeer.backend.domain.event.dto.*;
 import com.hyundai.softeer.backend.domain.event.entity.Event;
 import com.hyundai.softeer.backend.domain.event.exception.EventNotFoundException;
 import com.hyundai.softeer.backend.domain.event.repository.EventRepository;
@@ -20,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -81,5 +79,10 @@ public class EventService {
 
         event.updateEventPeriod(updateEventPeriodRequest.getStartAt(), updateEventPeriodRequest.getEndAt());
         eventRepository.save(event);
+    }
+
+    public List<EventUserCountDTO> getAnalysis() {
+        List<Object[]> totalUsersByEventNative = eventRepository.findTotalUsersByEventNative();
+        return EventUserCountDTO.fromObjects(totalUsersByEventNative);
     }
 }

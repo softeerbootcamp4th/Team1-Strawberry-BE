@@ -2,6 +2,7 @@ package com.hyundai.softeer.backend.domain.event.controller;
 
 import com.hyundai.softeer.backend.domain.event.dto.EventCreateRequest;
 import com.hyundai.softeer.backend.domain.event.dto.EventSimpleDto;
+import com.hyundai.softeer.backend.domain.event.dto.EventUserCountDTO;
 import com.hyundai.softeer.backend.domain.event.dto.UpdateEventPeriodRequest;
 import com.hyundai.softeer.backend.domain.event.service.EventService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,4 +40,10 @@ public class EventController {
             @RequestBody UpdateEventPeriodRequest updateEventPeriodRequest) {
         eventService.updateEvent(eventId, updateEventPeriodRequest);
     }
+
+    @GetMapping("/analysis")
+    public List<EventUserCountDTO> getAnalysis() {
+        return eventService.getAnalysis();
+    }
+
 }
