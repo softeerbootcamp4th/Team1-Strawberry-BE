@@ -1,10 +1,7 @@
 package com.hyundai.softeer.backend.domain.subevent.controller;
 
-import com.hyundai.softeer.backend.domain.event.dto.ApiKeyRequest;
 import com.hyundai.softeer.backend.domain.event.service.EventService;
-import com.hyundai.softeer.backend.domain.subevent.dto.SubEventRequest;
-import com.hyundai.softeer.backend.domain.subevent.dto.SubEventSimpleDto;
-import com.hyundai.softeer.backend.domain.subevent.dto.WinnerCandidate;
+import com.hyundai.softeer.backend.domain.subevent.dto.*;
 import com.hyundai.softeer.backend.domain.subevent.service.SubEventService;
 import com.hyundai.softeer.backend.domain.winner.dto.WinnerInfoDto;
 import com.hyundai.softeer.backend.global.dto.BaseResponse;
@@ -20,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -74,13 +68,8 @@ public class SubEventController {
     })
     @SecurityRequirement(name = "access-token")
     public BaseResponse<List<WinnerCandidate>> drawWinner(
-            @Validated SubEventRequest subEventRequest,
-            @Validated ApiKeyRequest apiKeyRequest
+            @Validated SubEventRequest subEventRequest
     ) {
-        if (!eventService.validateApiKey(apiKeyRequest)) {
-            throw new IllegalArgumentException("Invalid API Key");
-        }
-
         return new BaseResponse<>(subEventService.drawWinner(subEventRequest));
     }
 
@@ -91,5 +80,21 @@ public class SubEventController {
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         return subEventService.getSubEvents(Long.parseLong(eventId), page, size);
+    }
+
+    @PutMapping("/{subEventId}")
+    public void updateSubEvent(
+            @PathVariable Long subEventId,
+            @RequestBody UpdateSubEventPeriodRequest updateSubEventPeriodRequest
+    ) {
+        subEventService.updateSubEvent(subEventId, updateSubEventPeriodRequest);
+    }
+
+    @PutMapping("/{subEventId}/winner")
+    public void updateSubEventWinnerMeta(
+            @PathVariable Long subEventId,
+            @RequestBody List<UpdateWinnerMetaRequest> updateWinnerMetaRequests
+    ) {
+        subEventService.updateSubEventWinnerMeta(subEventId, updateWinnerMetaRequests);
     }
 }

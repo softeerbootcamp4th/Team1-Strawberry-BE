@@ -1,6 +1,7 @@
 package com.hyundai.softeer.backend.domain.subevent.entity;
 
 import com.hyundai.softeer.backend.domain.event.entity.Event;
+import com.hyundai.softeer.backend.domain.subevent.dto.UpdateWinnerMetaRequest;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventExecuteType;
 import com.hyundai.softeer.backend.domain.subevent.enums.SubEventType;
 import com.hyundai.softeer.backend.global.constant.ExecuteEnvironment;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,5 +78,24 @@ public class SubEvent extends BaseEntity {
         }
 
         return subEvents;
+    }
+
+    public void updatePeriod(LocalDateTime startAt, LocalDateTime endAt) {
+        this.startAt = startAt;
+        this.endAt = endAt;
+    }
+
+
+    public void updateWinnersMetaFromAdmin(List<UpdateWinnerMetaRequest> updateWinnerMetaRequest) {
+        Map<String, Object> winnersMeta = new HashMap<>();
+
+        for (UpdateWinnerMetaRequest request : updateWinnerMetaRequest) {
+            Map<String, Object> winnerDetails = new HashMap<>();
+            winnerDetails.put("prizeId", request.getPrizeId());
+            winnerDetails.put("winnerCount", request.getAmount());
+
+            winnersMeta.put(String.valueOf(request.getRank()), winnerDetails);
+        }
+        this.winnersMeta = winnersMeta;
     }
 }
