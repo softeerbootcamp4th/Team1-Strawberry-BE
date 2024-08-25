@@ -14,8 +14,10 @@ import com.hyundai.softeer.backend.domain.winner.repository.WinnerRepository;
 import com.hyundai.softeer.backend.domain.winner.utils.WinnerUtil;
 import com.hyundai.softeer.backend.global.aop.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class QuizWinnerDrawSync implements QuizWinnerDraw {
 
     private final WinnerRepository winnerRepository;

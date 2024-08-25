@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Set;
 
 @RequiredArgsConstructor
-@Service
 public class QuizWinnerDrawLua implements QuizWinnerDraw {
 
     private final RedisTemplate<String, String> redisTemplate;
