@@ -103,7 +103,7 @@ class DrawingLotteryServiceTest {
     @DisplayName("드로잉 추첨 이벤트 랜딩 페이지 조회 실패")
     void getWinners() {
         // Given
-        List<EventUser> users = List.of(
+        Set<EventUser> users = Set.of(
                 EventUser.builder().id(1L).user(User.builder().id(1L).build()).gameScore(50.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
                 EventUser.builder().id(2L).user(User.builder().id(2L).build()).gameScore(30.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
                 EventUser.builder().id(3L).user(User.builder().id(3L).build()).gameScore(1.0).lottoScore(1.0).priorityScore(1.0).sharedScore(1.0).build(),
