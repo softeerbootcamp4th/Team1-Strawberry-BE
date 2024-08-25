@@ -23,7 +23,7 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter implements Filter {
-    private final String[] whiteListUris = new String[]{"/**",
+    private final String[] whiteListUris = new String[]{
             "/swagger-ui/**",
             "/v3/api-docs",
             "/v3/api-docs/**",

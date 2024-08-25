@@ -15,13 +15,25 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 실제 구매자 수를 가져오는 요청
-        const purchaserResponse = await fetch('http://localhost:8080/api/v1/purchaser/analysis');
-        const purchaserResult = await purchaserResponse.json();
-
-        // 총 참여자 수를 가져오는 요청
-        const eventResponse = await fetch('http://localhost:8080/api/v1/event/analysis');
-        const eventResult = await eventResponse.json();
+      // 실제 구매자 수를 가져오는 요청
+      const purchaserResponse = await fetch('http://localhost:8080/api/v1/purchaser/analysis', {
+        method: 'GET', // HTTP 메서드를 명시적으로 지정합니다.
+        headers: {
+            'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+            'Content-Type': 'application/json' // 필요에 따라 Content-Type도 추가할 수 있습니다.
+        }
+      });
+      const purchaserResult = await purchaserResponse.json();
+      
+      // 총 참여자 수를 가져오는 요청
+      const eventResponse = await fetch('http://localhost:8080/api/v1/event/analysis', {
+          method: 'GET', // HTTP 메서드를 명시적으로 지정합니다.
+          headers: {
+              'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+              'Content-Type': 'application/json'
+          }
+      });
+      const eventResult = await eventResponse.json();
         console.log("eventReuslt",eventResult);
 
         // 가져온 데이터를 recharts에서 사용할 수 있는 형식으로 변환

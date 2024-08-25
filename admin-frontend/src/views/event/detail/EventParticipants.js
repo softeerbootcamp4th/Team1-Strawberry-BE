@@ -27,7 +27,14 @@ const EventDetail = () => {
     // API 호출
     const fetchEventDetails = async (id = subEventId, page = 0, size = 10) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/eventuser/list?subEventId=${id}&page=${page}&size=${size}`);
+            const response = await fetch(`http://localhost:8080/api/v1/eventuser/list?subEventId=${id}&page=${page}&size=${size}`, {
+                method: 'GET', // HTTP 메서드를 명시적으로 지정합니다.
+                headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+                    'Content-Type': 'application/json' // 필요에 따라 Content-Type도 추가할 수 있습니다.
+                }
+            });
+            
             if (!response.ok) {
                 throw new Error('네트워크 응답이 올바르지 않습니다');
             }

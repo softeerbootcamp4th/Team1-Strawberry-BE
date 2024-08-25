@@ -48,6 +48,7 @@ const EventDetail = () => {
             const response = await fetch(`http://localhost:8080/api/v1/subevent/${selectedEvent.id}/winner`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(editablePrizeInfo), // editablePrizeInfo 배열을 JSON 형식으로 변환하여 전송
@@ -70,7 +71,14 @@ const EventDetail = () => {
     const fetchEventDetails = async (id = eventId, page = 0, size = 10) => {
         setLoading(true); // 로딩 상태 설정
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/subevent/list?eventId=${id}&page=${page}&size=${size}`);
+            const response = await fetch(`http://localhost:8080/api/v1/subevent/list?eventId=${id}&page=${page}&size=${size}`, {
+                method: 'GET', // HTTP 메서드를 명시적으로 지정합니다.
+                headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+                    'Content-Type': 'application/json' // 필요에 따라 Content-Type도 추가할 수 있습니다.
+                }
+            });
+
             if (!response.ok) {
                 throw new Error('네트워크 응답이 올바르지 않습니다');
             }
@@ -89,7 +97,14 @@ const EventDetail = () => {
     const fetchWinners = async (subEventId) => {
         setLoading(true); // 로딩 상태 설정
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/subevent/winner?subEventId=${subEventId}`);
+            const response = await fetch(`http://localhost:8080/api/v1/subevent/winner?subEventId=${subEventId}`, {
+            method: 'GET', // HTTP 메서드를 명시적으로 지정합니다.
+            headers: {
+                'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+                'Content-Type': 'application/json' // 필요에 따라 Content-Type도 추가할 수 있습니다.
+            }
+        });
+
             if (!response.ok) {
                 throw new Error('네트워크 응답이 올바르지 않습니다');
             }
@@ -115,6 +130,7 @@ const EventDetail = () => {
             const response = await fetch(`http://localhost:8080/api/v1/subevent/${selectedEvent.id}`, {
                 method: 'PUT',
                 headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updatedEvent), // startAt과 endAt만 전송
@@ -145,6 +161,10 @@ const EventDetail = () => {
             // GET 요청을 사용하여 추첨 엔드포인트 호출
             const response = await fetch(`http://localhost:8080/api/v1/subevent/draw?${queryParams.toString()}`, {
                 method: 'GET', // GET 요청으로 변경
+                headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTcyNTAxOTIwM30.Y9N-pmmrNrEIDVDuoY0sdvQRVQj1TIJq2TokuSZK2L7yQPKctq4kZBc9OyikMGBPPXD0Ig8u6TOZ-JNVyRHpGg',
+                    'Content-Type': 'application/json' // 필요에 따라 Content-Type도 추가할 수 있습니다.
+                }
             });
     
             if (!response.ok) {
