@@ -1,4 +1,4 @@
-# 딸기 탕후루 백엔드 팀원 
+# :strawberry: Team1-Strawberry-BE
 
 <div align="center">
 
@@ -53,13 +53,14 @@
 - 대시보드를 통해 각 이벤트 별 참여자와 실제 구매자(가상)의 비율을 확인할 수 있습니다.
 
 # 개발환경
+
 - `Java 17`
 - `Spring Boot 3.3.2`
 - `MySQL 8.0`, `JPA`, `Redis`
 - `Github Actions` , `AWS CodeDeploy`, `AWS S3`, `AWS EC2`
 - `Swagger 3.0.0`
 
-# 그라운드 룰
+# [그라운드 룰](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%5B%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%A3%B0%5D)
 
 1. 퇴근 전 회고
 2. PR 시 코드 리뷰
@@ -73,34 +74,43 @@
 
 1. 슬랙을 이용하여 협업
 
+슬랙을 통해 프론트엔드와의 협업을 기록하고 빠르게 대응합니다. 
+
 <img width="912" alt="image" src="https://github.com/user-attachments/assets/dd2d5808-21bb-42a6-9abf-c5efddd9e353">
 
 
 2. [git flow를 이용하여 협업](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%5B%EC%BB%A8%EB%B2%A4%EC%85%98%5D)
 
+git-flow 사용해 `feature`, `fix` 단위 작업과 `release`, `hotfix` 를 통한 배포를 진행합니다.
+
 <img width="1128" alt="image" src="https://github.com/user-attachments/assets/03963aec-8a2f-4b3a-b4a0-21930e964073">
 
 3. swagger를 이용하여 프론트 협업
+
+Swagger 문서를 최대한 자세히 작성해 프론트엔드와의 협업을 용이하게 합니다. 
+Swagger 에는 각 API 의 설명, 요청 및 모든 응답의 예시가 포함됩니다.
 
 <img width="1431" alt="image" src="https://github.com/user-attachments/assets/77dc734b-3eb4-413f-ae75-1a465fde1390">
 <img width="1427" alt="image" src="https://github.com/user-attachments/assets/1bf04d00-0d8a-4019-8e6f-62bea1754b4d">
 
 ## 코드 리뷰 
 
+그라운드 룰에 따라 최대한 자세하고 사소한 코드리뷰를 진행하고자 노력했습니다.
+
 <img width="868" alt="image" src="https://github.com/user-attachments/assets/76c84c34-f86a-45d4-92fc-32f85d74bee2">
 
 
 # 아키텍쳐
 
-> 서비스 아키텍쳐
+## 서비스 아키텍쳐
 
-![image](https://github.com/user-attachments/assets/a9225dbd-f293-4a26-bf92-ed15debe166e)
+<img width="860" alt="image" src="https://github.com/user-attachments/assets/00f26f9e-18ed-4f47-973e-180ad27cb796">
 
-> 부하 테스트 아키텍처
+## 부하 테스트 아키텍처
 
-![image](https://github.com/user-attachments/assets/5a799e26-5a6a-45cd-bcd9-dd179342dfec)
+<img width="849" alt="image" src="https://github.com/user-attachments/assets/44f91095-a3e2-4008-a00f-0269e3ea54d3">
 
-> CICD 아키텍처
+## CICD 아키텍처
 
 ![image](https://github.com/user-attachments/assets/98218bc1-c169-46ee-b655-9b046e70941a)
 
