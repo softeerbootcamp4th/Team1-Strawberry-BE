@@ -1,15 +1,54 @@
 # 딸기 탕후루 백엔드 팀원 
 
+<div align="center">
 | 김민준                                                                                                                    | 김민규 | 
 |------------------------------------------------------------------------------------------------------------------------|---|
 | [<img src="https://avatars.githubusercontent.com/u/108040422?v=4" height=150 width=150>](https://github.com/violet-mj) | [<img src="https://avatars.githubusercontent.com/u/56664567?v=4" height=150 width=150>](https://github.com/min9805) <br /> 
 | [violet-mj](https://github.com/violet-mj)                                                                                                          | [min9805](https://github.com/min9805)
+</div>
 
 # 배포 URL
 [Service URL](https://front.softeer1.site/)
 
 # 기능 소개
 [기능 및 시연 영상](https://www.youtube.com/watch?v=TuaAZ3bZ9uA)
+
+## 1. 랜딩 페이지
+
+-   신차에 대한 간략한 소개와 진행하는 이벤트의 설명을 확인할 수 있습니다.
+
+## 2. 신차 소개 페이지
+
+-   신차에 대한 상세한 설명을 볼 수 있는 페이지입니다.
+
+## 3. 선착순 퀴즈 이벤트 페이지
+
+-   선착순으로 퀴즈를 맞추는 이벤트를 진행하는 페이지입니다.
+-   소개 페이지와 진행 페이지로 나뉩니다.
+-   이벤트 진행 페이지에서 퀴즈를 진행한 후 바로 결과를 확인할 수 있습니다.
+-   Redis 를 사용해 높은 성능으로 동시성 제어가 가능합니다.
+
+## 4. 드로잉 이벤트 페이지
+
+-   신차의 주요 특징을 드로잉 게임을 통해 고객에게 알릴 수 있는 페이지입니다.
+-   소개 페이지, 진행 페이지, 결과 페이지로 나뉩니다.
+-   소개 페이지에서 점수 랭킹과 자신의 점수를 확인할 수 있습니다.
+-   게임 진행 후 일정한 알고리즘에 따라 점수를 산출해냅니다.
+-   사용자는 게임 진행 후 결과를 확인하고 이를 링크 공유할 수 있습니다.
+
+## 5. 기대평 페이지
+
+-   신차에 대한 기대평을 작성할 수 있는 페이지입니다.
+-   고객은 기대평을 작성하거나 타인의 댓글을 확인할 수 있습니다.
+
+## 6. 어드민 페이지
+
+- 어드민은 전체 이벤트 참여자와 실제 차량 구매자(가상)을 관리할 수 있습니다.
+- 이벤트의 시작 종료 일자를 변경할 수 있습니다.
+- 상세 이벤트에서 내용을 변경할 수 있습니다.
+- 상세 이벤트의 당첨자 선정과 조회가 가능합니다.
+- 각 상세 이벤트의 참여자들을 조회할 수 있습니다.
+- 대시보드를 통해 각 이벤트 별 참여자와 실제 구매자(가상)의 비율을 확인할 수 있습니다.
 
 # 개발환경
 - `Java 17`
@@ -31,10 +70,16 @@
 # 협업 방식
 
 1. 슬랙을 이용하여 협업
+
 <img width="912" alt="image" src="https://github.com/user-attachments/assets/dd2d5808-21bb-42a6-9abf-c5efddd9e353">
+
+
 2. [git flow를 이용하여 협업](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%5B%EC%BB%A8%EB%B2%A4%EC%85%98%5D)
+
 <img width="1128" alt="image" src="https://github.com/user-attachments/assets/03963aec-8a2f-4b3a-b4a0-21930e964073">
+
 3. swagger를 이용하여 프론트 협업
+
 <img width="1431" alt="image" src="https://github.com/user-attachments/assets/77dc734b-3eb4-413f-ae75-1a465fde1390">
 <img width="1427" alt="image" src="https://github.com/user-attachments/assets/1bf04d00-0d8a-4019-8e6f-62bea1754b4d">
 
@@ -77,5 +122,17 @@ Redis 기반 대기열 도입으로 트래픽 처리
 ## [N명 추첨 - by min9805](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/N%EB%AA%85-%EC%B6%94%EC%B2%A8)
 
 이벤트 N명 추첨 방식
+
+## [선착순 동시성 문제 - by violet-mj](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%EC%84%A0%EC%B0%A9%EC%88%9C-%E2%80%90-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C)
+
+선착순 부하 시 동시성 문제 분석 및 결과
+
+## [선착순 구현별 성능 차이 - by violet-mj](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%EC%84%A0%EC%B0%A9%EC%88%9C-%E2%80%90-%EA%B5%AC%ED%98%84%EC%97%90-%EB%94%B0%EB%A5%B8-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D)
+
+mysql, redis, batch 작업에 따른 성능 차이를 비교
+
+## [스레드 풀 조정 - by violet-mj](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%EC%84%A0%EC%B0%A9%EC%88%9C-%E2%80%90-%EC%8A%A4%EB%A0%88%EB%93%9C-%ED%92%80-%EB%B3%80%EA%B2%BD%EC%97%90-%EB%94%B0%EB%A5%B8-%EC%84%B1%EB%8A%A5-%EC%B0%A8%EC%9D%B4)
+
+스레드 풀 개수에 따른 동시 처리 능력 분석
 
 # [[회고]](https://github.com/softeerbootcamp4th/Team1-Strawberry-BE/wiki/%5B%ED%9A%8C%EA%B3%A0%5D)
