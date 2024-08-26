@@ -1,10 +1,12 @@
 # 딸기 탕후루 백엔드 팀원 
 
 <div align="center">
+
 | 김민준                                                                                                                    | 김민규 | 
 |------------------------------------------------------------------------------------------------------------------------|---|
 | [<img src="https://avatars.githubusercontent.com/u/108040422?v=4" height=150 width=150>](https://github.com/violet-mj) | [<img src="https://avatars.githubusercontent.com/u/56664567?v=4" height=150 width=150>](https://github.com/min9805) <br /> 
 | [violet-mj](https://github.com/violet-mj)                                                                                                          | [min9805](https://github.com/min9805)
+
 </div>
 
 # 배포 URL
