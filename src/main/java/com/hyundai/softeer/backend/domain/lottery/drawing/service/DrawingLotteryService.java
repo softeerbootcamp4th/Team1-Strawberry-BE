@@ -57,6 +57,7 @@ public class DrawingLotteryService implements LotteryService {
     private final Random random = new Random();
 
     public static final int RANK_COUNT = 20;
+    public static final String BUCKET_DIR = "/preview/";
 
     @Value("${properties.event-id}")
     private Long eventId;
@@ -237,18 +238,24 @@ public class DrawingLotteryService implements LotteryService {
         EventUser eventUser = eventUserRepository.findByUserIdAndSubEventId(authenticatedUser.getId(), subEvent.getId())
                 .orElseThrow(() -> new EventUserNotFoundException());
 
+        String resultImgUrl = eventUser.getResultImgUrl();
+
+        if(resultImgUrl != null) {
+            amazonS3Client.deleteObject(bucket, BUCKET_DIR + resultImgUrl);
+        }
+
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
 
         try {
-            amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
+            amazonS3Client.putObject(bucket, BUCKET_DIR + fileName, file.getInputStream(), metadata);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        String fileUrl = amazonS3Client.getUrl(bucket, fileName).toString();
+        String fileUrl = amazonS3Client.getUrl(bucket, BUCKET_DIR + fileName).toString();
 
         eventUser.setResultImgUrl(fileUrl);
     }
