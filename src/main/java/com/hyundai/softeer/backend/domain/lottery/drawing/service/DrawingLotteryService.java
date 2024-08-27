@@ -57,7 +57,7 @@ public class DrawingLotteryService implements LotteryService {
     private final Random random = new Random();
 
     public static final int RANK_COUNT = 20;
-    public static final String BUCKET_DIR = "/preview/";
+    public static final String BUCKET_DIR = "preview/";
 
     @Value("${properties.event-id}")
     private Long eventId;
