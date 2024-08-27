@@ -15,9 +15,7 @@ public class PreviewService {
 
     private final EventUserRepository eventUserRepository;
 
-    public EventUser preview(PreviewRequest previewRequest, Model model) {
-        String sharedUrl = previewRequest.getSharedUrl();
-
+    public EventUser preview(String sharedUrl, Model model) {
         EventUser eventUser = eventUserRepository.findBySharedUrl(sharedUrl)
                 .orElseThrow(() -> new EventUserNotFoundException());
 
